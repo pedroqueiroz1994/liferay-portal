@@ -108,7 +108,7 @@
 	</command>
 
 	<command name="moveToRecycleBinCP">
-		<execute macro="WebContent#changeDisplayStyle">
+		<execute macro="Portlet#changeDisplayStyle">
 			<var name="displayStyle" value="Descriptive" />
 		</execute>
 
