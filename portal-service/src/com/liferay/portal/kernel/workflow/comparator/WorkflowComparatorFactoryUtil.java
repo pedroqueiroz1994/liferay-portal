@@ -117,6 +117,19 @@ public class WorkflowComparatorFactoryUtil {
 	}
 
 	public static OrderByComparator<WorkflowTask>
+		getTaskCompletedComparator() {
+
+		return getWorkflowComparatorFactory().getTaskCompletedComparator(false);
+	}
+
+	public static OrderByComparator<WorkflowTask>
+		getTaskCompletedComparator(boolean ascending) {
+
+		return getWorkflowComparatorFactory().getTaskCompletedComparator(
+			ascending);
+	}
+
+	public static OrderByComparator<WorkflowTask>
 		getTaskCompletionDateComparator() {
 
 		return getWorkflowComparatorFactory().getTaskCompletionDateComparator(
