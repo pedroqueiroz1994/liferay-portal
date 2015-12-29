@@ -49,6 +49,9 @@ public interface WorkflowComparatorFactory {
 	public OrderByComparator<WorkflowLog> getLogUserIdComparator(
 		boolean ascending);
 
+	public OrderByComparator<WorkflowTask> getTaskCompletedComparator(
+		boolean ascending);
+
 	public OrderByComparator<WorkflowTask> getTaskCompletionDateComparator(
 		boolean ascending);
 

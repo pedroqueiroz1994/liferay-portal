@@ -78,6 +78,13 @@ public class WorkflowComparatorFactoryProxyBean
 	}
 
 	@Override
+	public OrderByComparator<WorkflowTask> getTaskCompletedComparator(
+		boolean ascending) {
+
+		throw new UnsupportedOperationException();
+	}
+
+	@Override
 	public OrderByComparator<WorkflowTask> getTaskCompletionDateComparator(
 		boolean ascending) {
 
