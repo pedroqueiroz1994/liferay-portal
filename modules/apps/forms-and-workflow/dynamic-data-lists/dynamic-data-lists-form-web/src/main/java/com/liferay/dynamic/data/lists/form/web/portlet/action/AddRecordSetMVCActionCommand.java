@@ -21,6 +21,8 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQuery;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormJSONDeserializer;
@@ -37,6 +39,7 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.portlet.bridges.mvc.BaseTransactionalMVCActionCommand;
 import com.liferay.portal.kernel.portlet.bridges.mvc.MVCActionCommand;
 import com.liferay.portal.kernel.service.ServiceContext;
@@ -222,9 +225,14 @@ public class AddRecordSetMVCActionCommand
 		DDMFormFieldValue ddmFormFieldValue =
 			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
 
-		Value value = ddmFormFieldValue.getValue();
+		DDMFormFieldValueAccessor<JSONArray> ddmFormFieldValueAccessor =
+			_ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor(
+				"select");
 
-		return value.getString(ddmFormValues.getDefaultLocale());
+		JSONArray jsonArray = ddmFormFieldValueAccessor.getValue(
+			ddmFormFieldValue, ddmFormValues.getDefaultLocale());
+
+		return jsonArray.getString(0);
 	}
 
 	@Reference(unbind = "-")
@@ -306,6 +314,9 @@ public class AddRecordSetMVCActionCommand
 			DDLRecordSet.class.getName(), recordSet.getRecordSetId(), 0,
 			workflowDefinition);
 	}
+
+	@Reference
+	protected DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 
 	protected DDLRecordSetService ddlRecordSetService;
 	protected DDMFormJSONDeserializer ddmFormJSONDeserializer;

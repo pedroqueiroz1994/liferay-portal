@@ -19,6 +19,8 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionException;
 import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormFieldEvaluationResult;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
@@ -28,10 +30,12 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 
@@ -230,9 +234,25 @@ public class DDMFormEvaluatorHelper {
 		return ddmFormFieldValidation.getExpression();
 	}
 
-	protected String getValueString(Value value, Locale locale) {
+	protected String getValueString(
+			DDMFormFieldValue ddmFormFieldValue, String type, Locale locale)
+		throws PortalException {
+
+		Value value = ddmFormFieldValue.getValue();
+
 		if (value == null) {
 			return null;
+		}
+
+		if (type.equals("select")) {
+			DDMFormFieldValueAccessor<JSONArray> ddmFormFieldValueAccessor =
+				_ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor(
+					type);
+
+			JSONArray jsonArray = ddmFormFieldValueAccessor.getValue(
+				ddmFormFieldValue, locale);
+
+			return toString(jsonArray);
 		}
 
 		return value.getString(_locale);
@@ -290,7 +310,7 @@ public class DDMFormEvaluatorHelper {
 			}
 
 			String valueString = getValueString(
-				ddmFormFieldValue.getValue(), _locale);
+				ddmFormFieldValue, ddmFormField.getType(), _locale);
 
 			if (valueString != null) {
 				setExpressionVariableValue(
@@ -302,6 +322,12 @@ public class DDMFormEvaluatorHelper {
 				ddmExpression, ddmFormFieldValue.getNestedDDMFormFieldValues(),
 				ancestorDDMFormFieldValues);
 		}
+	}
+
+	protected void setDDMFormFieldTypeServicesTracker(
+		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker) {
+
+		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 	}
 
 	protected void setExpressionVariableValue(
@@ -321,11 +347,26 @@ public class DDMFormEvaluatorHelper {
 		}
 	}
 
+	protected String toString(JSONArray jsonArray) {
+		StringBundler sb = new StringBundler(jsonArray.length() * 2);
+
+		for (int i = 0; i < jsonArray.length(); i++) {
+			if (i != 0) {
+				sb.append(StringPool.COMMA);
+			}
+
+			sb.append(jsonArray.getString(i));
+		}
+
+		return sb.toString();
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormEvaluatorHelper.class);
 
 	private DDMExpressionFactory _ddmExpressionFactory;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
+	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private final Locale _locale;
 	private final List<DDMFormFieldValue> _rootDDMFormFieldValues;
 

@@ -104,6 +104,22 @@ AUI.add(
 						);
 					},
 
+					getValue: function() {
+						 var instance = this;
+
+						 var inputNode = instance.getInputNode();
+
+						 var value = [];
+
+						 inputNode.all('option').each(function(option) {
+							 if (option.get('selected')) {
+							 	value.push(option.val())
+						 	}
+						 })
+
+						return value;
+					},
+
 					render: function() {
 						var instance = this;
 

@@ -18,6 +18,7 @@ import com.liferay.dynamic.data.mapping.expression.DDMExpressionFactory;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationException;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluationResult;
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.portal.kernel.exception.PortalException;
@@ -44,6 +45,8 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 
 			ddmFormEvaluatorHelper.setDDMExpressionFactory(
 				_ddmExpressionFactory);
+			ddmFormEvaluatorHelper.setDDMFormFieldTypeServicesTracker(
+				_ddmFormFieldTypeServicesTracker);
 
 			return ddmFormEvaluatorHelper.evaluate();
 		}
@@ -52,13 +55,10 @@ public class DDMFormEvaluatorImpl implements DDMFormEvaluator {
 		}
 	}
 
-	@Reference(unbind = "-")
-	protected void setDDMExpressionFactory(
-		DDMExpressionFactory ddmExpressionFactory) {
-
-		_ddmExpressionFactory = ddmExpressionFactory;
-	}
-
+	@Reference
 	private DDMExpressionFactory _ddmExpressionFactory;
+
+	@Reference
+	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 
 }
