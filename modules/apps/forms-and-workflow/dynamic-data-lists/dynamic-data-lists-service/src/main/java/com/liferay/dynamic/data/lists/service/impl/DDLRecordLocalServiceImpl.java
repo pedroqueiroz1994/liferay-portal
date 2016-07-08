@@ -1275,13 +1275,13 @@ public class DDLRecordLocalServiceImpl extends DDLRecordLocalServiceBaseImpl {
 	}
 
 	protected void validate(DDLRecordSet recordSet, long groupId)
-			throws PortalException {
+		throws PortalException {
 
-			if (recordSet.getGroupId() != groupId) {
-				throw new RecordGroupIdException(
-					"Record groupId should be the same as its recordSet.");
-			}
+		if (recordSet.getGroupId() != groupId) {
+			throw new RecordGroupIdException(
+				"Record groupId should be the same as its recordSet.");
 		}
+	}
 
 	@ServiceReference(type = DDM.class)
 	protected DDM ddm;
