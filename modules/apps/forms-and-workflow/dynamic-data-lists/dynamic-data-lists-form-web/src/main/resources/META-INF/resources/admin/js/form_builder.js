@@ -640,7 +640,7 @@ AUI.add(
 							function(field) {
 								var fieldVisible = boundingBox.contains(field.get('container'));
 
-								if (fieldVisible && field.get('required')) {
+								if (fieldVisible && field.get('context').required) {
 									hasRequiredField = true;
 								}
 							}
