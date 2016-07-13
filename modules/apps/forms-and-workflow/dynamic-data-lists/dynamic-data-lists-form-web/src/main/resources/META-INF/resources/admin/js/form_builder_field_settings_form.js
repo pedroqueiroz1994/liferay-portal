@@ -41,7 +41,7 @@ AUI.add(
 							evaluator.after('evaluationEnded', A.bind('_saveSettings', instance)),
 							instance.after('render', instance._afterSettingsFormRender),
 							instance.on('*:addOption', instance._afterAddOption),
-							instance.on('*:removeField', instance.alignModal)
+							instance.on('*:removeOption', instance.alignModal)
 						);
 
 						instance._fieldEventHandlers = [];
@@ -156,17 +156,6 @@ AUI.add(
 
 						var container = instance.get('container');
 
-						var formName = A.guid();
-
-						container.attr('id', formName);
-						container.attr('name', formName);
-
-						Liferay.Form.register(
-							{
-								id: formName
-							}
-						);
-
 						var labelField = instance.getField('label');
 						var nameField = instance.getField('name');
 
@@ -179,8 +168,6 @@ AUI.add(
 
 						labelField.set('key', labelField.normalizeKey(nameField.getValue()));
 						labelField.set('keyInputEnabled', instance.get('editMode'));
-
-						labelField.focus();
 					},
 
 					_createModeToggler: function() {
