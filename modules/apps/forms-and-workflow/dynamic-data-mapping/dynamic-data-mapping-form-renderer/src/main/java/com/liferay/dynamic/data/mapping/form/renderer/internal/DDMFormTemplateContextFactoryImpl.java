@@ -15,10 +15,13 @@
 package com.liferay.dynamic.data.mapping.form.renderer.internal;
 
 import com.liferay.dynamic.data.mapping.form.evaluator.DDMFormEvaluator;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldType;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormRenderingContext;
 import com.liferay.dynamic.data.mapping.form.renderer.DDMFormTemplateContextFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormFieldTypesJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormJSONSerializer;
+import com.liferay.dynamic.data.mapping.io.DDMFormLayoutJSONSerializer;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormLayout;
 import com.liferay.dynamic.data.mapping.util.DDM;
@@ -40,6 +43,10 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.ResourceBundle;
+
+import javax.servlet.Servlet;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
@@ -66,6 +73,14 @@ public class DDMFormTemplateContextFactoryImpl
 		return doCreate(
 			ddmForm, _ddm.getDefaultDDMFormLayout(ddmForm),
 			ddmFormRenderingContext);
+	}
+
+	public String getDDMFormRendererEvaluatorServletURL() {
+		String servletContextPath = getServletContextPath(
+			_ddmFormRendererEvaluatorServlet);
+
+		return servletContextPath.concat(
+			"/dynamic-data-mapping-form-renderer-evaluator/");
 	}
 
 	protected void collectResourceBundles(
@@ -98,7 +113,18 @@ public class DDMFormTemplateContextFactoryImpl
 
 		templateContext.put("containerId", containerId);
 		templateContext.put(
-			"evaluatorURL", ddmFormRenderingContext.getEvaluatorURL());
+			"definition", _ddmFormJSONSerializer.serialize(ddmForm));
+		templateContext.put(
+			"evaluatorURL", getDDMFormRendererEvaluatorServletURL());
+
+		List<DDMFormFieldType> ddmFormFieldTypes =
+			_ddmFormFieldTypeServicesTracker.getDDMFormFieldTypes();
+
+		templateContext.put(
+			"fieldTypes",
+			_ddmFormFieldTypesJSONSerializer.serialize(ddmFormFieldTypes));
+		templateContext.put(
+			"layout", _ddmFormLayoutJSONSerializer.serialize(ddmFormLayout));
 
 		List<Object> pages = getPages(
 			ddmForm, ddmFormLayout, ddmFormRenderingContext);
@@ -202,6 +228,14 @@ public class DDMFormTemplateContextFactoryImpl
 		return new AggregateResourceBundle(resourceBundlesArray);
 	}
 
+	protected String getServletContextPath(Servlet servlet) {
+		ServletConfig servletConfig = servlet.getServletConfig();
+
+		ServletContext servletContext = servletConfig.getServletContext();
+
+		return servletContext.getContextPath();
+	}
+
 	protected String getTemplateNamespace(DDMFormLayout ddmFormLayout) {
 		String paginationMode = ddmFormLayout.getPaginationMode();
 
@@ -230,5 +264,16 @@ public class DDMFormTemplateContextFactoryImpl
 
 	@Reference
 	private DDMFormFieldTypesJSONSerializer _ddmFormFieldTypesJSONSerializer;
+
+	@Reference
+	private DDMFormJSONSerializer _ddmFormJSONSerializer;
+
+	@Reference
+	private DDMFormLayoutJSONSerializer _ddmFormLayoutJSONSerializer;
+
+	@Reference(
+		target = "(osgi.http.whiteboard.servlet.name=com.liferay.dynamic.data.mapping.form.renderer.internal.servlet.DDMFormRendererEvaluatorServlet)"
+	)
+	private Servlet _ddmFormRendererEvaluatorServlet;
 
 }

@@ -80,6 +80,16 @@ public class DDMFormPagesTemplateContextFactory {
 			_ddmFormLayout.getDDMFormLayoutPages());
 	}
 
+	public void setDDMFormEvaluator(DDMFormEvaluator ddmFormEvaluator) {
+		_ddmFormEvaluator = ddmFormEvaluator;
+	}
+
+	public void setDDMFormFieldTypeServicesTracker(
+		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker) {
+
+		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
+	}
+
 	protected boolean containsRequiredField(List<String> ddmFormFieldNames) {
 		for (String ddmFormFieldName : ddmFormFieldNames) {
 			DDMFormField ddmFormField = _ddmFormFieldsMap.get(ddmFormFieldName);
@@ -157,8 +167,7 @@ public class DDMFormPagesTemplateContextFactory {
 
 		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
 			new DDMFormFieldTemplateContextFactory(
-				_ddmFormFieldsMap,
-				_ddmFormFieldEvaluationResultMap.get(ddmFormFieldName),
+				_ddmFormFieldsMap, _ddmFormFieldEvaluationResultMap,
 				_ddmFormFieldValuesMap.get(ddmFormFieldName),
 				_ddmFormRenderingContext);
 
@@ -272,16 +281,6 @@ public class DDMFormPagesTemplateContextFactory {
 				ddmFormFieldsMap,
 				ddmFormFieldValue.getNestedDDMFormFieldValues());
 		}
-	}
-
-	protected void setDDMFormEvaluator(DDMFormEvaluator ddmFormEvaluator) {
-		_ddmFormEvaluator = ddmFormEvaluator;
-	}
-
-	protected void setDDMFormFieldTypeServicesTracker(
-		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker) {
-
-		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 	}
 
 	private static final Log _log = LogFactoryUtil.getLog(
