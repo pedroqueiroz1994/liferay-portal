@@ -270,12 +270,6 @@ AUI.add(
 						instance.showFieldSettingsPanel(field);
 					},
 
-					findTypeOfField: function(field) {
-						var instance = this;
-
-						return FieldTypes.get(field.get('type'));
-					},
-
 					findFieldByName: function(name) {
 						var instance = this;
 
@@ -295,6 +289,12 @@ AUI.add(
 						visitor.visit();
 
 						return field;
+					},
+
+					findTypeOfField: function(field) {
+						var instance = this;
+
+						return FieldTypes.get(field.get('type'));
 					},
 
 					getFieldSettingsPanel: function() {
