@@ -86,6 +86,7 @@ AUI.add(
 						var instance = this;
 
 						return {
+							p_auth: Liferay.authToken,
 							portletNamespace: instance.get('portletNamespace'),
 							serializedDDMForm: JSON.stringify(instance.get('definition')),
 							serializedDDMFormLayout: JSON.stringify(instance.get('layout')),

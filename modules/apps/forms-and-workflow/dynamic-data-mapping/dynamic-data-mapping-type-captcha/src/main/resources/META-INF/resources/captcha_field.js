@@ -6,8 +6,9 @@ AUI.add(
 		var CaptchaField = A.Component.create(
 			{
 				ATTRS: {
-					errorMessage: {
-						getter: '_getErrorMessage'
+					html: {
+						repaint: false,
+						value: ''
 					},
 
 					type: {
