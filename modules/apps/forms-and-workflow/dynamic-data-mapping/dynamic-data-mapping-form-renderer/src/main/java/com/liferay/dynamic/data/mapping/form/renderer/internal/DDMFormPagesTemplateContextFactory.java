@@ -160,14 +160,13 @@ public class DDMFormPagesTemplateContextFactory {
 	}
 
 	protected List<Object> createFieldTemplateContext(String ddmFormFieldName) {
-		if (_ddmFormFieldEvaluationResultMap == null) {
-			_ddmFormFieldEvaluationResultMap =
-				createDDMFormFieldEvaluationResultsMap();
+		if (_ddmFormEvaluationResult == null) {
+			_ddmFormEvaluationResult = _createDDMFormEvaluationResult();
 		}
 
 		DDMFormFieldTemplateContextFactory ddmFormFieldTemplateContextFactory =
 			new DDMFormFieldTemplateContextFactory(
-				_ddmFormFieldsMap, _ddmFormFieldEvaluationResultMap,
+				_ddmFormFieldsMap, _ddmFormEvaluationResult,
 				_ddmFormFieldValuesMap.get(ddmFormFieldName),
 				_ddmFormRenderingContext);
 
@@ -283,13 +282,24 @@ public class DDMFormPagesTemplateContextFactory {
 		}
 	}
 
+	private DDMFormEvaluationResult _createDDMFormEvaluationResult() {
+		try {
+			return _ddmFormEvaluator.evaluate(
+				_ddmForm, _ddmFormValues, _locale);
+		}
+		catch (DDMFormEvaluationException ddmfee) {
+			_log.error("Unable to evaluate the form", ddmfee);
+		}
+
+		return null;
+	}
+
 	private static final Log _log = LogFactoryUtil.getLog(
 		DDMFormPagesTemplateContextFactory.class);
 
 	private final DDMForm _ddmForm;
+	private DDMFormEvaluationResult _ddmFormEvaluationResult;
 	private DDMFormEvaluator _ddmFormEvaluator;
-	private Map<String, DDMFormFieldEvaluationResult>
-		_ddmFormFieldEvaluationResultMap;
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
 	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private final Map<String, List<DDMFormFieldValue>> _ddmFormFieldValuesMap;
