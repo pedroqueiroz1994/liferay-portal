@@ -83,11 +83,13 @@ public class DDMFormEvaluationResult {
 		StringBuilder sb = new StringBuilder();
 
 		sb.append(fieldName);
-		sb.append("_INSTANCE_");
+		sb.append(_INSTANCE_SEPARATOR);
 		sb.append(instanceId);
 
 		return sb.toString();
 	}
+
+	private static final String _INSTANCE_SEPARATOR = "_INSTANCE_";
 
 	private List<DDMFormFieldEvaluationResult> _ddmFormFieldEvaluationResults =
 		new ArrayList<>();
