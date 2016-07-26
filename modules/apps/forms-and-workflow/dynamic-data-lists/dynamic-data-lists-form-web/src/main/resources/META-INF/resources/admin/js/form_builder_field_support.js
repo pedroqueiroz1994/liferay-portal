@@ -83,16 +83,6 @@ AUI.add(
 				return settings;
 			},
 
-			getSettingsModal: function() {
-				var instance = this;
-
-				var builder = instance.get('builder');
-
-				var settingsModal = builder._fieldSettingsModal;
-
-				return settingsModal;
-			},
-
 			isAdding: function() {
 				var instance = this;
 
