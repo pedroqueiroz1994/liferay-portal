@@ -433,8 +433,6 @@ AUI.add(
 
 						event.preventDefault();
 
-						instance.serializeFormBuilder();
-
 						instance.submitForm();
 					},
 
