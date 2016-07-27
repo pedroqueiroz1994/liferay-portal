@@ -114,7 +114,7 @@ AUI.add(
 
 						var boundingBox = instance.get('boundingBox');
 
-						instance.getFieldSettingsPanel();
+						instance._createFieldSettingsPanel();
 
 						instance._eventHandlers = [
 							boundingBox.delegate('click', instance._onClickPaginationItem, '.pagination li a'),
@@ -418,15 +418,9 @@ AUI.add(
 					_createFieldSettingsPanel: function() {
 						var instance = this;
 
-						var fieldOptionsToolbar = new Liferay.DDL.FormBuilderFieldOptionsToolbar(
-							{
-								formBuilder: instance
-							}
-						);
-
 						var sidebar = new Liferay.DDL.FormBuilderFieldsSettingsSidebar(
 							{
-								toolbar: fieldOptionsToolbar
+								builder: instance
 							}
 						);
 
