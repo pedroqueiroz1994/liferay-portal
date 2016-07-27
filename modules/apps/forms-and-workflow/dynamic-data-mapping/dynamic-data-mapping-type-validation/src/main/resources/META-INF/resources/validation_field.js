@@ -22,10 +22,6 @@ AUI.add(
 						value: 'text'
 					},
 
-					typesOptions: {
-						value: []
-					},
-
 					selectedValidation: {
 						getter: '_getSelectedValidation',
 						value: 'notEmpty'
@@ -45,6 +41,10 @@ AUI.add(
 
 					type: {
 						value: 'validation'
+					},
+
+					typesOptions: {
+						value: []
 					},
 
 					validations: {
