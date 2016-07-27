@@ -68,6 +68,8 @@ AUI.add(
 						instance._syncOptionUI(repeatedOption);
 						instance._syncOptionUI(lastOption);
 
+						repeatedOption.addTarget(instance);
+
 						instance.fire('addOption');
 
 						return repeatedOption;
@@ -340,6 +342,8 @@ AUI.add(
 
 						instance._mainOption = new Liferay.DDM.Field.KeyValue(config);
 
+						instance._mainOption.addTarget(instance);
+
 						instance._bindOptionUI(instance._mainOption);
 					},
 
@@ -389,6 +393,8 @@ AUI.add(
 						if (option.get('repeatedIndex') === repetitions.length - 1) {
 							instance.addOption();
 						}
+
+						instance.set('value', instance.getValue());
 					},
 
 					_renderOptions: function(optionsValues) {
