@@ -80,16 +80,6 @@ AUI.add(
 				return settings;
 			},
 
-			getSettingsModal: function() {
-				var instance = this;
-
-				var builder = instance.get('builder');
-
-				var settingsModal = builder._fieldSettingsModal;
-
-				return settingsModal;
-			},
-
 			isAdding: function() {
 				var instance = this;
 
@@ -121,7 +111,18 @@ AUI.add(
 						function(context) {
 							var settingsForm = instance._createSettingsForm(context);
 
-							instance._updateSettingsFormValues(settingsForm);
+							var visitor = settingsForm.get('visitor');
+
+							visitor.set(
+								'fieldHandler',
+								function(formFieldContext) {
+									instance._fillSettingsFormField(formFieldContext, settingsForm);
+								}
+							);
+
+							visitor.visit();
+
+							settingsForm.set('context', context);
 
 							return settingsForm;
 						}
@@ -162,6 +163,28 @@ AUI.add(
 				);
 			},
 
+			_fillSettingsFormField: function(formFieldContext, settingsForm) {
+				var instance = this;
+
+				var instanceContext = instance.get('context');
+
+				var contextKey = RendererUtil.getFieldNameFromQualifiedName(formFieldContext.name);
+
+				if (contextKey === 'name') {
+					var fieldName = instanceContext.fieldName;
+
+					if (!fieldName) {
+						fieldName = settingsForm._generateFieldName();
+					}
+
+					formFieldContext.value = fieldName;
+					instanceContext.fieldName = fieldName;
+				}
+				else if (contextKey in instanceContext) {
+					formFieldContext.value = instanceContext[contextKey];
+				}
+			},
+
 			_renderFormBuilderField: function() {
 				var instance = this;
 
@@ -189,8 +212,6 @@ AUI.add(
 			_updateSettingsFormValues: function(settingsForm) {
 				var instance = this;
 
-				var context = instance.get('context');
-
 				settingsForm.get('fields').forEach(
 					function(item, index) {
 						var name = item.get('fieldName');
@@ -198,6 +219,8 @@ AUI.add(
 						if (name === 'name') {
 							name = 'fieldName';
 						}
+
+						var context = instance.get('context');
 
 						if (context.hasOwnProperty(name)) {
 							item.set('errorMessage', '');
@@ -224,6 +247,6 @@ AUI.add(
 	},
 	'',
 	{
-		requires: ['liferay-ddl-form-builder-settings-form', 'liferay-ddl-form-builder-settings-retriever', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-renderer-util']
+		requires: ['liferay-ddl-form-builder-field-settings-form', 'liferay-ddl-form-builder-settings-retriever', 'liferay-ddl-form-builder-util', 'liferay-ddm-form-renderer-util']
 	}
 );
