@@ -25,26 +25,45 @@ public class PQLEntityTest extends TestCase {
 
 	@Test
 	public void testFixPQL() throws Exception {
-		_compare(PQLEntity.fixPQL("(((test)))"), "test");
-		_compare(PQLEntity.fixPQL(" (((test)) )"), "test");
-		_compare(PQLEntity.fixPQL(" ((( test test ))) "), "test test");
-		_compare(PQLEntity.fixPQL(")test("), ")test(");
-		_compare(PQLEntity.fixPQL(" )test( "), ")test(");
-		_compare(PQLEntity.fixPQL(" ) test"), ") test");
-		_compare(PQLEntity.fixPQL(" ( test"), "( test");
-		_compare(PQLEntity.fixPQL("test ) "), "test )");
-		_compare(PQLEntity.fixPQL("test ( "), "test (");
-		_compare(PQLEntity.fixPQL("( (test) OR (test))"), "(test) OR (test)");
-		_compare(
+		_compareString(PQLEntity.fixPQL("(((test)))"), "test");
+		_compareString(PQLEntity.fixPQL(" (((test)) )"), "test");
+		_compareString(PQLEntity.fixPQL(" ((( test test ))) "), "test test");
+		_compareString(PQLEntity.fixPQL(")test("), ")test(");
+		_compareString(PQLEntity.fixPQL(" )test( "), ")test(");
+		_compareString(PQLEntity.fixPQL(" ) test"), ") test");
+		_compareString(PQLEntity.fixPQL(" ( test"), "( test");
+		_compareString(PQLEntity.fixPQL("test ) "), "test )");
+		_compareString(PQLEntity.fixPQL("test ( "), "test (");
+		_compareString(
+			PQLEntity.fixPQL("( (test) OR (test))"), "(test) OR (test)");
+		_compareString(
 			PQLEntity.fixPQL(" ( (( test ( test ))) "), "( (( test ( test )))");
 	}
 
-	private void _compare(String actualString, String expectedString)
+	@Test
+	public void testRemoveModifierFromPQL() throws Exception {
+		_compareString(PQLEntity.removeModifierFromPQL("test"), "test");
+		_compareString(PQLEntity.removeModifierFromPQL("NOT test"), "test");
+		_compareString(PQLEntity.removeModifierFromPQL(" NOT test"), "test");
+		_compareString(
+			PQLEntity.removeModifierFromPQL(" test NOT"), "test NOT");
+		_compareString(PQLEntity.removeModifierFromPQL("OR test"), "OR test");
+		_compareString(PQLEntity.removeModifierFromPQL(" OR test"), "OR test");
+	}
+
+	private void _compareString(String actualString, String expectedString)
 		throws Exception {
 
 		if (!actualString.equals(expectedString)) {
-			throw new Exception(
-				"'" + expectedString + "' should equal '" + actualString + "'");
+			StringBuilder sb = new StringBuilder();
+
+			sb.append("Mismatched string values:");
+			sb.append("\n* Actual:   ");
+			sb.append(actualString);
+			sb.append("\n* Expected: ");
+			sb.append(expectedString);
+
+			throw new Exception(sb.toString());
 		}
 	}
 
