@@ -18,6 +18,8 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Lists;
 import com.google.common.collect.Multimap;
 
+import com.liferay.poshi.runner.pql.PQLEntity;
+import com.liferay.poshi.runner.pql.PQLEntityFactory;
 import com.liferay.poshi.runner.selenium.LiferaySelenium;
 import com.liferay.poshi.runner.util.FileUtil;
 import com.liferay.poshi.runner.util.MathUtil;
@@ -37,13 +39,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
 import org.apache.tools.ant.DirectoryScanner;
 
-import org.dom4j.Attribute;
 import org.dom4j.Element;
 
 /**
@@ -274,6 +276,40 @@ public class PoshiRunnerContext {
 		return MathUtil.quotient(testCount, groupCount, true);
 	}
 
+	private static Properties _getClassCommandNameProperties(
+			Element rootElement, Element commandElement)
+		throws Exception {
+
+		Properties properties = new Properties();
+
+		List<Element> rootPropertyElements = rootElement.elements("property");
+
+		for (Element propertyElement : rootPropertyElements) {
+			String propertyName = propertyElement.attributeValue("name");
+			String propertyValue = propertyElement.attributeValue("value");
+
+			properties.setProperty(propertyName, propertyValue);
+		}
+
+		List<Element> commandPropertyElements = commandElement.elements(
+			"property");
+
+		for (Element propertyElement : commandPropertyElements) {
+			String propertyName = propertyElement.attributeValue("name");
+			String propertyValue = propertyElement.attributeValue("value");
+
+			properties.setProperty(propertyName, propertyValue);
+		}
+
+		if (Validator.isNotNull(commandElement.attributeValue("priority"))) {
+			String priority = commandElement.attributeValue("priority");
+
+			properties.setProperty("priority", priority);
+		}
+
+		return properties;
+	}
+
 	private static List<String> _getCommandReturns(Element commandElement) {
 		String returns = commandElement.attributeValue("returns");
 
@@ -431,22 +467,54 @@ public class PoshiRunnerContext {
 	}
 
 	private static String _getTestBatchGroups() throws Exception {
-		String[] propertyNames = PropsValues.TEST_BATCH_PROPERTY_NAMES;
-		String[] propertyValues = PropsValues.TEST_BATCH_PROPERTY_VALUES;
+		String propertyQuery = PropsValues.TEST_BATCH_PROPERTY_QUERY;
+
+		if (propertyQuery == null) {
+			String[] propertyNames = PropsValues.TEST_BATCH_PROPERTY_NAMES;
+			String[] propertyValues = PropsValues.TEST_BATCH_PROPERTY_VALUES;
+
+			if (propertyNames.length != propertyValues.length) {
+				throw new Exception(
+					"'test.batch.property.names'/'test.batch.property.values'" +
+						" must have matching amounts of entries!");
+			}
+
+			StringBuilder sb = new StringBuilder();
+
+			for (int i = 0; i < propertyNames.length; i++) {
+				sb.append(propertyNames[i]);
+				sb.append(" == \"");
+				sb.append(propertyValues[i]);
+				sb.append("\"");
+
+				if (i < (propertyNames.length - 1)) {
+					sb.append(" OR ");
+				}
+			}
+
+			propertyQuery = sb.toString();
+		}
 
 		List<String> classCommandNames = new ArrayList<>();
 
-		if (propertyNames.length != propertyValues.length) {
-			throw new Exception(
-				"'test.batch.property.names'/'test.batch.property.values' " +
-					"must have matching amounts of entries!");
+		PQLEntity pqlEntity = PQLEntityFactory.newPQLEntity(propertyQuery);
+
+		for (String testCaseClassCommandName : _testCaseClassCommandNames) {
+			Properties properties = _classCommandNamePropertiesMap.get(
+				testCaseClassCommandName);
+
+			Boolean pqlResultBoolean = (Boolean)pqlEntity.getPQLResult(
+				properties);
+
+			if (pqlResultBoolean) {
+				classCommandNames.add(testCaseClassCommandName);
+			}
 		}
 
-		for (int i = 0; i < propertyNames.length; i++) {
-			classCommandNames.addAll(
-				_getRunTestCaseCommandNames(
-					propertyNames[i], propertyValues[i]));
-		}
+		System.out.println(
+			"The following query returned " + classCommandNames.size() +
+				" test class command names:");
+		System.out.println(propertyQuery);
 
 		if (PropsValues.TEST_BATCH_RUN_TYPE.equals("sequential")) {
 			return _getTestBatchSequentialGroups(classCommandNames);
@@ -463,25 +531,19 @@ public class PoshiRunnerContext {
 			List<String> classCommandNames)
 		throws Exception {
 
-		Multimap<Set<String>, String> multimap = HashMultimap.create();
+		Multimap<Properties, String> multimap = HashMultimap.create();
 
 		for (String classCommandName : classCommandNames) {
-			String className =
-				PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
-					classCommandName);
+			Properties properties = _classCommandNamePropertiesMap.get(
+				classCommandName);
 
-			Set<String> properties = new TreeSet<>();
+			Set<String> propertyNames = properties.stringPropertyNames();
 
-			properties.addAll(_getTestCaseClassProperties(className));
-			properties.addAll(_getTestCaseCommandProperties(classCommandName));
+			for (String propertyName : propertyNames) {
+				if (propertyName.matches(
+						PropsValues.TEST_BATCH_GROUP_IGNORE_REGEX)) {
 
-			for (Iterator<String> iterator = properties.iterator();
-				iterator.hasNext();) {
-
-				String next = iterator.next();
-
-				if (next.matches(PropsValues.TEST_BATCH_GROUP_IGNORE_REGEX)) {
-					iterator.remove();
+					properties.remove(propertyName);
 				}
 			}
 
@@ -490,7 +552,7 @@ public class PoshiRunnerContext {
 
 		Map<Integer, List<String>> classCommandNameGroups = new HashMap<>();
 		int classCommandNameIndex = 0;
-		Map<Set<String>, Collection<String>> map = multimap.asMap();
+		Map<Properties, Collection<String>> map = multimap.asMap();
 
 		for (Collection<String> value : map.values()) {
 			List<String> classCommandNameGroup = new ArrayList(value);
@@ -918,13 +980,20 @@ public class PoshiRunnerContext {
 					classType + "#" + classCommandName,
 					_getCommandReturns(commandElement));
 
-				if (Objects.equals(classType, "test-case") &&
-					Validator.isNotNull(
-						commandElement.attributeValue("description"))) {
+				if (classType.equals("test-case")) {
+					Properties properties = _getClassCommandNameProperties(
+						rootElement, commandElement);
 
-					_testCaseDescriptions.put(
-						classCommandName,
-						commandElement.attributeValue("description"));
+					_classCommandNamePropertiesMap.put(
+						classCommandName, properties);
+
+					if (Validator.isNotNull(
+							commandElement.attributeValue("description"))) {
+
+						_testCaseDescriptions.put(
+							classCommandName,
+							commandElement.attributeValue("description"));
+					}
 				}
 			}
 
@@ -1022,43 +1091,46 @@ public class PoshiRunnerContext {
 	private static void _writeTestCaseMethodNamesProperties() throws Exception {
 		StringBuilder sb = new StringBuilder();
 
-		for (String componentName : _componentNames) {
-			String componentNameKey = componentName + "_TEST_CASE_METHOD_NAMES";
-
-			componentNameKey = StringUtil.upperCase(
-				componentNameKey.replace("-", "_"));
-
-			sb.append(componentNameKey);
-			sb.append("=");
-
-			Set<String> classCommandNames = _componentClassCommandNames.get(
-				componentName);
-
-			if (Validator.isNotNull(classCommandNames) &&
-				!classCommandNames.isEmpty()) {
-
-				Iterator<String> iterator = classCommandNames.iterator();
-
-				while (iterator.hasNext()) {
-					sb.append(iterator.next());
-
-					if (iterator.hasNext()) {
-						sb.append(" ");
-					}
-				}
-			}
-			else {
-				sb.append(PropsValues.TEST_NAME);
-			}
-
-			sb.append("\n");
-		}
-
 		if ((PropsValues.TEST_BATCH_MAX_GROUP_SIZE > 0) &&
-			(PropsValues.TEST_BATCH_PROPERTY_NAMES != null) &&
-			(PropsValues.TEST_BATCH_PROPERTY_VALUES != null)) {
+			(((PropsValues.TEST_BATCH_PROPERTY_NAMES != null) &&
+			  (PropsValues.TEST_BATCH_PROPERTY_VALUES != null)) ||
+			 (PropsValues.TEST_BATCH_PROPERTY_QUERY != null))) {
 
 			sb.append(_getTestBatchGroups());
+		}
+		else {
+			for (String componentName : _componentNames) {
+				String componentNameKey =
+					componentName + "_TEST_CASE_METHOD_NAMES";
+
+				componentNameKey = StringUtil.upperCase(
+					componentNameKey.replace("-", "_"));
+
+				sb.append(componentNameKey);
+				sb.append("=");
+
+				Set<String> classCommandNames = _componentClassCommandNames.get(
+					componentName);
+
+				if (Validator.isNotNull(classCommandNames) &&
+					!classCommandNames.isEmpty()) {
+
+					Iterator<String> iterator = classCommandNames.iterator();
+
+					while (iterator.hasNext()) {
+						sb.append(iterator.next());
+
+						if (iterator.hasNext()) {
+							sb.append(" ");
+						}
+					}
+				}
+				else {
+					sb.append(PropsValues.TEST_NAME);
+				}
+
+				sb.append("\n");
+			}
 		}
 
 		FileUtil.write("test.case.method.names.properties", sb.toString());
@@ -1067,56 +1139,25 @@ public class PoshiRunnerContext {
 	private static void _writeTestGeneratedProperties() throws Exception {
 		StringBuilder sb = new StringBuilder();
 
-		for (String className : _testCaseClassNames) {
-			List<String> classProperties = _getTestCaseClassProperties(
-				className);
+		for (String testCaseClassCommandName : _testCaseClassCommandNames) {
+			Properties properties = _classCommandNamePropertiesMap.get(
+				testCaseClassCommandName);
+			String testClassName =
+				PoshiRunnerGetterUtil.getClassNameFromClassCommandName(
+					testCaseClassCommandName);
+			String testCommandName =
+				PoshiRunnerGetterUtil.getCommandNameFromClassCommandName(
+					testCaseClassCommandName);
 
-			for (String classProperty : classProperties) {
-				sb.append(className);
-				sb.append("TestCase.all.");
-				sb.append(classProperty);
+			for (String propertyName : properties.stringPropertyNames()) {
+				sb.append(testClassName);
+				sb.append("TestCase.test");
+				sb.append(testCommandName);
+				sb.append(".");
+				sb.append(propertyName);
+				sb.append("=");
+				sb.append(properties.getProperty(propertyName));
 				sb.append("\n");
-			}
-
-			Set<String> commandNames = _getTestCaseCommandNames(className);
-
-			for (String commandName : commandNames) {
-				List<String> commandProperties = _getTestCaseCommandProperties(
-					className, commandName);
-
-				for (String commandProperty : commandProperties) {
-					sb.append(className);
-					sb.append("TestCase.test");
-					sb.append(commandName);
-					sb.append(".");
-					sb.append(commandProperty);
-					sb.append("\n");
-				}
-
-				Element commandElement = getTestCaseCommandElement(
-					className, commandName);
-
-				List<Attribute> commandAttributes = commandElement.attributes();
-
-				for (Attribute commandAttribute : commandAttributes) {
-					String commandAttributeName = StringUtil.replace(
-						commandAttribute.getName(), "-", ".");
-
-					if (commandAttributeName.equals("line.number") ||
-						commandAttributeName.equals("name")) {
-
-						continue;
-					}
-
-					sb.append(className);
-					sb.append("TestCase.test");
-					sb.append(commandName);
-					sb.append(".");
-					sb.append(commandAttributeName);
-					sb.append("=");
-					sb.append(commandAttribute.getValue());
-					sb.append("\n");
-				}
 			}
 		}
 
@@ -1128,6 +1169,8 @@ public class PoshiRunnerContext {
 
 	private static final Map<String, String> _actionExtendClassName =
 		new HashMap<>();
+	private static final Map<String, Properties>
+		_classCommandNamePropertiesMap = new HashMap<>();
 	private static final Map<String, Element> _commandElements =
 		new HashMap<>();
 	private static final Map<String, List<String>> _commandReturns =
