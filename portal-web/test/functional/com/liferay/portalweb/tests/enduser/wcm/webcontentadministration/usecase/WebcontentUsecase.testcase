@@ -275,6 +275,8 @@
 
 		<execute macro="Portlet#shutdownServer" />
 
+		<execute function="Pause" locator1="30000" />
+
 		<execute macro="Portlet#startServer" />
 
 		<execute macro="Navigator#openURL" />
@@ -698,7 +700,7 @@
 
 		<var name="key_portletTitleName" value="Web Content Display" />
 
-		<execute function="AssertTextNotPresent" locator1="BasePortlet#SPECIFIC_TITLE" value1="Web Content Display" />
+		<execute function="AssertTextNotPresent" locator1="Portlet#SPECIFIC_TITLE" value1="Web Content Display" />
 
 		<execute function="AssertTextNotPresent" locator1="WCD#WEB_CONTENT_CONTENT" value1="WC WebContent Content" />
 	</command>
