@@ -509,13 +509,17 @@ public class PoshiRunnerContext {
 			properties.putAll(
 				_classCommandNamePropertiesMap.get(classCommandName));
 
-			Set<String> propertyNames = properties.stringPropertyNames();
+			if (Validator.isNotNull(
+					PropsValues.TEST_BATCH_GROUP_IGNORE_REGEX)) {
 
-			for (String propertyName : propertyNames) {
-				if (propertyName.matches(
-						PropsValues.TEST_BATCH_GROUP_IGNORE_REGEX)) {
+				Set<String> propertyNames = properties.stringPropertyNames();
 
-					properties.remove(propertyName);
+				for (String propertyName : propertyNames) {
+					if (propertyName.matches(
+							PropsValues.TEST_BATCH_GROUP_IGNORE_REGEX)) {
+
+						properties.remove(propertyName);
+					}
 				}
 			}
 
