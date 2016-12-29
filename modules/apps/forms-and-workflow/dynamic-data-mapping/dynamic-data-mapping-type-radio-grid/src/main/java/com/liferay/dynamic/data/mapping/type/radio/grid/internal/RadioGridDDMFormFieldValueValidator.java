@@ -60,7 +60,7 @@ public class RadioGridDDMFormFieldValueValidator
 
 		Set<String> optionValues = ddmFormFieldOptions.getOptionsValues();
 
-		if (optionValues.isEmpty()) {
+		if (optionValues.isEmpty() && ddmFormField.isRequired()) {
 			throw new DDMFormFieldValueValidationException(
 				"Options must contain at least one alternative");
 		}

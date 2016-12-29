@@ -47,60 +47,26 @@ public class RadioGridDDMFormFieldTemplateContextContributor
 		Map<String, Object> parameters = new HashMap<>();
 
 		parameters.put(
-			"rows", getRows(ddmFormField, ddmFormFieldRenderingContext));
+  			"rows", getOptions("rows", ddmFormField, ddmFormFieldRenderingContext));
 		parameters.put(
-			"columns", getColumns(ddmFormField, ddmFormFieldRenderingContext));
+			"columns", getOptions("columns", ddmFormField, ddmFormFieldRenderingContext));
 
 		return parameters;
 	}
 
 	protected DDMFormFieldOptions getDDMFormFieldOptions(String optionType,
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
+		DDMFormField ddmFormField) {
 
-		DDMFormFieldOptions ddmFormFieldOptions = new DDMFormFieldOptions();
-
-		List<Map<String, String>> keyValuePairs =
-			(List<Map<String, String>>)
-				ddmFormFieldRenderingContext.getProperty(optionType);
-
-		if (keyValuePairs.isEmpty()) {
-			return ddmFormField.getDDMFormFieldOptions();
-		}
-
-		for (Map<String, String> keyValuePair : keyValuePairs) {
-			ddmFormFieldOptions.addOptionLabel(
-				keyValuePair.get("value"),
-				ddmFormFieldRenderingContext.getLocale(),
-				keyValuePair.get("label"));
-		}
-
-		return ddmFormFieldOptions;
+		return (DDMFormFieldOptions) ddmFormField.getProperty(optionType);
 	}
 
-	protected List<Object> getColumns(
+	protected List<Object> getOptions(String key,
 		DDMFormField ddmFormField,
 		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
 
 		RadioGridDDMFormFieldContextHelper radioDDMFormFieldContextHelper =
 			new RadioGridDDMFormFieldContextHelper(
-				jsonFactory, getDDMFormFieldOptions("columns",
-					ddmFormField, ddmFormFieldRenderingContext),
-				ddmFormFieldRenderingContext.getValue(),
-				ddmFormField.getPredefinedValue(),
-				ddmFormFieldRenderingContext.getLocale());
-
-		return radioDDMFormFieldContextHelper.getOptions();
-	}
-
-	protected List<Object> getRows(
-		DDMFormField ddmFormField,
-		DDMFormFieldRenderingContext ddmFormFieldRenderingContext) {
-
-		RadioGridDDMFormFieldContextHelper radioDDMFormFieldContextHelper =
-			new RadioGridDDMFormFieldContextHelper(
-				jsonFactory, getDDMFormFieldOptions("rows",
-				ddmFormField, ddmFormFieldRenderingContext),
+				jsonFactory, getDDMFormFieldOptions(key, ddmFormField),
 				ddmFormFieldRenderingContext.getValue(),
 				ddmFormField.getPredefinedValue(),
 				ddmFormFieldRenderingContext.getLocale());

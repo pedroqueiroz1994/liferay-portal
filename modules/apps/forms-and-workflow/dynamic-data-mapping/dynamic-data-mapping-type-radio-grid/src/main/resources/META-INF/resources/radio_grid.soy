@@ -11,7 +11,6 @@
  * Prints the DDM form radio grid field.
  *
  * @param? childElementsHTML
- * @param dir
  * @param label
  * @param name
  * @param rows
@@ -24,43 +23,47 @@
  */
 {template .radio_grid autoescape="deprecated-contextual"}
 	<div class="form-group{$visible ? '' : ' hide'}" data-fieldname="{$name}">
-			{if $showLabel}
-				<label class="control-label">
-					{$label}
+		{if $showLabel}
+			<label class="control-label">
+				{$label}
 
-					{if $required}
-						<span class="icon-asterisk text-warning"></span>
-					{/if}
-				</label>
-
-				{if $tip}
-					<p class="liferay-ddm-form-field-tip">{$tip}</p>
+				{if $required}
+					<span class="icon-asterisk text-warning"></span>
 				{/if}
-			{/if}
+			</label>
 
-			<div class="radio-grid-table">
-				<div class="radio-grid-row radio-grid-row-header">
-					<label class="radio-grid-cell"></label>
-					{foreach $column in $columns}
-						<label class="radio-grid-cell">{$column.label}</label>
-					{/foreach}
-				</div>
-				{foreach $row in $rows}
-					<div class="radio-grid-row">
-						<div class="clearfix radio radio-options">
-							<label class="radio-grid-cell">{$row.label}</label>
-							{foreach $column in $columns}	
-								<div class="radio-grid-cell">
-									<input class="field" dir="{$dir or ''}" {if $readOnly}disabled{/if} id="{$name}_{$column.value}" name="{$name}" type="radio" value="{$column.value}" />
-								</div>
-							{/foreach}
-						</div>
-					</div>
-				{/foreach}
-			</div>
-			
-			{if $childElementsHTML}
-				{$childElementsHTML|noAutoescape}
+			{if $tip}
+				<p class="liferay-ddm-form-field-tip">{$tip}</p>
 			{/if}
+		{/if}
+
+		<div class="liferay-ddm-form-field-radio-grid table-responsive">
+			<table class="table table-autofit table-list table-striped">
+				<thead>
+					<tr>
+						<th></th>
+						{foreach $column in $columns}
+							<th>{$column.label}</th>
+						{/foreach}
+					</tr>
+				</thead>
+				<tbody>
+					{foreach $row in $rows}
+						<tr name="{$row.value}">
+							<td>{$row.label}</td>
+							{foreach $column in $columns}	
+								<td>
+									<input class="field" {if $readOnly}disabled{/if} id="{$name}_{$row.value}_{$column.value}" name="{$name}_{$row.value}" type="radio" value="{$column.value}" />
+								</td>
+							{/foreach}
+						</tr>
+					{/foreach}
+				</tbody>
+			</table>
+		</div>
+		
+		{if $childElementsHTML}
+			{$childElementsHTML|noAutoescape}
+		{/if}
 	</div>
 {/template}

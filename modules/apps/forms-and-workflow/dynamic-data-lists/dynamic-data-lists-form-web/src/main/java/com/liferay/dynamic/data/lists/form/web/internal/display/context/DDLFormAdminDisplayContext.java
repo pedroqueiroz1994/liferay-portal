@@ -72,18 +72,16 @@ import com.liferay.portal.kernel.workflow.WorkflowEngineManager;
 import com.liferay.portal.kernel.workflow.WorkflowHandler;
 import com.liferay.portal.kernel.workflow.WorkflowHandlerRegistryUtil;
 
-import java.util.List;
-import java.util.Locale;
-
 import javax.portlet.PortletRequest;
 import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
-
 import javax.servlet.Servlet;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+import java.util.Locale;
 
 /**
  * @author Bruno Basto
@@ -554,6 +552,7 @@ public class DDLFormAdminDisplayContext {
 
 			jsonObject.put("localizable", ddmFormField.isLocalizable());
 			jsonObject.put("name", ddmFormField.getName());
+			jsonObject.put("type", ddmFormField.getType());
 
 			jsonArray.put(jsonObject);
 		}

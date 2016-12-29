@@ -5,16 +5,18 @@ AUI.add(
 			{
 				ATTRS: {
 					rows: {
+						setter: '_setRows',
 						state: true,
 						validator: Array.isArray,
 						value: []
 					},
 
-					// columns: {
-					// 	state: true,
-					// 	validator: Array.isArray,
-					// 	value: []
-					// },
+					columns: {
+						setter: '_setColumns',
+						state: true,
+						validator: Array.isArray,
+						value: []
+					},
 
 					type: {
 						value: 'radio_grid'
@@ -26,18 +28,14 @@ AUI.add(
 				NAME: 'liferay-ddm-form-field-radio-grid',
 
 				prototype: {
-					getInputNode: function() {
+					getGridRowsNodes: function() {
 						var instance = this;
 
 						var container = instance.get('container');
 
-						var inputNode = container.one('input[type="radio"]:checked');
+						var gridRowsNodes = container.all('tbody tr').get(0);
 
-						if (inputNode === null) {
-							inputNode = container.one('input[type="radio"]');
-						}
-
-						return inputNode;
+						return gridRowsNodes;
 					},
 
 					getTemplateContext: function() {
@@ -55,14 +53,22 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						var inputNode = instance.getInputNode();
+						var gridRowsNodes = instance.getGridRowsNodes();
 
-						var value = '';
+						var value = new Array();
 
-						if (inputNode.attr('checked')) {
-							value = inputNode.val();
-						}
-
+						gridRowsNodes.
+							forEach(
+								function(gridRowNode) {
+									rowValue = gridRowNode.attr('name');
+									checkedInput = gridRowNode.all('td').one('input[type="radio"]:checked');
+									answer = checkedInput ? checkedInput.val() : '';
+									value.push({
+										"row": rowValue,
+										"answer": answer
+									});
+								}
+							);
 						return value;
 					},
 
@@ -84,6 +90,34 @@ AUI.add(
 						if (radioToCheck) {
 							radioToCheck.attr('checked', true);
 						}
+					},
+
+					_setColumns: function(columns) {
+						var instance = this;
+
+						instance._mapItemsLabels(columns);
+					},
+
+					_setRows: function(rows) {
+						var instance = this;
+
+						instance._mapItemsLabels(rows);
+					},
+
+					_mapItemsLabels: function(items) {
+						var instance = this;
+
+						items.forEach(
+							function(item) {
+								item.label = instance._getLocalizedLabel(item);
+							}
+						);
+					},
+
+					_getLocalizedLabel: function(option) {
+						var defaultLanguageId = themeDisplay.getDefaultLanguageId();
+
+						return option.label[defaultLanguageId] ? option.label[defaultLanguageId] : option.label;
 					},
 
 					showErrorMessage: function() {
