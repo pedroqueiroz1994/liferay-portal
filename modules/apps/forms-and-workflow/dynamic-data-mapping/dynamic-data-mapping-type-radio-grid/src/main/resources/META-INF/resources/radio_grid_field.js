@@ -60,13 +60,14 @@ AUI.add(
 						gridRowsNodes.
 							forEach(
 								function(gridRowNode) {
-									rowValue = gridRowNode.attr('name');
-									checkedInput = gridRowNode.all('td').one('input[type="radio"]:checked');
-									answer = checkedInput ? checkedInput.val() : '';
-									value.push({
-										"row": rowValue,
-										"answer": answer
-									});
+									colValue = gridRowNode.all('td').one('input[type="radio"]:checked');
+									if (colValue) {
+										rowValue = gridRowNode.attr('name');
+										value.push({
+											"row": rowValue,
+											"colValue": colValue.val()
+										});
+									}
 								}
 							);
 						return value;
@@ -75,21 +76,38 @@ AUI.add(
 					setValue: function(value) {
 						var instance = this;
 
-						var container = instance.get('container');
+						// var container = instance.get('container');
+						//
+						// var radiosNodeList = container.all('input[type="radio"]');
+						//
+						// radiosNodeList.removeAttribute('checked');
+						//
+						// var radioToCheck = radiosNodeList.filter(
+						// 	function(node) {
+						// 		return node.val() === value;
+						// 	}
+						// ).item(0);
+						//
+						// if (radioToCheck) {
+						// 	radioToCheck.attr('checked', true);
+						// }
+						var gridRowsNodes = instance.getGridRowsNodes();
 
-						var radiosNodeList = container.all('input[type="radio"]');
+						gridRowsNodes.
+						forEach(
+							function(gridRowNode) {
+								radiosNodeList = gridRowNode.all('td').all('input[type="radio"]');
+								radiosNodeList.attr('checked', true); //removeAttribute('checked');
 
-						radiosNodeList.removeAttribute('checked');
-
-						var radioToCheck = radiosNodeList.filter(
-							function(node) {
-								return node.val() === value;
+						// 		var radioToCheck = radiosNodeList.filter(
+						// 			function(node) {
+						// 				return node.val() === value[];
+						// 			}
+						// 		).item(0);
+						// 		checkedInput = gridRowNode.all('td').one('input[type="radio"]:checked');
+						// 		answer = checkedInput ? checkedInput.val() : '';
 							}
-						).item(0);
-
-						if (radioToCheck) {
-							radioToCheck.attr('checked', true);
-						}
+						);
 					},
 
 					_setColumns: function(columns) {

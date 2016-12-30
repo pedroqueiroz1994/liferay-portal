@@ -19,10 +19,13 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.util.StringPool;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Iterator;
 import java.util.Locale;
 
 /**
@@ -34,31 +37,52 @@ public class RadioGridDDMFormFieldValueRenderer
 
 	@Override
 	public String render(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
-		String optionValue = radioDDMFormFieldValueAccessor.getValue(
-			ddmFormFieldValue, locale);
+		JSONObject optionValuesJSONObject =
+			radioGridDDMFormFieldValueAccessor.getValue(
+				ddmFormFieldValue, locale);
 
-		DDMFormFieldOptions ddmFormFieldOptions = getDDMFormFieldOptions(
-			ddmFormFieldValue);
-
-		LocalizedValue optionLabel = ddmFormFieldOptions.getOptionLabels(
-			optionValue);
-
-		if (optionLabel == null) {
+		if (optionValuesJSONObject.length() == 0) {
 			return StringPool.BLANK;
 		}
 
-		return optionLabel.getString(locale);
+		DDMFormFieldOptions rows = getDDMFormFieldOptions(
+			ddmFormFieldValue, "rows");
+		DDMFormFieldOptions columns = getDDMFormFieldOptions(
+			ddmFormFieldValue, "columns");
+
+		StringBundler sb = new StringBundler();
+
+		Iterator<String> keys = optionValuesJSONObject.keys();
+		while(keys.hasNext()) {
+			String key = keys.next();
+			LocalizedValue rowLabel = rows.getOptionLabels(key);
+			LocalizedValue columnLabel =
+				columns.getOptionLabels(optionValuesJSONObject.getString(key));
+
+			sb.append(rowLabel.getString(locale));
+			sb.append(StringPool.COLON);
+			sb.append(StringPool.SPACE);
+			sb.append(columnLabel.getString(locale));
+			sb.append(StringPool.COMMA_AND_SPACE);
+		}
+
+		sb.setIndex(sb.index() - 1);
+
+		return sb.toString();
 	}
 
 	protected DDMFormFieldOptions getDDMFormFieldOptions(
-		DDMFormFieldValue ddmFormFieldValue) {
+		DDMFormFieldValue ddmFormFieldValue, String optionType) {
 
 		DDMFormField ddmFormField = ddmFormFieldValue.getDDMFormField();
 
-		return ddmFormField.getDDMFormFieldOptions();
+		DDMFormFieldOptions options =
+			(DDMFormFieldOptions) ddmFormField.getProperty(optionType);
+
+		return options;
 	}
 
 	@Reference
-	protected RadioGridDDMFormFieldValueAccessor radioDDMFormFieldValueAccessor;
+	protected RadioGridDDMFormFieldValueAccessor radioGridDDMFormFieldValueAccessor;
 
 }

@@ -20,15 +20,15 @@ import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.Validator;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -48,21 +48,24 @@ public class RadioGridDDMFormFieldValueValidator
 			DDMFormField ddmFormField, DDMFormFieldValue ddmFormFieldValue)
 		throws DDMFormFieldValueValidationException {
 
-		DDMFormFieldOptions ddmFormFieldOptions =
-			ddmFormField.getDDMFormFieldOptions();
+		DDMFormFieldOptions rows =
+			(DDMFormFieldOptions) ddmFormField.getProperty("rows");
+		DDMFormFieldOptions columns =
+			(DDMFormFieldOptions) ddmFormField.getProperty("columns");
 
-		if (ddmFormFieldOptions == null) {
+		if (rows == null || columns == null) {
 			throw new DDMFormFieldValueValidationException(
 				String.format(
-					"Options must be set for radio field \"%s\"",
+					"Rows and columns must be set for radio grid field \"%s\"",
 					ddmFormField.getName()));
 		}
 
-		Set<String> optionValues = ddmFormFieldOptions.getOptionsValues();
+		Set<String> rowValues = rows.getOptionsValues();
+		Set<String> columnValues = columns.getOptionsValues();
 
-		if (optionValues.isEmpty() && ddmFormField.isRequired()) {
+		if ((rowValues.isEmpty() || columnValues.isEmpty()) && ddmFormField.isRequired()) {
 			throw new DDMFormFieldValueValidationException(
-				"Options must contain at least one alternative");
+				"Rows and columns must contain at least one alternative each");
 		}
 
 		Value value = ddmFormFieldValue.getValue();
@@ -70,13 +73,13 @@ public class RadioGridDDMFormFieldValueValidator
 		Map<Locale, String> selectedValues = value.getValues();
 
 		for (String selectedValue : selectedValues.values()) {
-			validateSelectedValue(ddmFormField, optionValues, selectedValue);
+			validateSelectedValue(ddmFormField, rowValues, columnValues, selectedValue);
 		}
 	}
 
-	protected JSONArray createJSONArray(String fieldName, String json) {
+	protected JSONObject createJSONObject(String fieldName, String json) {
 		try {
-			return jsonFactory.createJSONArray(json);
+			return jsonFactory.createJSONObject(json);
 		}
 		catch (JSONException jsone) {
 
@@ -88,30 +91,36 @@ public class RadioGridDDMFormFieldValueValidator
 
 			throw new IllegalStateException(
 				String.format(
-					"Invalid data stored for radio field \"%s\"", fieldName));
+					"Invalid data stored for radio grid field \"%s\"", fieldName));
 		}
 	}
 
 	protected void validateSelectedValue(
-			DDMFormField ddmFormField, Set<String> optionValues,
+			DDMFormField ddmFormField, Set<String> rowValues, Set<String> columnValues,
 			String selectedValue)
 		throws DDMFormFieldValueValidationException {
 
-		JSONArray jsonArray = createJSONArray(
-			ddmFormField.getName(), selectedValue);
+		String ddmFormFieldName = ddmFormField.getName();
 
-		for (int i = 0; i < jsonArray.length(); i++) {
-			if (Validator.isNull(jsonArray.getString(i)) &&
-				!ddmFormField.isRequired()) {
+		JSONObject jsonObject = createJSONObject(ddmFormFieldName, selectedValue);
 
-				continue;
-			}
+		if (jsonObject.length() < rowValues.size() && ddmFormField.isRequired()) {
+			throw new DDMFormFieldValueValidationException(
+					String.format(
+						"All rows of \"%s\" should have a value.",
+						ddmFormFieldName));
+		}
 
-			if (!optionValues.contains(jsonArray.getString(i))) {
+		Iterator<String> keys = jsonObject.keys();
+
+		while (keys.hasNext()) {
+			String key = keys.next();
+			String value = (String) jsonObject.get(key);
+			if (!rowValues.contains(key) || !columnValues.contains(value)) {
 				throw new DDMFormFieldValueValidationException(
 					String.format(
-						"The selected option \"%s\" is not a valid alternative",
-						jsonArray.getString(i)));
+						"The selected option \"%s\" is not a valid choice",
+						value));
 			}
 		}
 	}

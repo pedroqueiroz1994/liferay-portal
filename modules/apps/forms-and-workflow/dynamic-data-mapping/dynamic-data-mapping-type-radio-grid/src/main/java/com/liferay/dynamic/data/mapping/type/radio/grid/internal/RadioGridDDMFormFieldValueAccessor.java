@@ -17,12 +17,11 @@ package com.liferay.dynamic.data.mapping.type.radio.grid.internal;
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
-import com.liferay.portal.kernel.json.JSONArray;
 import com.liferay.portal.kernel.json.JSONException;
 import com.liferay.portal.kernel.json.JSONFactory;
+import com.liferay.portal.kernel.json.JSONObject;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
-import com.liferay.portal.kernel.util.StringPool;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
@@ -38,23 +37,23 @@ import java.util.Locale;
 	}
 )
 public class RadioGridDDMFormFieldValueAccessor
-	implements DDMFormFieldValueAccessor<String> {
+	implements DDMFormFieldValueAccessor<JSONObject> {
 
 	@Override
-	public String getValue(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
-		try {
+	public JSONObject getValue(DDMFormFieldValue ddmFormFieldValue, Locale locale) {
+
 			Value value = ddmFormFieldValue.getValue();
 
-			JSONArray jsonArray = jsonFactory.createJSONArray(
-				value.getString(locale));
+			String valueString = value.getString(locale);
 
-			return jsonArray.getString(0);
-		}
-		catch (JSONException jsone) {
-			_log.error("Unable to parse JSON array", jsone);
-
-			return StringPool.BLANK;
-		}
+			try {
+				return jsonFactory.createJSONObject(valueString);
+			}
+			catch (JSONException jsone) {
+				throw new IllegalStateException(
+					String.format(
+						"Unable to parse JSON Object", jsone));
+			}
 	}
 
 	@Reference

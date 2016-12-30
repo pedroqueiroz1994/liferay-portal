@@ -16,12 +16,14 @@ package com.liferay.dynamic.data.mapping.type.radio.grid.internal;
 
 import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueRequestParameterRetriever;
 import com.liferay.portal.kernel.json.JSONFactory;
-import com.liferay.portal.kernel.util.GetterUtil;
-import com.liferay.portal.kernel.util.ParamUtil;
+import com.liferay.portal.kernel.json.JSONObject;
+import com.liferay.portal.kernel.util.StringPool;
+import com.liferay.portal.kernel.util.StringUtil;
 import org.osgi.service.component.annotations.Component;
 import org.osgi.service.component.annotations.Reference;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Map;
 
 /**
  * @author Marcellus Tavares
@@ -35,11 +37,24 @@ public class RadioGridDDMFormFieldValueRequestParameterRetriever
 		HttpServletRequest httpServletRequest, String ddmFormFieldParameterName,
 		String defaultDDMFormFieldParameterValue) {
 
-		String[] parameterValues = ParamUtil.getParameterValues(
-			httpServletRequest, ddmFormFieldParameterName,
-			GetterUtil.DEFAULT_STRING_VALUES);
 
-		return jsonFactory.serialize(parameterValues);
+		JSONObject jsonObject = jsonFactory.createJSONObject();
+
+		Map<String, String[]> parametersMap =
+			httpServletRequest.getParameterMap();
+
+
+		for(Map.Entry<String, String[]> entry : parametersMap.entrySet()) {
+			if (entry.getKey().startsWith(ddmFormFieldParameterName)) {
+				String key = StringUtil.extractLast(entry.getKey(), ddmFormFieldParameterName);
+
+				String value = entry.getValue()[0];
+				jsonObject.put(key, value != null ? value : StringPool.BLANK);
+			}
+
+		}
+
+		return jsonObject.toString();
 	}
 
 	@Reference

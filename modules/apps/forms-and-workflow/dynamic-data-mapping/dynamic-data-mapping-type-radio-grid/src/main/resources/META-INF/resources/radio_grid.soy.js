@@ -28,16 +28,16 @@ ddm.radio_grid = function(opt_data, opt_ignored) {
     output += '<th>' + soy.$$escapeHtml(columnData27.label) + '</th>';
   }
   output += '</tr></thead><tbody>';
-  var rowList55 = opt_data.rows;
-  var rowListLen55 = rowList55.length;
-  for (var rowIndex55 = 0; rowIndex55 < rowListLen55; rowIndex55++) {
-    var rowData55 = rowList55[rowIndex55];
-    output += '<tr name="' + soy.$$escapeHtmlAttribute(rowData55.value) + '"><td>' + soy.$$escapeHtml(rowData55.label) + '</td>';
-    var columnList52 = opt_data.columns;
-    var columnListLen52 = columnList52.length;
-    for (var columnIndex52 = 0; columnIndex52 < columnListLen52; columnIndex52++) {
-      var columnData52 = columnList52[columnIndex52];
-      output += '<td><input class="field" ' + ((opt_data.readOnly) ? 'disabled' : '') + ' id="' + soy.$$escapeHtmlAttribute(opt_data.name) + '_' + soy.$$escapeHtmlAttribute(rowData55.value) + '_' + soy.$$escapeHtmlAttribute(columnData52.value) + '" name="' + soy.$$escapeHtmlAttribute(opt_data.name) + '_' + soy.$$escapeHtmlAttribute(rowData55.value) + '" type="radio" value="' + soy.$$escapeHtmlAttribute(columnData52.value) + '" /></td>';
+  var rowList54 = opt_data.rows;
+  var rowListLen54 = rowList54.length;
+  for (var rowIndex54 = 0; rowIndex54 < rowListLen54; rowIndex54++) {
+    var rowData54 = rowList54[rowIndex54];
+    output += '<tr name="' + soy.$$escapeHtmlAttribute(rowData54.value) + '"><td>' + soy.$$escapeHtml(rowData54.label) + '</td>';
+    var columnList51 = opt_data.columns;
+    var columnListLen51 = columnList51.length;
+    for (var columnIndex51 = 0; columnIndex51 < columnListLen51; columnIndex51++) {
+      var columnData51 = columnList51[columnIndex51];
+      output += '<td><input class="field" ' + ((opt_data.readOnly) ? 'disabled' : '') + ' id="' + soy.$$escapeHtmlAttribute(opt_data.name) + '_' + soy.$$escapeHtmlAttribute(rowData54.value) + '_' + soy.$$escapeHtmlAttribute(columnData51.value) + '" name="' + soy.$$escapeHtmlAttribute(opt_data.name) + soy.$$escapeHtmlAttribute(rowData54.value) + '" type="radio" value="' + soy.$$escapeHtmlAttribute(columnData51.value) + '" /></td>';
     }
     output += '</tr>';
   }

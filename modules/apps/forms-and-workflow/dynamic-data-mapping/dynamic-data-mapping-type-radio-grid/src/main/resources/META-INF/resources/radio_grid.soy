@@ -53,7 +53,7 @@
 							<td>{$row.label}</td>
 							{foreach $column in $columns}	
 								<td>
-									<input class="field" {if $readOnly}disabled{/if} id="{$name}_{$row.value}_{$column.value}" name="{$name}_{$row.value}" type="radio" value="{$column.value}" />
+									<input class="field" {if $readOnly}disabled{/if} id="{$name}_{$row.value}_{$column.value}" name="{$name}{$row.value}" type="radio" value="{$column.value}" />
 								</td>
 							{/foreach}
 						</tr>
