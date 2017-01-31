@@ -303,7 +303,7 @@ AUI.add(
 						var fieldJSON = {
 							instanceId: instance.get('instanceId'),
 							name: instance.get('fieldName'),
-							value: instance.getValue()
+							value: instance.get('value')
 						};
 
 						var fields = instance.getImmediateFields();
