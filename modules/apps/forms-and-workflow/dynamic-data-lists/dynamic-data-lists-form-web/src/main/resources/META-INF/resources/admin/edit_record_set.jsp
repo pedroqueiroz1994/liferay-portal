@@ -238,6 +238,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 							}
 						);
 
+						var fieldSets = <%= ddlFormAdminDisplayContext.getFieldSetDefinitions() %>;
+
 						Liferay.provide(
 							window,
 							'<portlet:namespace />init',
@@ -245,6 +247,8 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 								var definition = <%= ddlFormAdminDisplayContext.getSerializedDDMForm() %>;
 
 								Liferay.DDM.Renderer.FieldTypes.register(fieldTypes);
+
+								Liferay.DDL.FieldSets.register(fieldSets);
 
 								Liferay.component(
 									'formPortlet',
@@ -259,7 +263,6 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											editForm: event.form,
 											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
 											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
-											fieldSetDefinitions: <%= ddlFormAdminDisplayContext.getFieldSetDefinitions() %>,
 											functionsMetadata: <%= ddlFormAdminDisplayContext.getSerializedDDMExpressionFunctionsMetadata() %>,
 											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
 											getDataProviderInstancesURL: '<%= getDataProviderInstancesURL.toString() %>',
@@ -283,7 +286,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 								</c:if>
 
 							},
-							['liferay-ddl-portlet'].concat(systemFieldModules)
+							['liferay-ddl-portlet','liferay-ddl-form-builder-field-sets'].concat(systemFieldModules)
 						);
 
 						<portlet:namespace />init();
