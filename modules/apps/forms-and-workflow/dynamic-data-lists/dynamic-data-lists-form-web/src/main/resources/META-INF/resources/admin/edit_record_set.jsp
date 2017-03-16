@@ -259,6 +259,7 @@ renderResponse.setTitle((recordSet == null) ? LanguageUtil.get(request, "new-for
 											editForm: event.form,
 											evaluatorURL: '<%= ddlFormAdminDisplayContext.getDDMFormContextProviderServletURL() %>',
 											fieldTypesDefinitions: <%= ddlFormAdminDisplayContext.getDDMFormFieldTypesDefinitionsMap() %>,
+											fieldSetDefinitions: <%= ddlFormAdminDisplayContext.getFieldSetDefinitions() %>,
 											functionsMetadata: <%= ddlFormAdminDisplayContext.getSerializedDDMExpressionFunctionsMetadata() %>,
 											getDataProviderParametersSettingsURL: '<%= getDataProviderParametersSettings.toString() %>',
 											getDataProviderInstancesURL: '<%= getDataProviderInstancesURL.toString() %>',
