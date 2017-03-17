@@ -446,6 +446,10 @@ AUI.add(
 						if (settingsDDMForm) {
 							var publishCheckbox = instance.one('#publishCheckbox');
 
+							if (!publishCheckbox) {
+								return;
+							}
+
 							var publishedField = settingsDDMForm.getField('published');
 
 							publishedField.setValue(publishCheckbox.attr('checked'));

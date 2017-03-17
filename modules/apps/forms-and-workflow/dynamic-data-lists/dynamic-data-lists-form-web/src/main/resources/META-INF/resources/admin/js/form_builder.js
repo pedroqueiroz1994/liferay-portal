@@ -485,7 +485,7 @@ AUI.add(
 
 								var layoutRow = new A.LayoutRow({cols: layoutColumns});
 
-								layout.addRow(0, layoutRow);
+								layout.addRow(instance._currentRowIndex(), layoutRow);
 							});
 						}
 					},
@@ -537,6 +537,26 @@ AUI.add(
 						instance._sidebar = sidebar;
 
 						return sidebar;
+					},
+
+					_currentRowIndex: function() {
+						var instance = this;
+
+						var layout = instance.getActiveLayout();
+
+						var rows = layout.get('rows');
+
+						if (A.instanceOf(instance._newFieldContainer.get('value'), A.FormBuilderFieldList)) {
+							var row = instance._newFieldContainer.get('value').get('content').ancestor('.row').getData();
+
+							return A.Array.indexOf(rows, row);
+						}
+
+						if (rows.length > 0) {
+							return rows.length - 1;
+						}
+
+						return 0;
 					},
 
 					_getPageManagerInstance: function(config) {
