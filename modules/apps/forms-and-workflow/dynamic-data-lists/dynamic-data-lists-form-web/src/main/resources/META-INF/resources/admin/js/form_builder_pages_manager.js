@@ -50,6 +50,10 @@ AUI.add(
 						value: 'pagination'
 					},
 
+					showPagination : {
+						value: true
+					},
+
 					strings: {
 						value: {
 							addPageLastPosition: Liferay.Language.get('add-new-page'),
