@@ -171,6 +171,7 @@ class LiferayApp extends App {
 			}
 		);
 
+		Utils.resetAllPortlets();
 		this._startRequestTimer(event.path);
 	}
 
