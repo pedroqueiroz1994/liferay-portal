@@ -48,12 +48,11 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 
-import java.util.List;
-
 import javax.portlet.PortletSession;
 import javax.portlet.RenderRequest;
 import javax.portlet.RenderResponse;
 import javax.portlet.ResourceURL;
+import java.util.List;
 
 /**
  * @author Marcellus Tavares
@@ -110,6 +109,8 @@ public class DDLFormDisplayContext {
 		ddmFormRenderingContext.setGroupId(recordSet.getGroupId());
 
 		boolean showSubmitButton = isShowSubmitButton();
+
+		ddmFormRenderingContext.setGroupId(recordSet.getGroupId());
 
 		ddmFormRenderingContext.setShowSubmitButton(showSubmitButton);
 
