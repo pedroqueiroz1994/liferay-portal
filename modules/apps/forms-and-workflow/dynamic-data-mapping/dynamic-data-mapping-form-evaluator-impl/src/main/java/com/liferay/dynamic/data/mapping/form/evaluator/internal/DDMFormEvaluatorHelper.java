@@ -31,6 +31,8 @@ import com.liferay.dynamic.data.mapping.form.evaluator.internal.functions.JumpPa
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.functions.SetEnabledFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.functions.SetInvalidFunction;
 import com.liferay.dynamic.data.mapping.form.evaluator.internal.functions.SetPropertyFunction;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldValueAccessor;
 import com.liferay.dynamic.data.mapping.model.DDMForm;
 import com.liferay.dynamic.data.mapping.model.DDMFormField;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
@@ -51,6 +53,7 @@ import com.liferay.portal.kernel.util.ListUtil;
 import com.liferay.portal.kernel.util.StringUtil;
 import com.liferay.portal.kernel.util.Validator;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -61,8 +64,6 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
-import javax.servlet.http.HttpServletRequest;
-
 /**
  * @author Leonardo Barros
  */
@@ -72,6 +73,7 @@ public class DDMFormEvaluatorHelper {
 		DDMDataProviderContextFactory ddmDataProviderContextFactory,
 		DDMDataProviderInvoker ddmDataProviderInvoker,
 		DDMExpressionFactory ddmExpressionFactory,
+		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker,
 		DDMFormEvaluatorContext ddmFormEvaluatorContext,
 		JSONFactory jsonFactory, UserLocalService userLocalService) {
 
@@ -79,6 +81,7 @@ public class DDMFormEvaluatorHelper {
 		_ddmDataProviderInvoker = ddmDataProviderInvoker;
 
 		_ddmExpressionFactory = ddmExpressionFactory;
+		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
 		_ddmForm = ddmFormEvaluatorContext.getDDMForm();
 
 		_ddmFormFieldsMap = _ddmForm.getDDMFormFieldsMap(true);
@@ -349,6 +352,16 @@ public class DDMFormEvaluatorHelper {
 			return true;
 		}
 
+		if(ddmFormField.getType().equals("grid")) {
+			DDMFormFieldValueAccessor<?> ddmFormFieldValueAccessor =
+				_ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor(
+				ddmFormField.getType());
+
+			if(ddmFormFieldValueAccessor.isEmpty(ddmFormField, value, _locale) ) {
+				return true;
+			}
+		}
+
 		return false;
 	}
 
@@ -614,6 +627,7 @@ public class DDMFormEvaluatorHelper {
 	private final DDMExpressionFunctionRegistry _ddmExpressionFunctionRegistry =
 		new DDMExpressionFunctionRegistry();
 	private final DDMForm _ddmForm;
+	private final DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 	private final Map<String, List<DDMFormFieldEvaluationResult>>
 		_ddmFormFieldEvaluationResultsMap = new HashMap<>();
 	private final Map<String, DDMFormField> _ddmFormFieldsMap;
