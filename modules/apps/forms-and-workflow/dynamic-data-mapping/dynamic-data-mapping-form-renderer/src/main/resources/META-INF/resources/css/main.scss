@@ -145,6 +145,16 @@
 	}
 }
 
+.clearfix.lfr-ddm-form-field-container.has-error {
+	.liferay-ddm-form-field-grid {
+		.table-list {
+			td {
+				color: #C67;
+			}
+		}
+	}
+}
+
 .multi-step-progress-bar {
 	> .complete {
 		color: #65B6F0;
