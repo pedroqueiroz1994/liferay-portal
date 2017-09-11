@@ -27,6 +27,7 @@ import com.liferay.dynamic.data.lists.model.DDLRecordSetSettings;
 import com.liferay.dynamic.data.lists.service.DDLRecordSetService;
 import com.liferay.dynamic.data.mapping.exception.StructureDefinitionException;
 import com.liferay.dynamic.data.mapping.exception.StructureLayoutException;
+import com.liferay.dynamic.data.mapping.form.field.type.DDMFormFieldTypeServicesTracker;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQuery;
 import com.liferay.dynamic.data.mapping.form.values.query.DDMFormValuesQueryFactory;
 import com.liferay.dynamic.data.mapping.io.DDMFormValuesJSONDeserializer;
@@ -55,18 +56,16 @@ import com.liferay.portal.kernel.util.StringPool;
 import com.liferay.portal.kernel.util.Validator;
 import com.liferay.portal.kernel.util.WebKeys;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
+import org.osgi.service.component.annotations.Component;
+import org.osgi.service.component.annotations.Reference;
 
+import javax.portlet.PortletRequest;
+import javax.portlet.PortletResponse;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-
-import javax.portlet.PortletRequest;
-import javax.portlet.PortletResponse;
-
-import org.osgi.service.component.annotations.Component;
-import org.osgi.service.component.annotations.Reference;
 
 /**
  * @author Marcellus Tavares
@@ -285,10 +284,20 @@ public class SaveRecordSetMVCCommandHelper {
 		DDMFormFieldValue ddmFormFieldValue =
 			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
 
-		Value value = ddmFormFieldValue.getValue();
+//		Value value = ddmFormFieldValue.getValue();
+//
+//		String storageType = getSingleValue(
+//			value.getString(ddmFormValues.getDefaultLocale()));
 
-		String storageType = getSingleValue(
-			value.getString(ddmFormValues.getDefaultLocale()));
+		_ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor("select");
+
+//		Value value = ddmFormFieldValue.getValue();
+
+		JSONArray jsonArray = (JSONArray) _ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor("select").getValue(ddmFormFieldValue, ddmFormValues.getDefaultLocale());
+//		return getSingleValue(
+//			value.getString(ddmFormValues.getDefaultLocale()));
+
+		String storageType = (String) jsonArray.get(0);
 
 		if (Validator.isNull(storageType)) {
 			storageType = StorageType.JSON.toString();
@@ -307,10 +316,15 @@ public class SaveRecordSetMVCCommandHelper {
 		DDMFormFieldValue ddmFormFieldValue =
 			ddmFormValuesQuery.selectSingleDDMFormFieldValue();
 
-		Value value = ddmFormFieldValue.getValue();
+		_ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor("select");
 
-		return getSingleValue(
-			value.getString(ddmFormValues.getDefaultLocale()));
+//		Value value = ddmFormFieldValue.getValue();
+
+		JSONArray jsonArray = (JSONArray) _ddmFormFieldTypeServicesTracker.getDDMFormFieldValueAccessor("select").getValue(ddmFormFieldValue, ddmFormValues.getDefaultLocale());
+//		return getSingleValue(
+//			value.getString(ddmFormValues.getDefaultLocale()));
+
+		return (String) jsonArray.get(0);
 	}
 
 	protected DDMStructure updateDDMStructure(
@@ -456,6 +470,21 @@ public class SaveRecordSetMVCCommandHelper {
 			}
 		}
 	}
+
+	protected
+	DDMFormFieldTypeServicesTracker getDDMFormFieldTypeServicesTracker() {
+
+		return _ddmFormFieldTypeServicesTracker;
+	}
+
+	@Reference(unbind = "-")
+	protected void setDDMFormFieldTypeServicesTracker(
+		DDMFormFieldTypeServicesTracker ddmFormFieldTypeServicesTracker) {
+
+		_ddmFormFieldTypeServicesTracker = ddmFormFieldTypeServicesTracker;
+	}
+
+	private DDMFormFieldTypeServicesTracker _ddmFormFieldTypeServicesTracker;
 
 	@Reference
 	protected DDLFormBuilderContextToDDMForm ddlFormBuilderContextToDDMForm;
