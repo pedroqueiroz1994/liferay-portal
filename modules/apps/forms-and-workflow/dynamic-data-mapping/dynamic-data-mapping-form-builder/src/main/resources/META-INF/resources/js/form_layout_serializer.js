@@ -59,6 +59,11 @@ AUI.add(
 					_serializeField: function(field) {
 						var instance = this;
 
+						if (field.__metal_component__) {
+							console.log(field.getState());
+							return field.getState();
+						}
+
 						return field.get('context');
 					},
 

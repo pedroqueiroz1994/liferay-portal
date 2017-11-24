@@ -1,0 +1,9 @@
+{
+  "LiferayTheme": {
+    "deployPath": "/Users/brunobasto/Projects/bundles/deploy",
+    "themeName": "frontend-theme-standard",
+    "appServerPathTheme": "/Users/brunobasto/Projects/bundles/tomcat-8.0.32/webapps/frontend-theme-standard",
+    "deployed": false,
+    "appServerPath": "/Users/brunobasto/Projects/bundles/tomcat-8.0.32"
+  }
+}

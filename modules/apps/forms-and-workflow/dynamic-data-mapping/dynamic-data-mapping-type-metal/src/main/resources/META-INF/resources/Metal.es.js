@@ -11,7 +11,13 @@ import Ajax from 'metal-ajax';
  */
 class Metal extends Component {
 	after(event, callback) {
+		console.log('after', event, callback);
 		return this.on(event, callback);
+	}
+
+	on(event, callback) {
+		console.log('on', event, callback);
+		super.on(event, callback);
 	}
 
 	loadSettingsForm() {
@@ -78,9 +84,13 @@ class Metal extends Component {
 Metal.isMetal = true;
 
 Metal.STATE = {
+	fieldName: Config.string().value('metal-name'),
+	locale: Config.string().value(themeDisplay.getDefaultLanguageId()),
 	name: Config.string().value('metal-name'),
 	placeholder: Config.string().value('Metal.js'),
-	type: Config.string().value('metal')
+	settingsContext: Config.object().value({}),
+	type: Config.string().value('metal'),
+	editMode: Config.bool().value(false)
 };
 
 // Register component

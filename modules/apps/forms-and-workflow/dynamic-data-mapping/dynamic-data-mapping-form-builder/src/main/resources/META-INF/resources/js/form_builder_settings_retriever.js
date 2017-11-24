@@ -35,7 +35,12 @@ AUI.add(
 								else if (cachedContextJSON) {
 									settingsContext = resolveJSON(cachedContextJSON);
 
-									field.set('context.settingsContext', settingsContext);
+									if (field.__metal_component__) {
+										field.settingsContext = settingsContext;
+									}
+									else {
+										field.set('context.settingsContext', settingsContext);	
+									}
 								}
 								else {
 									var payload = {

@@ -336,6 +336,8 @@ AUI.add(
 					_onLabelFieldChange: function(event) {
 						var instance = this;
 
+						console.log('asdasasd');
+
 						var nameField = instance.getField('name');
 
 						var formBuilderField = instance.get('field');
@@ -348,9 +350,15 @@ AUI.add(
 
 						if (defaultLocale === locale) {
 							nameField.set('value', event.newVal);
-							formBuilderField.set('context.fieldName', event.newVal);
-						}
 
+							if (formBuilderField.__metal_component__) {
+								formBuilderField.fieldName = event.newVal;
+							}
+							else {
+								formBuilderField.set('context.fieldName', event.newVal);
+							}
+							console.log(formBuilderField.getState());
+						}
 						instance._saveSettings();
 					},
 

@@ -11,19 +11,42 @@
  * Prints the DDM form metal field.
  */
 {template .render}
-	{@param? dir: string}
-	{@param? displayStyle: string}
-	{@param? label: string}
 	{@param name: string}
 	{@param placeholder: string}
+	{@param value: ?}
+	{@param visible: bool}
+	{@param? dir: string}
+	{@param? displayStyle: string}
+	{@param? editMode: bool}
+	{@param? label: string}
 	{@param? predefinedValue: string}
 	{@param? readOnly: bool}
 	{@param? required: bool}
 	{@param? showLabel: bool}
 	{@param? tip: string}
 	{@param? tooltip: string}
+
+	<div class="clearfix lfr-ddm-form-field-container form-builder-container">
+		{call .content data="all"}
+		{/call}
+	</div>
+{/template}
+
+{template .content}
+	{@param name: string}
+	{@param placeholder: string}
 	{@param value: ?}
 	{@param visible: bool}
+	{@param? dir: string}
+	{@param? displayStyle: string}
+	{@param? editMode: bool}
+	{@param? label: string}
+	{@param? predefinedValue: string}
+	{@param? readOnly: bool}
+	{@param? required: bool}
+	{@param? showLabel: bool}
+	{@param? tip: string}
+	{@param? tooltip: string}
 
 	{let $displayValue: $value ? $value : $predefinedValue ? $predefinedValue : '' /}
 
@@ -68,5 +91,8 @@
 				</span>
 			{/if}
 		</div>
+		{if $editMode}
+			<div class="form-builder-field-content-target"></div>
+		{/if}
 	</div>
 {/template}

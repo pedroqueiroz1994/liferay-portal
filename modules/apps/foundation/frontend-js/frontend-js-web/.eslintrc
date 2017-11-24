@@ -1,0 +1,15 @@
+{
+	"env": {
+		"browser": true,
+		"jest": true,
+		"mocha": true
+	},
+	"extends": "liferay",
+	"globals": {
+		"_": true,
+		"$": true,
+		"AUI": true,
+		"Liferay": true,
+		"submitForm": true
+	}
+}

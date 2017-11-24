@@ -79,12 +79,22 @@ AUI.add(
 
 						var fieldClass = FormBuilderUtil.getFieldClass(context.type, context);
 
+						console.log(A.merge(
+								context,
+								{
+									context: context,
+									parent: builder,
+									editMode: true
+								}
+							));
+
 						return new fieldClass(
 							A.merge(
 								context,
 								{
 									context: context,
-									parent: builder
+									parent: builder,
+									editMode: true
 								}
 							)
 						);
