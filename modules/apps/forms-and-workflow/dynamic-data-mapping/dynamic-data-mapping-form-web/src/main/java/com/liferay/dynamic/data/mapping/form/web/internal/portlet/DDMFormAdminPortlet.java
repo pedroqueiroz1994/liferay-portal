@@ -192,10 +192,6 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 		String currentTab = ParamUtil.getString(
 			renderRequest, "currentTab", "forms");
 
-		PortletSession portletSession = renderRequest.getPortletSession();
-
-		portletSession.setAttribute("currentTab", currentTab);
-
 		if (currentTab.equals("element-set")) {
 			renderRequest.setAttribute(
 				WebKeys.PORTLET_DISPLAY_CONTEXT,
