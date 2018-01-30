@@ -106,6 +106,8 @@ AUI.add(
 
 						instance.get('boundingBox').removeClass('open');
 						instance.get('boundingBox').addClass('closed');
+
+						instance.set('field', null);
 					},
 
 					getTemplate: function() {
@@ -219,7 +221,6 @@ AUI.add(
 
 						if (instance.get('open') && !instance.hasFocus(event.target)) {
 							instance.close();
-							instance.set('field', null);
 						}
 					},
 
