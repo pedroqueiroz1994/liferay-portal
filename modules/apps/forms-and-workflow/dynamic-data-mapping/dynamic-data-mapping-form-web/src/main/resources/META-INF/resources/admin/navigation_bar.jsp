@@ -16,33 +16,7 @@
 
 <%@ include file="/admin/init.jsp" %>
 
-<%
-PortletURL portletURL = renderResponse.createRenderURL();
-
-String currentTab = ParamUtil.getString(request, "currentTab", "forms");
-%>
-
-<aui:nav-bar cssClass="collapse-basic-search" id="toolbar" markupView="lexicon">
-	<aui:nav cssClass="navbar-nav">
-
-		<%
-		portletURL.setParameter("currentTab", "forms");
-		%>
-
-		<aui:nav-item
-			href="<%= portletURL.toString() %>"
-			label="forms"
-			selected='<%= currentTab.equals("forms") %>'
-		/>
-
-		<%
-		portletURL.setParameter("currentTab", "element-set");
-		%>
-
-		<aui:nav-item
-			href="<%= portletURL.toString() %>"
-			label="element-sets"
-			selected='<%= currentTab.equals("element-set") %>'
-		/>
-	</aui:nav>
-</aui:nav-bar>
+<clay:navigation-bar
+	inverted="<%= true %>"
+	items="<%= ddmFormAdminDisplayContext.getNavigationItems() %>"
+/>

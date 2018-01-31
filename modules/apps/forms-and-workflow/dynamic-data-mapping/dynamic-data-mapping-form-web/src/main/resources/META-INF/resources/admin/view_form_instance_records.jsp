@@ -30,12 +30,10 @@ searchURL.setParameter("formInstanceId", String.valueOf(ddmFormInstance.getFormI
 renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 %>
 
-<aui:nav-bar cssClass="collapse-basic-search" markupView="lexicon">
-	<aui:nav cssClass="navbar-nav">
-		<aui:nav-item label="<%= HtmlUtil.escape(ddmFormInstance.getName(locale)) %>" selected="<%= true %>" />
-	</aui:nav>
-
-</aui:nav-bar>
+<clay:navigation-bar
+	inverted="<%= true %>"
+	items="<%= ddmFormViewFormInstanceRecordsDisplayContext.getNavigationItems() %>"
+/>
 
 <liferay-frontend:management-bar
 	includeCheckBox="<%= true %>"
