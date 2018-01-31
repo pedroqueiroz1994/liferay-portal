@@ -45,12 +45,4 @@ String currentTab = ParamUtil.getString(request, "currentTab", "forms");
 			selected='<%= currentTab.equals("element-set") %>'
 		/>
 	</aui:nav>
-
-	<c:if test="<%= ddmFormAdminDisplayContext.isShowSearch() %>">
-		<aui:nav-bar-search>
-			<aui:form action="<%= ddmFormAdminDisplayContext.getPortletURL() %>" method="post" name="fm1">
-				<liferay-ui:input-search markupView="lexicon" />
-			</aui:form>
-		</aui:nav-bar-search>
-	</c:if>
 </aui:nav-bar>

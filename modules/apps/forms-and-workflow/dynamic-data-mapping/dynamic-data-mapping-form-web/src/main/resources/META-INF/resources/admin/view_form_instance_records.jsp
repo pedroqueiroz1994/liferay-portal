@@ -35,11 +35,6 @@ renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 		<aui:nav-item label="<%= HtmlUtil.escape(ddmFormInstance.getName(locale)) %>" selected="<%= true %>" />
 	</aui:nav>
 
-	<aui:nav-bar-search>
-		<aui:form action="<%= searchURL %>" method="post" name="fm">
-			<liferay-ui:input-search autoFocus="<%= true %>" markupView="lexicon" />
-		</aui:form>
-	</aui:nav-bar-search>
 </aui:nav-bar>
 
 <liferay-frontend:management-bar
@@ -58,6 +53,12 @@ renderResponse.setTitle(LanguageUtil.get(request, "form-entries"));
 			orderColumns='<%= new String[] {"modified-date"} %>'
 			portletURL="<%= searchURL %>"
 		/>
+
+		<li>
+			<aui:form action="<%= searchURL %>" method="post" name="fm">
+				<liferay-ui:input-search autoFocus="<%= true %>" markupView="lexicon" />
+			</aui:form>
+		</li>
 	</liferay-frontend:management-bar-filters>
 
 	<liferay-frontend:management-bar-action-buttons>
