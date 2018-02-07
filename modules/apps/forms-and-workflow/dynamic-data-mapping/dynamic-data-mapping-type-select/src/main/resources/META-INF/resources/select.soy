@@ -48,7 +48,7 @@
 						{param strings: $strings /}
 					{/call}
 				{/if}
-				{if $fixedOptions}
+				{if $fixedOptions and (length($fixedOptions) > 0)}
 					{if not $readOnly and $displayValue}
 						{call .hidden_select}
 							{param dir: $dir /}
@@ -243,7 +243,6 @@
 	{@param value: list<string>}
 	{@param? fixedOptions: list<[label: string, value: string]>}
 	{@param? multiple: bool}
-
 	<ul class="dropdown-visible results-chosen list-unstyled">
 		{if length($options) > 0}
 			<div class="inline-scroller">
@@ -295,48 +294,111 @@
 				{/foreach}
 			{/if}
 		{/let}
-
-		{let $attributes kind="attributes"}
-			class="
-
-				{sp}select-option-item
-
-				{if $fixed}
-					{sp}fixed
-				{else}
-					{sp}unfixed
-				{/if}
-			"
-			data-option-index="{index($option)}"
-
-			data-option-value="{$option.value}"
-		{/let}
-
-		<li {$attributes}>
-			{if $multiple}
-				<input type="checkbox" value="" {if $selected == 'selected'}checked{/if}>
-			{/if}
-			{let $itemAttributes kind="attributes"}
-				class="
-					dropdown-item
-
-					{if $selected}
-						{sp}active
-					{/if}
-				"
-				data-option-selected="
-					{if $selected}
-						true
-					{/if}"
-
-				href="javascript:;"
-
-				title="{$option.label}"
-			{/let}
-			<a {$itemAttributes}>
-				{$option.label}
-			</a>
-		</li>
+		{if $multiple}
+			{call .multiple_selection}
+				{param fixed: $fixed /}
+				{param option: $option /}
+				{param selected: $selected /}
+				{param indexOption: index($option) /}
+			{/call}
+		{else}
+			{call .normal_selection}
+				{param fixed: $fixed /}
+				{param option: $option /}
+				{param selected: $selected /}
+				{param indexOption: index($option) /}
+			{/call}
+		{/if}
 	{/foreach}
 
+{/template}
+
+/**
+ * Prints the DDM multiple dropdown itens.
+ */
+{template .multiple_selection}
+	{@param indexOption: int}
+	{@param option: [label: string, value: string]}
+	{@param selected: string}
+	{@param? fixed: bool}
+	{let $attributesMultipleSelection kind="attributes"}
+		class="
+		{if $selected} active {/if}
+		dropdown-item
+
+		{if $fixed}
+			{sp}fixed
+		{else}
+			{sp}unfixed
+		{/if}
+		"
+
+		data-option-index="{$indexOption}"
+
+		data-option-value="{$option.value}"
+
+		data-option-selected="
+				{if $selected}
+					true
+				{/if}"
+	{/let}
+	<li {$attributesMultipleSelection}>
+		<div class="custom-control custom-checkbox">
+			<label>
+				<input {if $selected}checked{else}xxx{/if} class="custom-control-input" type="checkbox" value="">
+				<span class="custom-control-label ">
+					<span class="custom-control-label-text">{$option.label}</span>
+				</span>
+			</label>
+		</div>
+	</li>
+{/template}
+
+/**
+ * Prints the DDM normal dropdown itens.
+ */
+{template .normal_selection}
+	{@param indexOption: int}
+	{@param option: [label: string, value: string]}
+	{@param selected: string}
+	{@param? fixed: bool}
+
+	{let $attributesNormalSelection kind="attributes"}
+		class="
+
+			{sp}select-option-item
+
+			{if $fixed}
+				{sp}fixed
+			{else}
+				{sp}unfixed
+			{/if}
+		"
+		data-option-index="{$indexOption}"
+
+		data-option-value="{$option.value}"
+	{/let}
+	<li {$attributesNormalSelection}>
+		{let $itemAttributes kind="attributes"}
+			class="
+				dropdown-item
+
+				{if $selected}
+					{sp}active
+				{/if}
+			"
+			data-option-selected="
+				{if $selected}
+					true
+				{/if}"
+
+			href="javascript:;"
+
+			title="{$option.label}"
+		{/let}
+		<a {$itemAttributes}>
+			{$option.label}
+		</a>
+	</li>
+	
 {/template}
