@@ -981,19 +981,6 @@ AUI.add(
 						localizedName[editingLanguageId] = name;
 
 						instance._setName(name);
-					},
-
-					_toogleAddFieldButton: function() {
-						var instance = this;
-
-						var addButton = A.one('.lfr-ddm-add-field');
-
-						if (addButton && !addButton.hasClass('hide')) {
-							addButton.addClass('hide');
-						}
-						else {
-							addButton.removeClass('hide');
-						}
 					}
 				}
 			}
