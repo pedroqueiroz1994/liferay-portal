@@ -724,7 +724,7 @@ AUI.add(
 
 						instance._showFormBuilder();
 
-						instance._toogleAddFieldButton();
+						instance._addFieldButton();
 					},
 
 					_onNameEditorChange: function(event) {
@@ -828,7 +828,7 @@ AUI.add(
 
 						instance._showRuleBuilder();
 
-						instance._toogleAddFieldButton();
+						instance._removeAddFieldButton();
 					},
 
 					_onSaveButtonClick: function(event) {
