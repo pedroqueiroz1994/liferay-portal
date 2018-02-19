@@ -394,6 +394,16 @@ AUI.add(
 						}
 					},
 
+					_addFieldButton() {
+						var instance = this;
+
+						var addButton = A.one('.lfr-ddm-add-field');
+
+						if (addButton && addButton.hasClass('hide')) {
+							addButton.removeClass('hide');
+						}
+					},
+
 					_afterAutosave: function(event) {
 						var instance = this;
 
