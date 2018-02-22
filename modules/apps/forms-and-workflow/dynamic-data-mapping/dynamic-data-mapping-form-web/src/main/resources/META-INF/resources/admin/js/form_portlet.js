@@ -394,7 +394,7 @@ AUI.add(
 						}
 					},
 
-					_addFieldButton() {
+					_addFieldButton: function() {
 						var instance = this;
 
 						var addButton = A.one('.lfr-ddm-add-field');
@@ -839,7 +839,7 @@ AUI.add(
 						instance.submitForm();
 					},
 
-					_removeAddFieldButton() {
+					_removeAddFieldButton: function() {
 						var instance = this;
 
 						var addButton = A.one('.lfr-ddm-add-field');
