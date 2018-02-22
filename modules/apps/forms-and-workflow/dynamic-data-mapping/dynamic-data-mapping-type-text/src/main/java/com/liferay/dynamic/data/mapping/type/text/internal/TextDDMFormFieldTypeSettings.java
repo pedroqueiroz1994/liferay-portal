@@ -25,6 +25,7 @@ import com.liferay.dynamic.data.mapping.form.field.type.DefaultDDMFormFieldTypeS
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldOptions;
 import com.liferay.dynamic.data.mapping.model.DDMFormFieldValidation;
 import com.liferay.dynamic.data.mapping.model.LocalizedValue;
+import com.liferay.portal.kernel.util.StringPool;
 
 /**
  * @author Lino Alves
@@ -83,8 +84,8 @@ public interface TextDDMFormFieldTypeSettings
 
 	@DDMFormField(
 		label = "%create-list",
-		optionLabels = {"%manually", "%from-data-provider"},
-		optionValues = {"manual", "data-provider"},
+		optionLabels = {"%manually", "%from-data-provider", "%none"},
+		optionValues = {"manual", "data-provider", StringPool.BLANK},
 		properties = {"showLabel=false"}, type = "radio",
 		visibilityExpression = "TRUE"
 	)
