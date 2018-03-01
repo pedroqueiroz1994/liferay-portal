@@ -868,8 +868,6 @@ AUI.add(
 							instance.set('availableLocales', availableLocales);
 						}
 
-						var localizable = instance.get('localizable');
-
 						var locales = [defaultLocale].concat(availableLocales);
 
 						if (locales.indexOf(event.prevVal) > -1) {
@@ -879,6 +877,8 @@ AUI.add(
 						if (locales.indexOf(event.newVal) > -1) {
 							instance.addLocaleToLocalizationMap(event.newVal);
 						}
+
+						var localizable = instance.get('localizable');
 
 						instance.set('displayLocale', event.newVal);
 						instance.set('readOnly', defaultLocale !== event.newVal && !localizable);
