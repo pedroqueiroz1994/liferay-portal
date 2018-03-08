@@ -168,17 +168,56 @@
 
 	<div class="lfr-ddm-form-container" id="{$containerId}">
 		<div class="lfr-ddm-form-content">
-			{if length($pages) > 1}
+			{if  1 < length($pages) < 7}
 				<div class="lfr-ddm-form-wizard">
 					<ul class="multi-step-progress-bar multi-step-progress-bar-collapse">
 						{foreach $page in $pages}
 							<li {if isFirst($page)}class="active"{/if}>
-								<div class="progress-bar-title">{$page.title}</div>
 
-								<div class="divider"></div>
+								<div class="multi-step-divider"></div>
 
-								<div class="progress-bar-step">{index($page) + 1}</div>
+								<div class="dropdown multi-step-indicator">
+
+								<div class="multi-step-indicator-label">{$page.title}</div>
+
+								<a class="multi-step-icon" data-multi-step-icon="{index($page) + 1}" href="#1"></a>
+
+								</div>
 							</li>
+						{/foreach}
+					</ul>
+				</div>
+			{/if}
+
+			{if length($pages) > 7}
+				<div class="lfr-ddm-form-wizard">
+					<ul class="multi-step-progress-bar multi-step-progress-bar-collapse">
+						{foreach $page in $pages}
+							{if $page == $pages[length($pages) - 2]}
+								<li class="{if isFirst($page)}active{/if} multi-step-item multi-step-item-expand">
+								<div class="multi-step-divider"></div>
+								<div class="dropdown multi-step-indicator">
+									<div class="multi-step-indicator-label">{$page.title}</div>
+									<a aria-expanded="false" aria-haspopup="true" class="dropdown-toggle multi-step-icon" data-toggle="dropdown" href="#1" role="button">
+										<svg aria-hidden="true" class="lexicon-icon lexicon-icon-ellipsis-h">
+											<use xlink:href="/vendor/lexicon/icons.svg#ellipsis-h"></use>
+										</svg>
+									</a>
+								</div>
+							{else}
+								<li {if isFirst($page)}class="active"{/if}>
+
+								<div class="multi-step-divider"></div>
+
+								<div class="dropdown multi-step-indicator">
+
+								<div class="multi-step-indicator-label">{$page.title}</div>
+
+								<a class="multi-step-icon" data-multi-step-icon="{index($page) + 1}" href="#1"></a>
+
+								</div>
+								</li>
+							{/if}
 						{/foreach}
 					</ul>
 				</div>
