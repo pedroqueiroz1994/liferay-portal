@@ -1,9 +1,12 @@
 AUI.add(
 	'liferay-ddm-form-builder-wizard',
 	function(A) {
-		var TPL_WIZARD_SUCCESSPAGE = '<li class="{state}" data-success-page="true">' +
-				'<div class="progress-bar-title">{title}</div>' +
+		var TPL_WIZARD_SUCCESSPAGE = '<li class="{state} multi-step-item multi-step-item-expand" data-success-page="true">' +
+				'<div class="multi-step-divider">' +
+				'<div class="multi-step-indicator-label">{title}</div>' +
+				//falta reescrever aqui em baixo!
 				'<div class="progress-bar-success-item divider"></div>' +
+				'</div>' +
 			'</li>';
 
 		var FormBuilderWizard = A.Component.create(
