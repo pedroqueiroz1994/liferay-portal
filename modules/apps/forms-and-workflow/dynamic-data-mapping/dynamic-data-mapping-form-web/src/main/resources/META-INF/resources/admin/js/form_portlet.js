@@ -331,20 +331,20 @@ AUI.add(
 									toolbars: {
 										footer: [
 											{
+												cssClass: 'btn-secondary',
+												label: Liferay.Language.get('stay'),
+												on: {
+													click: function() {
+														cancel.call(instance, dialog);
+													}
+												}
+											},
+											{
 												cssClass: 'btn-primary',
 												label: Liferay.Language.get('leave'),
 												on: {
 													click: function() {
 														confirm.call(instance, dialog);
-													}
-												}
-											},
-											{
-												cssClass: 'btn-link',
-												label: Liferay.Language.get('stay'),
-												on: {
-													click: function() {
-														cancel.call(instance, dialog);
 													}
 												}
 											}
