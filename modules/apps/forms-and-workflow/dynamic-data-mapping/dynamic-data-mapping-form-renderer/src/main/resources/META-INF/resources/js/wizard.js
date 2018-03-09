@@ -11,15 +11,6 @@ AUI.add(
 		'</div>' +
 		'</li>';
 
-		var TPL_DROPDOWN_ACTIVE_ELEMENT = '<a class="{state} complete dropdown-item" href="#1">' +
-										  '{number}. {title}' +
-										  '<span aria-hidden="true" class="dropdown-item-indicator">' +
-										  '<svg aria-hidden="true" class="lexicon-icon lexicon-icon-check">' +
-										  '<use xlink:href="/vendor/lexicon/icons.svg#check" /> ' +
-										  '</svg>' +
-										  '</span>' +
-										  '</a>';
-
 		var Wizard = A.Component.create(
 			{
 				ATTRS: {
@@ -48,9 +39,6 @@ AUI.add(
 
 						var items = [];
 
-						// if (boundingBox.all('li') > 7) {
-						// 	//put logic to restrict to 7 nodes at the screen. <3
-						// }
 						boundingBox.all('li').each(
 							function(itemNode) {
 								var title = itemNode.one('.multi-step-indicator-label').text();
@@ -107,25 +95,10 @@ AUI.add(
 					activate: function(index) {
 						var instance = this;
 
-						var itemNumber = index + 1;
-
 						instance._setState(index, 'active');
 
 						//provide a way to create a dropdown node to active item
 						//`item` is the name of text element which i will use to type in checkboxes.
-
-						// if (itemNumber > 7) {
-						// 	A.Node.create(
-						// 		Lang.sub(
-						// 			TPL_DROPDOWN_ACTIVE_ELEMENT,
-						// 			{
-						// 				number: itemNumber,
-						// 				state: item.state,
-						// 				title: item.title
-						// 			}
-						// 		)
-						// 	);
-						// }
 					},
 
 					clear: function(index) {
