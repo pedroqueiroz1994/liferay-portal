@@ -152,15 +152,6 @@ templateSearch.setOrderByType(ddmDisplayContext.getOrderByType());
 	</div>
 </aui:form>
 
-<liferay-util:include page="/template_add_buttons.jsp" servletContext="<%= application %>">
-	<liferay-util:param name="redirect" value="<%= currentURL %>" />
-	<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-	<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
-	<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
-	<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
-	<liferay-util:param name="mode" value="<%= mode %>" />
-</liferay-util:include>
-
 <aui:script>
 	Liferay.Util.focusFormField(document.<portlet:namespace />searchForm.<portlet:namespace />keywords);
 </aui:script>
