@@ -145,12 +145,18 @@ AUI.add(
 						var instance = this;
 
 						instance._onChangeEditor(instance.getValue());
+						instance.isActionPerformed = true;
 					},
 
 					_onChangeEditor: function(value) {
 						var instance = this;
 
 						var inputNode = instance.getInputNode();
+
+						if (instance.isActionPerformed) {
+							instance.isActionPerformed = false;
+							return;
+						}
 
 						if (inputNode && !Util.compare(value, inputNode.val())) {
 							inputNode.val(value);
