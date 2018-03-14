@@ -700,15 +700,15 @@ AUI.add(
 								selectorInput.attr('disabled', instance.get('readOnly'));
 							}
 
-							var checkboxInput = container.one("input[type='checkbox']");
+							var checkboxInput = container.one('input[type="checkbox"]');
 
 							if (checkboxInput) {
 								checkboxInput.attr('disabled', instance.get('readOnly'));
 							}
 
-							var disableCheckboxInput = container.one("input[type='checkbox'][name$='disable']");
+							var disableCheckboxInput = container.one('input[type="checkbox"][name$="disable"]');
 
-							if (inputNode && disableCheckboxInput && disableCheckboxInput.get("checked")) {
+							if (inputNode && disableCheckboxInput && disableCheckboxInput.get('checked')) {
 								inputNode.attr('disabled', true);
 							}
 						}
@@ -2797,6 +2797,8 @@ AUI.add(
 					getInputName: function() {
 						var instance = this;
 
+						var inputNode;
+
 						if (instance.get('localizable')) {
 							var fieldsNamespace = instance.get('fieldsNamespace');
 							var portletNamespace = instance.get('portletNamespace');
@@ -2807,7 +2809,7 @@ AUI.add(
 								prefix.push(fieldsNamespace);
 							}
 
-							return prefix.concat(
+							inputNode = prefix.concat(
 								[
 									instance.get('name'),
 									'_',
@@ -2818,8 +2820,10 @@ AUI.add(
 							).join('');
 						}
 						else {
-							TextHTMLField.superclass.getInputName().apply(instance, arguments);
+							inputNode = TextHTMLField.superclass.getInputName().apply(instance, arguments);
 						}
+
+						return inputNode;
 					},
 
 					getValue: function() {
@@ -2868,14 +2872,12 @@ AUI.add(
 					updateTranslationsDefaultValue: function() {
 						var instance = this;
 
-						var localizationMap = instance.get('localizationMap');
 						var inputLocalized = Liferay.component(instance.getInputName());
+						var localizationMap = instance.get('localizationMap');
 
 						if (inputLocalized) {
 							inputLocalized.get('items').forEach(
-								function(item, index) {
-									var value = localizationMap[item];
-
+								function(item) {
 									localizationMap[item] = inputLocalized.getValue(item);
 								}
 							);
@@ -2888,7 +2890,6 @@ AUI.add(
 					_afterRenderTextHTMLField: function() {
 						var instance = this;
 
-						console.log('eee');
 						var container = instance.get('container');
 
 						container.placeAfter(instance.readOnlyText);
@@ -2906,8 +2907,8 @@ AUI.add(
 					_updateValues: function() {
 						var instance = this;
 
-						var localizationMap = instance.get('localizationMap');
 						var inputLocalized = Liferay.component(instance.getInputName());
+						var localizationMap = instance.get('localizationMap');
 
 						for (var languageId in localizationMap) {
 							inputLocalized.updateInputLanguage(localizationMap[languageId], languageId);
