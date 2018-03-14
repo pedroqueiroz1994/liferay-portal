@@ -332,19 +332,19 @@ AUI.add(
 										footer: [
 											{
 												cssClass: 'btn-secondary',
-												label: Liferay.Language.get('stay'),
+												label: Liferay.Language.get('leave'),
 												on: {
 													click: function() {
-														cancel.call(instance, dialog);
+														confirm.call(instance, dialog);
 													}
 												}
 											},
 											{
 												cssClass: 'btn-primary',
-												label: Liferay.Language.get('leave'),
+												label: Liferay.Language.get('stay'),
 												on: {
 													click: function() {
-														confirm.call(instance, dialog);
+														cancel.call(instance, dialog);
 													}
 												}
 											}
