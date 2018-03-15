@@ -143,7 +143,7 @@ AUI.add(
 
 					_onActionPerformed: function(event) {
 						var instance = this;
-						
+
 						if (event.data.props.tabKey == "twitter") {
 							instance._onChangeEditor(instance.getValue());
 						}
