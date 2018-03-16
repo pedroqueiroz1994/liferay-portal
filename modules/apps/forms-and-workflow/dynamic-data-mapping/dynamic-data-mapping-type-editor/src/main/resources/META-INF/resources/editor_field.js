@@ -141,16 +141,19 @@ AUI.add(
 						return !!A.one(document.activeElement).ancestor('.ae-ui');
 					},
 
-					_onActionPerformed: function() {
+					_onActionPerformed: function(event) {
 						var instance = this;
 
-						instance._onChangeEditor(instance.getValue());
+						if (event.data.props.tabKey == "twitter") {
+							instance._onChangeEditor(instance.getValue());
+						}
 					},
 
-					_onChangeEditor: function(value) {
+					_onChangeEditor: function() {
 						var instance = this;
 
 						var inputNode = instance.getInputNode();
+						var value = instance.getValue();
 
 						if (inputNode && !Util.compare(value, inputNode.val())) {
 							inputNode.val(value);
