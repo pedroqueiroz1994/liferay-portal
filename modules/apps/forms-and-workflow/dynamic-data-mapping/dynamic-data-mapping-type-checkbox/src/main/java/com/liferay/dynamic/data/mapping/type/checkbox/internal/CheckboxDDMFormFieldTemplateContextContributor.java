@@ -47,7 +47,7 @@ public class CheckboxDDMFormFieldTemplateContextContributor
 
 		parameters.put(
 			"predefinedValue",
-			Boolean.parseBoolean(
+			GetterUtil.getBoolean(
 				getPredefinedValue(
 					ddmFormField, ddmFormFieldRenderingContext)));
 
