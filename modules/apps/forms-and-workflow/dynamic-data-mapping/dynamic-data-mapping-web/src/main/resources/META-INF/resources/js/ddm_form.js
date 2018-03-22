@@ -488,7 +488,7 @@ AUI.add(
 						);
 					},
 
-					getInputName: function(component) {
+					getInputName: function() {
 						var instance = this;
 
 						var fieldsNamespace = instance.get('fieldsNamespace');
@@ -500,27 +500,13 @@ AUI.add(
 							prefix.push(fieldsNamespace);
 						}
 
-						if (instance.get('localizable') && component) {
-							return prefix.concat(
-								[
-									instance.get('name'),
-									'_',
-									INSTANCE_ID_PREFIX,
-									'_',
-									instance.get('instanceId')
-								]
-							).join('');
-						}
-						else {
-							return prefix.concat(
-								[
-									instance.get('name'),
-									INSTANCE_ID_PREFIX,
-									instance.get('instanceId')
-								]
-							).join('');
-						}
-
+						return prefix.concat(
+							[
+								instance.get('name'),
+								INSTANCE_ID_PREFIX,
+								instance.get('instanceId')
+							]
+						).join('');
 					},
 
 					getInputNode: function() {
@@ -673,8 +659,7 @@ AUI.add(
 					setValue: function(value) {
 						var instance = this;
 
-						var localizable = instance.get('localizable');
-						var inputLocalized = Liferay.component(instance.getInputName(instance.get('localizable')));
+						var inputLocalized = Liferay.component(instance.getInputName());
 
 						if (inputLocalized) {
 							var localizationMap = instance.get('localizationMap');
@@ -809,7 +794,7 @@ AUI.add(
 
 						var localizationMap = instance.get('localizationMap');
 
-						var inputLocalized = Liferay.component(instance.getInputName(instance.get('localizable')));
+						var inputLocalized = Liferay.component(instance.getInputName());
 
 						if (inputLocalized) {
 							inputLocalized.get('items').forEach(
@@ -2565,7 +2550,7 @@ AUI.add(
 
 						var notEmpty = instance.isNotEmpty(parsedValue);
 
-						var altNode = A.one('#' + instance.getInputName(instance.get('localizable')) + 'Alt');
+						var altNode = A.one('#' + instance.getInputName() + 'Alt');
 
 						altNode.attr('disabled', !notEmpty);
 
@@ -2637,7 +2622,7 @@ AUI.add(
 
 						var parsedValue = instance.getParsedValue(ImageField.superclass.getValue.apply(instance, arguments));
 
-						var inputLocalized = Liferay.component(instance.getInputName(instance.get('localizable')) + 'Alt');
+						var inputLocalized = Liferay.component(instance.getInputName() + 'Alt');
 
 						if (instance.isNotEmpty(parsedValue)) {
 							if (inputLocalized) {
@@ -2648,7 +2633,7 @@ AUI.add(
 								);
 							}
 							else {
-								var altNode = A.one('#' + instance.getInputName(instance.get('localizable')) + 'Alt');
+								var altNode = A.one('#' + instance.getInputName() + 'Alt');
 
 								parsedValue.alt = altNode.val();
 							}
@@ -2675,7 +2660,7 @@ AUI.add(
 
 						var parsedValue = instance.getParsedValue(value);
 
-						var inputLocalized = Liferay.component(instance.getInputName(instance.get('localizable')) + 'Alt');
+						var inputLocalized = Liferay.component(instance.getInputName() + 'Alt');
 
 						if (instance.isNotEmpty(parsedValue)) {
 							if (!parsedValue.name && parsedValue.title) {
@@ -2690,7 +2675,7 @@ AUI.add(
 								);
 							}
 							else {
-								var altNode = A.one('#' + instance.getInputName(instance.get('localizable')) + 'Alt');
+								var altNode = A.one('#' + instance.getInputName() + 'Alt');
 
 								altNode.val(parsedValue.alt);
 							}
@@ -2862,7 +2847,7 @@ AUI.add(
 					setValue: function(value) {
 						var instance = this;
 
-						var editorComponentName = instance.getInputName(instance.get('localizable')) + 'Editor';
+						var editorComponentName = instance.getInputName() + 'Editor';
 
 						Liferay.componentReady(editorComponentName).then(
 							function(editor) {
