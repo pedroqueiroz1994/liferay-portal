@@ -21,7 +21,7 @@ AUI.add(
 				EXTENDS: Liferay.DDM.Renderer.Field,
 
 				NAME: 'liferay-ddm-form-field-checkbox',
-	
+
 				prototype: {
 					getBooleanValue: function(value) {
 						var instance = this;
