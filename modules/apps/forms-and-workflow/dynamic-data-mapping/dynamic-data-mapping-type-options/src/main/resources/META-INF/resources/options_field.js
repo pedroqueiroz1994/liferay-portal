@@ -209,13 +209,15 @@ AUI.add(
 					moveOption: function(oldIndex, newIndex) {
 						var instance = this;
 
-						var value = instance.getValue();
+						var value = instance.get('value');
 
-						value.splice(newIndex, 0, value.splice(oldIndex, 1)[0]);
+						AObject.keys(value).forEach(
+							function(languageId) {
+								value[languageId].splice(newIndex, 0, value[languageId].splice(oldIndex, 1)[0]);
+							}
+						);
 
-						instance._setValue(value);
-
-						instance._renderOptions();
+						instance.setValue(value);
 					},
 
 					processEvaluationContext: function(context) {
