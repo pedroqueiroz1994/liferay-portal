@@ -19,17 +19,17 @@
 	{@param? label: string}
 
 	<div class="form-group{$visible ? '' : ' hide'} liferay-ddm-form-field-options" data-fieldname="{$name}">
-		{if $showLabel}
-			<label class="control-label">
+		<label class="control-label">
+			{if $showLabel}
 				{$label}{sp}
+			{/if}
 
-				{if $required}
-					<svg aria-hidden="true" class="lexicon-icon lexicon-icon-asterisk reference-mark">
-						<use xlink:href="{$pathThemeImages}/lexicon/icons.svg#asterisk" />
-					</svg>
-				{/if}
-			</label>
-		{/if}
+			{if $required}
+				<svg aria-hidden="true" class="lexicon-icon lexicon-icon-asterisk reference-mark">
+					<use xlink:href="{$pathThemeImages}/lexicon/icons.svg#asterisk" />
+				</svg>
+			{/if}
+		</label>
 
 		<input
 			name="{$name}"
