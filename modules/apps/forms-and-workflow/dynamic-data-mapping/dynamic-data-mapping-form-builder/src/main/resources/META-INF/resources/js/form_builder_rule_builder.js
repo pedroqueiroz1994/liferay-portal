@@ -122,7 +122,7 @@ AUI.add(
 												operand.label = instance._getFieldLabel(operand.value);
 
 												if (!operand.label) {
-													operand.label = operand.value;
+													operand.label = String(operand.value);
 												}
 											}
 										);
