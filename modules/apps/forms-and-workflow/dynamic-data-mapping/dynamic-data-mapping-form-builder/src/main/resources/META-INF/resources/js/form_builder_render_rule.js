@@ -390,6 +390,9 @@ AUI.add(
 						);
 
 						if (field) {
+							if (field.type === 'date') {
+								return field.type;
+							}
 							return field.dataType;
 						}
 
