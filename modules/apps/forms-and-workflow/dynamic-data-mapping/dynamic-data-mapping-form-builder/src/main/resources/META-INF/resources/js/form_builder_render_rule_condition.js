@@ -497,7 +497,13 @@ AUI.add(
 			_isConstant: function(operandTypeValue) {
 				var instance = this;
 
-				return operandTypeValue === 'double' || operandTypeValue === 'integer' || operandTypeValue === 'string';
+				return operandTypeValue === 'double' || operandTypeValue === 'integer' || operandTypeValue === 'string' || operandTypeValue === 'date';
+			},
+
+			_isDate: function(operandTypeValue) {
+				var instance = this;
+
+				return operandTypeValue === 'date';
 			},
 
 			_isEmpty: function(operator) {
@@ -510,6 +516,18 @@ AUI.add(
 				var value = field.getValue()[0] || '';
 
 				return instance._getFieldOptions(value).length > 0 && instance._getFieldType(value) !== 'text';
+			},
+
+			_isNumber: function(operandTypeValue) {
+				var instance = this;
+
+				return operandTypeValue === 'double' || operandTypeValue === 'integer';
+			},
+
+			_isText: function(operandTypeValue) {
+				var instance = this;
+
+				return operandTypeValue === 'string';
 			},
 
 			_isUnaryCondition: function(index) {
