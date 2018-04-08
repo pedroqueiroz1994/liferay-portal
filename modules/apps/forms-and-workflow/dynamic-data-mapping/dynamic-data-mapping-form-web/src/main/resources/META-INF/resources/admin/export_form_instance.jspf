@@ -55,9 +55,21 @@
 				{
 					dialog: {
 						bodyContent: form,
+						height: 275,
+						resizable: false,
 						toolbars: {
 							footer: [
 								{
+									cssClass: 'btn-secondary',
+									label: '<liferay-ui:message key="cancel" />',
+									on: {
+										click: function() {
+											dialog.hide();
+										}
+									}
+								},
+								{
+									cssClass: 'btn-primary',
 									label: '<liferay-ui:message key="ok" />',
 									on: {
 										click: function() {
@@ -65,30 +77,11 @@
 
 											dialog.hide();
 										}
-									},
-									primary: true
-								},
-								{
-									label: '<liferay-ui:message key="cancel" />',
-									on: {
-										click: function() {
-											dialog.hide();
-										}
-									}
-								}
-							],
-							header: [
-								{
-									cssClass: 'close',
-									label: '\u00D7',
-									on: {
-										click: function(event) {
-											dialog.hide();
-										}
 									}
 								}
 							]
-						}
+						},
+						width: 300
 					},
 					title: '<%= UnicodeLanguageUtil.get(request, "export") %>'
 				}
