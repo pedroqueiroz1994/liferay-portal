@@ -262,34 +262,55 @@ AUI.add(
 					_getActionOptions: function() {
 						var instance = this;
 
+						var actions = [];
+						var pages = instance.get('pages');
 						var strings = instance.get('strings');
 
-						return [
+						actions.push(
 							{
 								label: strings.show,
 								value: 'show'
-							},
+							}
+						);
+
+						actions.push(
 							{
 								label: strings.enable,
 								value: 'enable'
-							},
+							}
+						);
+
+						actions.push(
 							{
 								label: strings.require,
 								value: 'require'
-							},
+							}
+						);
+
+						actions.push(
 							{
 								label: strings.autofill,
 								value: 'auto-fill'
-							},
-							{
-								label: strings.jumpToPage,
-								value: 'jump-to-page'
-							},
+							}
+						);
+
+						if (pages.length > 2) {
+							actions.push(
+								{
+									label: strings.jumpToPage,
+									value: 'jump-to-page'
+								}
+							);
+						}
+
+						actions.push(
 							{
 								label: strings.calculate,
 								value: 'calculate'
 							}
-						];
+						);
+
+						return actions;
 					},
 
 					_getActions: function() {
