@@ -106,15 +106,16 @@ AUI.add(
 						var value = [];
 
 						var action = instance.get('action');
+						var pageIndex = action.target;
 
-						if (action && action.target) {
-							if (action.target.value) {
-								value = [action.target.value];
+						if (action && pageIndex) {
+							if (pageIndex.value) {
+								value = [pageIndex.value];
 							}
 							else {
 								var options = instance.get('options');
 
-								value = [options[action.target].value];
+								value = options[pageIndex] ? [options[pageIndex].value] : [];
 							}
 						}
 
