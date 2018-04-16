@@ -341,19 +341,19 @@ AUI.add(
 					_getConditionSelectedFieldsPage: function() {
 						var instance = this;
 
-						var fields = [];
+						var pages = [];
 
 						for (var conditionKey in instance._conditions) {
 							if (!!conditionKey.match('-condition-second-operand-select') || !!conditionKey.match('-condition-first-operand')) {
 								var fieldName = instance._getSelectFieldFirstValue(instance._conditions[conditionKey]);
 
 								if (fieldName && fieldName != 'user') {
-									fields.push(instance._getFieldPageIndex(fieldName));
+									pages.push(instance._getFieldPageIndex(fieldName));
 								}
 							}
 						}
 
-						return fields;
+						return pages;
 					},
 
 					_getFieldDataType: function(fieldName) {
