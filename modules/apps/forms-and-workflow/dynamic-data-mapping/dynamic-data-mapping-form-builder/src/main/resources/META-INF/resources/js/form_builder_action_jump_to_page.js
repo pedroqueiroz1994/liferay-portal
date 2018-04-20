@@ -37,6 +37,7 @@ AUI.add(
 
 						instance._setSourcePage(String(Math.max(pages)));
 						instance._setTargetOptions(options);
+						instance._setTargetValue();
 					},
 
 					getValue: function() {
@@ -57,6 +58,12 @@ AUI.add(
 
 						instance._createSourceField().render(fieldsListContainer);
 						instance._createTargetField().render(fieldsListContainer);
+					},
+
+					_clearTargetValue: function() {
+						var instance = this;
+
+						instance._targetField.set('value', []);
 					},
 
 					_createSourceField: function() {
@@ -137,6 +144,15 @@ AUI.add(
 						var instance = this;
 
 						instance._targetField.set('options', pages);
+					},
+
+					_setTargetValue: function() {
+						var instance = this;
+
+						var previousValue = instance._targetField.get('value');
+
+						instance._clearTargetValue();
+						instance._targetField.set('value', previousValue);
 					}
 				}
 			}
