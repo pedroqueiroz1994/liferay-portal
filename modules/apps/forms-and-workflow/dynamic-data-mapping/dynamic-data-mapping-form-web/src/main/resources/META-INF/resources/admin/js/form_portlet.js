@@ -559,7 +559,7 @@ AUI.add(
 
 												instance._defineIds(responseData);
 
-												instance.savedState = state;
+												instance.savedState = A.clone(state);
 
 												instance.fire(
 													'autosave',
@@ -924,7 +924,7 @@ AUI.add(
 						instance.renderUI();
 						instance.bindUI();
 
-						instance.savedState = instance.getState();
+						instance.savedState = A.clone(instance.getState());
 					},
 
 					_onRulesButtonClick: function() {
