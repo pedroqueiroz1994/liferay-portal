@@ -143,7 +143,8 @@ public class DDMFormRuleConverter {
 
 		String value = operand.getValue();
 
-		if (isNumericConstant(operand.getType())) {
+		if (isDateConstant(operand.getType()) ||
+			isNumericConstant(operand.getType())) {
 			return value;
 		}
 
@@ -235,6 +236,14 @@ public class DDMFormRuleConverter {
 					"Unable to parse expression \"%s\"", expressionString),
 				ddmee);
 		}
+	}
+
+	protected boolean isDateConstant(String operandType) {
+		if (operandType.equals("date")) {
+			return true;
+		}
+
+		return false;
 	}
 
 	protected boolean isNumericConstant(String operandType) {
