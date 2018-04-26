@@ -348,20 +348,28 @@ AUI.add(
 			_getSecondOperand: function(index, type) {
 				var instance = this;
 
-				switch (type) {
-				case 'date':
-					return instance._conditions[index + '-condition-second-operand-date'];
-				case 'double':
-					return instance._conditions[index + '-condition-second-operand-decimal'];
-				case 'fields':
-					return instance._conditions[index + '-condition-second-operand-select'];
-				case 'integer':
-					return instance._conditions[index + '-condition-second-operand-integer'];
-				case 'options':
-					return instance._conditions[index + '-condition-second-operand-options-select'];
-				default:
-					return instance._conditions[index + '-condition-second-operand-input-text'];
+				var secondOperand;
+
+				if (type == 'date') {
+					secondOperand = instance._conditions[index + '-condition-second-operand-date'];
 				}
+				else if (type == 'double') {
+					secondOperand = instance._conditions[index + '-condition-second-operand-decimal'];
+				}
+				else if (type == 'fields') {
+					secondOperand = instance._conditions[index + '-condition-second-operand-select'];
+				}
+				else if (type == 'integer') {
+					secondOperand = instance._conditions[index + '-condition-second-operand-integer'];
+				}
+				else if (type == 'options') {
+					secondOperand = instance._conditions[index + '-condition-second-operand-options-select'];
+				}
+				else {
+					secondOperand = instance._conditions[index + '-condition-second-operand-input-text'];
+				}
+
+				return secondOperand;
 			},
 
 			_getSecondOperandType: function(index) {
