@@ -101,7 +101,8 @@ AUI.add(
 
 						return {
 							allowDecimal: true,
-							decimalLimit: 6,
+							allowLeadingZeroes: true,
+							decimalLimit: null,
 							decimalSymbol: symbols.decimalSymbol,
 							includeThousandsSeparator: false,
 							prefix: ''
@@ -136,21 +137,7 @@ AUI.add(
 					getValue: function() {
 						var instance = this;
 
-						var inputNode = instance.getInputNode();
-
-						var value = inputNode.val();
-
-						if (value === '') {
-							return value;
-						}
-
-						var dataType = instance.get('dataType');
-
-						if (dataType === 'integer') {
-							return parseInt(value, 10);
-						}
-
-						return parseFloat(value);
+						return instance.get('value');
 					},
 
 					showErrorMessage: function() {
