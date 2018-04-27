@@ -103,7 +103,7 @@ AUI.add(
 						instance._createBadgeTooltip();
 
 						instance._eventHandlers.push(
-							A.one('doc').after('click', A.bind(instance._afterClickOutside, instance)),
+							A.one('doc').after('click', A.bind(instance._afterDocumentClick, instance)),
 							instance.bindContainerEvent('click', instance._handleContainerClick, '.' + CSS_FORM_FIELD_CONTAINER)
 						);
 					},
@@ -114,6 +114,8 @@ AUI.add(
 						if (instance._tooltip) {
 							instance._tooltip.destroy();
 						}
+
+						(new A.EventHandle(instance._eventHandlers)).detach();
 					},
 
 					cleanSelect: function() {
@@ -277,14 +279,10 @@ AUI.add(
 						}
 					},
 
-					_afterClickOutside: function(event) {
+					_afterDocumentClick: function(event) {
 						var instance = this;
 
-						if (!instance._preventDocumentClick && instance._isClickingOutSide(event)) {
-							instance.closeList();
-						}
-
-						instance._preventDocumentClick = false;
+						instance.closeList();
 					},
 
 					_createBadgeTooltip: function() {
@@ -328,6 +326,8 @@ AUI.add(
 					_handleContainerClick: function(event) {
 						var instance = this;
 
+						event.stopPropagation();
+
 						var target = event.target;
 
 						var addRepeatebleButton = target.hasClass('lfr-ddm-form-field-repeatable-add-button');
@@ -354,8 +354,6 @@ AUI.add(
 						else if (!addRepeatebleButton && !deleteRepeatebleButton) {
 							instance._handleSelectTriggerClick(event);
 						}
-
-						instance._preventDocumentClick = true;
 					},
 
 					_handleItemClick: function(target) {
@@ -420,24 +418,6 @@ AUI.add(
 						);
 
 						return hasOption;
-					},
-
-					_isClickingOutSide: function(event) {
-						var instance = this;
-
-						var container = instance.get('container');
-
-						var triggers = instance.get('triggers');
-
-						if (triggers.length) {
-							for (var i = 0; i < triggers.length; i++) {
-								if (triggers[i].contains(event.target)) {
-									return false;
-								}
-							}
-						}
-
-						return !container.contains(event.target);
 					},
 
 					_isListOpen: function() {
