@@ -20,12 +20,14 @@ import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.service.DDMFormInstanceRecordLocalService;
 import com.liferay.exportimport.kernel.staging.permission.StagingPermission;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.security.permission.ActionKeys;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermission;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionFactory;
 import com.liferay.portal.kernel.security.permission.resource.ModelResourcePermissionLogic;
 import com.liferay.portal.kernel.security.permission.resource.PortletResourcePermission;
 import com.liferay.portal.kernel.util.HashMapDictionary;
+import com.liferay.portal.kernel.workflow.WorkflowConstants;
 
 import java.util.Dictionary;
 
@@ -57,6 +59,24 @@ public class DDMFormInstanceRecordModelResourcePermissionRegistrar {
 				_ddmFormInstanceRecordLocalService::getDDMFormInstanceRecord,
 				_portletResourcePermission,
 				(modelResourcePermission, consumer) -> {
+					consumer.accept(
+						(
+							permissionChecker, name, formInstanceRecord,
+							actionId) -> {
+							if (!actionId.equals(ActionKeys.UPDATE)) {
+								return null;
+							}
+
+							if ((formInstanceRecord.getStatus() ==
+									WorkflowConstants.STATUS_DRAFT) &&
+								(formInstanceRecord.getUserId() ==
+									permissionChecker.getUserId())) {
+
+								return true;
+							}
+
+							return null;
+						});
 					consumer.accept(
 						new DDMFormInstanceRecordInheritancePermissionLogic());
 				}),
