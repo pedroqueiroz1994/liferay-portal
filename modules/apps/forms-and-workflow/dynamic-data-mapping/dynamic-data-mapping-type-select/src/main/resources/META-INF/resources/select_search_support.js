@@ -39,7 +39,9 @@ AUI.add(
 			_afterCloseList: function() {
 				var instance = this;
 
-				instance.clearFilter();
+				if (instance._showSearch()) {
+					instance.clearFilter();
+				}
 			},
 
 			_afterOpenList: function() {
@@ -47,7 +49,9 @@ AUI.add(
 
 				var searchInputNode = instance._getInputSearch();
 
-				searchInputNode.focus();
+				if (instance._showSearch()) {
+					searchInputNode.focus();
+				}
 			},
 
 			_afterStartSearching: function(event) {
