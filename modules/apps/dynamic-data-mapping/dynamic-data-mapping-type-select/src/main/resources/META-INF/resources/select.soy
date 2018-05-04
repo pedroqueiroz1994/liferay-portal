@@ -299,7 +299,7 @@
 				{param value: $value /}
 			{/call}
 		{/if}
-		{if length($options) == 0}
+		{if $fixedOptions and length($fixedOptions) == 0 and length($options) == 0}
 			<li class="no-results-list">
 				<span>
 					{$strings.emptyList}
