@@ -39,7 +39,7 @@
 			basic: list<[description: string, icon: html, label: string, name: string]>,
 			customized: list<[description: string, icon: html, label: string, name: string]>
 		]}
-	{@param strings: [basic: string, customized: string, elements: string, element_set: string, emptyListText: string]}
+	{@param strings: [basic: string, customized: string, elementSets: string, elements: string, emptyElementSetListMessage: string]}
 	{@param? icons: [angleDown: html, angleRight: html]}
 
 	<div class="sidebar-body">
@@ -60,7 +60,7 @@
 					<a href="javascript:;"
 						class="tab-content tab-label"
 						role="tab">
-						{$strings.element_set}
+						{$strings.elementSets}
 					</a>
 				</li>
 			</ul>
@@ -92,7 +92,7 @@
 				{if $fieldSets}
 					{call .render_field_set_list_group}
 						{param fieldSets: $fieldSets /}
-						{param message: $strings.emptyListText /}
+						{param message: $strings.emptyElementSetListMessage /}
 					{/call}
 				{/if}
 			</div>
