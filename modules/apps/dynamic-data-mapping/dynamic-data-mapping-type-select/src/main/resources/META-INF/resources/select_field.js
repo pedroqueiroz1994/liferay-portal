@@ -174,6 +174,7 @@ AUI.add(
 								predefinedValue: instance.get('readOnly') ? instance.get('predefinedValue') : instance.getValue(),
 								selectCaretDoubleIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('caret-double')),
 								selectSearchIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('search')),
+								showPlaceholderOption: instance._showPlaceholderOption(),
 								strings: instance.get('strings'),
 								value: instance.getValue()
 							}
@@ -378,7 +379,12 @@ AUI.add(
 							}
 						}
 						else {
-							value = [itemValue];
+							if (itemValue === '') {
+								value = [];
+							}
+							else {
+								value = [itemValue];
+							}
 
 							instance._open = false;
 						}
@@ -493,6 +499,20 @@ AUI.add(
 						for (var i = 0; i < value.length; i++) {
 							instance._selectDOMOption(optionNode, value[i]);
 						}
+					},
+
+					_showPlaceholderOption: function() {
+						var instance = this;
+
+						var showPlaceholderOption = false;
+
+						if ((instance.get('fixedOptions') || instance.get('options')) && !instance.get('multiple')) {
+							showPlaceholderOption = true;
+						}
+
+						return showPlaceholderOption;
+					},
+
 					}
 				}
 			}
