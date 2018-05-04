@@ -7,7 +7,7 @@ AUI.add(
 			{
 				ATTRS: {
 					dataType: {
-						value: 'string'
+						value: 'date'
 					},
 
 					mask: {
@@ -57,6 +57,12 @@ AUI.add(
 						}
 
 						return formattedDate || '';
+					},
+
+					getEvaluationContext: function(context) {
+						return {
+							dataType: context.dataType
+						};
 					},
 
 					getISODate: function(date) {

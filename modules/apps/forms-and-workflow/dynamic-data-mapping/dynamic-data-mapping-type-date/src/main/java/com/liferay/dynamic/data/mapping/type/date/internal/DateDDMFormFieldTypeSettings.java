@@ -67,7 +67,13 @@ public interface DateDDMFormFieldTypeSettings
 	extends DefaultDDMFormFieldTypeSettings {
 
 	@DDMFormField(
-		dataType = "string", label = "%predefined-value", type = "date"
+		predefinedValue = "date", required = true,
+		visibilityExpression = "FALSE"
+	)
+	public String dataType();
+
+	@DDMFormField(
+		dataType = "date", label = "%predefined-value", type = "date"
 	)
 	@Override
 	public LocalizedValue predefinedValue();
