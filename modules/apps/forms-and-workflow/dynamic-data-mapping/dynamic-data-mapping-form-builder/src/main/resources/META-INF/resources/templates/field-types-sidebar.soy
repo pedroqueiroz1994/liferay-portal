@@ -152,15 +152,11 @@
 			</div>
 			{ifempty}
 				<div class="main-content-body">
-					<div class="sheet">
-						<div class="taglib-empty-result-message-header"></div>
-
-						{if $message}
-							<div class="sheet-text text-center text-muted">
-								<p class="text-default">{$message}</p>
-							</div>
-						{/if}
-					</div>
+					{if $message}
+						<div class="text-center text-muted">
+							<p class="text-default">{$message}</p>
+						</div>
+					{/if}
 				</div>
 		{/foreach}
 	</div>
