@@ -25,6 +25,8 @@ AUI.add(
 
 		var CSS_SELECT_TRIGGER_ACTION = A.getClassName('select', 'field', 'trigger');
 
+		var MAX_DROPDOWN_ITEMS = 11;
+
 		var Lang = A.Lang;
 
 		var TPL_OPTION = '<option>{label}</option>';
@@ -175,6 +177,7 @@ AUI.add(
 								selectCaretDoubleIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('caret-double')),
 								selectSearchIcon: soyIncDom(Liferay.Util.getLexiconIconTpl('search')),
 								showPlaceholderOption: instance._showPlaceholderOption(),
+								showSearch: instance._showSearch(),
 								strings: instance.get('strings'),
 								value: instance.getValue()
 							}
@@ -511,6 +514,24 @@ AUI.add(
 						}
 
 						return showPlaceholderOption;
+					},
+
+					_showSearch: function() {
+						var instance = this;
+
+						var fixedOptions = instance.get('fixedOptions');
+
+						var options = instance.get('options');
+
+						var fieldOptions = options.concat(fixedOptions);
+
+						var showSearch = false;
+
+						if (fieldOptions.length > MAX_DROPDOWN_ITEMS) {
+							showSearch = true;
+						}
+
+						return showSearch;
 					},
 
 					}

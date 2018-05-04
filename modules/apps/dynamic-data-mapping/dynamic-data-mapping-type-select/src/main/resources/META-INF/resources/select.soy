@@ -28,6 +28,7 @@
 	{@param? required: bool}
 	{@param? selectCaretDoubleIcon: html}
 	{@param? selectSearchIcon: html}
+	{@param? showSearch: bool}
 	{@param? showPlaceholderOption: bool}
 	{@param? showLabel: bool}
 	{@param? tip: string}
@@ -118,6 +119,7 @@
 				{if not $readOnly}
 					<div class="drop-chosen {$open ? '' : 'hide'}">
 						<div aria-labelledby="theDropdownToggleId" class="dropdown-menu">
+							{if $showSearch}
 								<div class="dropdown-section">
 									<div class="input-group input-group-sm">
 										<div class="input-group-item">
@@ -132,6 +134,7 @@
 										</div>
 									</div>
 								</div>
+							{/if}
 							{call .select_options data="all" /}
 						</div>
 					</div>
