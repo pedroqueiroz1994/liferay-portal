@@ -62,7 +62,6 @@ AUI.add(
 							instance.after('valueChange', A.bind('_afterValueChange', instance)),
 							instance.after('render', instance._loadValidationFieldType, instance),
 							instance.bindContainerEvent('change', A.bind('_setErrorMessage', instance), '.message-input'),
-							instance.bindContainerEvent('change', A.bind('_setParameterValue', instance), '.parameter-input'),
 							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), '.enable-validation'),
 							instance.bindContainerEvent('change', A.bind('_syncValidationUI', instance), 'select')
 						);
@@ -191,7 +190,6 @@ AUI.add(
 							parameterMessage = selectedValidation.parameterMessage;
 						}
 
-						var field;
 						var fieldConfig = {
 							fieldName: '',
 							options: [],
@@ -203,6 +201,8 @@ AUI.add(
 							visible: true
 						};
 
+						var field;
+
 						if (dataType == 'integer') {
 							field = instance.createIntegerField(fieldConfig);
 						}
@@ -212,6 +212,8 @@ AUI.add(
 						else {
 							field = instance.createTextField(fieldConfig);
 						}
+
+						field.after('blur', A.bind('_setParameterValue', instance));
 
 						return field;
 					},
@@ -327,9 +329,9 @@ AUI.add(
 					_setParameterValue: function(event) {
 						var instance = this;
 
-						var input = event.target;
+						var field = event.target;
 
-						instance.set('parameterValue', input.val());
+						instance.set('parameterValue', field.getValue());
 						instance.set('value', instance.getValue());
 					},
 
