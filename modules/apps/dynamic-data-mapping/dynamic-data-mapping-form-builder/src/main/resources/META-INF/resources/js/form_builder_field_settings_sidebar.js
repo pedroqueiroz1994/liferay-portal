@@ -497,10 +497,10 @@ AUI.add(
 					_loadFieldSettingsForm: function(field) {
 						var instance = this;
 
+						instance.destroyFieldSettingsForm();
+
 						field.loadSettingsForm().then(
 							function(settingsForm) {
-								instance.destroyFieldSettingsForm();
-
 								instance.settingsForm = settingsForm;
 
 								instance._configureSideBar(field);
