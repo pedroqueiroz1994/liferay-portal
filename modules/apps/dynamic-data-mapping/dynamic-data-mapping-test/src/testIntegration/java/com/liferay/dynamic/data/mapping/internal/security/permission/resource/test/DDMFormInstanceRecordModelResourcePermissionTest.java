@@ -25,7 +25,6 @@ import com.liferay.dynamic.data.mapping.service.test.BaseDDMServiceTestCase;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormTestUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormValuesTestUtil;
-import com.liferay.portal.kernel.model.Group;
 import com.liferay.portal.kernel.model.User;
 import com.liferay.portal.kernel.security.auth.PrincipalThreadLocal;
 import com.liferay.portal.kernel.security.permission.ActionKeys;
@@ -87,7 +86,7 @@ public class DDMFormInstanceRecordModelResourcePermissionTest
 	}
 
 	@Test
-	public void testUpdateApprovedFormInstanceRecordByCreatorShouldBeFalse()
+	public void testUpdateApprovedFormInstanceRecordByOwnerShouldBeFalse()
 		throws Exception {
 
 		DDMFormInstance formInstance = createFormInstance();
@@ -114,7 +113,7 @@ public class DDMFormInstanceRecordModelResourcePermissionTest
 	}
 
 	@Test
-	public void testUpdateDraftFormInstanceRecordByCreatorShouldBeTrue()
+	public void testUpdateDraftFormInstanceRecordByOwnerShouldBeTrue()
 		throws Exception {
 
 		DDMFormInstance formInstance = createFormInstance();
@@ -184,9 +183,6 @@ public class DDMFormInstanceRecordModelResourcePermissionTest
 	)
 	private ModelResourcePermission<DDMFormInstanceRecord>
 		_ddmFormInstanceRecordModelResourcePermission;
-
-	@DeleteAfterTestRun
-	private Group _group;
 
 	private String _originalName;
 	private PermissionChecker _originalPermissionChecker;
