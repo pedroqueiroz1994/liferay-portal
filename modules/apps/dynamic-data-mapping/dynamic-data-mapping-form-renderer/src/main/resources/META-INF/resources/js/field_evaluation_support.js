@@ -74,7 +74,9 @@ AUI.add(
 
 				var evaluator = instance.get('evaluator');
 
-				evaluator.setEvaluating(instance);
+				if (evaluator) {
+					evaluator.setEvaluating(instance);
+				}
 			}
 		};
 
