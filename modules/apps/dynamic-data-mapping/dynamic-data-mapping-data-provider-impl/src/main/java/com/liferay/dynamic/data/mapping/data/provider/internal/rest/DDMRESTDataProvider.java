@@ -29,7 +29,6 @@ import com.liferay.petra.string.CharPool;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.cache.MultiVMPool;
 import com.liferay.portal.kernel.cache.PortalCache;
-import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.util.Http;
 import com.liferay.portal.kernel.util.KeyValuePair;
 import com.liferay.portal.kernel.util.ListUtil;
@@ -366,11 +365,6 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 	}
 
 	@Reference(unbind = "-")
-	protected void setJSONFactory(JSONFactory jsonFactory) {
-		_jsonFactory = jsonFactory;
-	}
-
-	@Reference(unbind = "-")
 	protected void setMultiVMPool(MultiVMPool multiVMPool) {
 		_portalCache =
 			(PortalCache<String, DDMRESTDataProviderResult>)
@@ -402,7 +396,6 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 				ddmDataProviderRequest, ddmRESTDataProviderSettings));
 	}
 
-	private JSONFactory _jsonFactory;
 	private final Pattern _pathParameterPattern = Pattern.compile("\\{(.*)\\}");
 	private PortalCache<String, DDMRESTDataProviderResult> _portalCache;
 
