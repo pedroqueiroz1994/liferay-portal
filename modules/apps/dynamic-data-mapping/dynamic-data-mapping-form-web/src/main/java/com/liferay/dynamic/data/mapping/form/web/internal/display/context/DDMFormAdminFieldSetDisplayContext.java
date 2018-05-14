@@ -106,9 +106,7 @@ public class DDMFormAdminFieldSetDisplayContext
 			{
 				add(
 					dropdownItem -> {
-						dropdownItem.setHref(
-							"javascript:" + renderResponse.getNamespace() +
-								"deleteStructures();");
+						dropdownItem.putData("action", "deleteStructures");
 						dropdownItem.setIcon("trash");
 						dropdownItem.setLabel("recycle-bin");
 						dropdownItem.setQuickAction(true);
