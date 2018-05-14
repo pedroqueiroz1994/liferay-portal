@@ -28,7 +28,7 @@ RecordSetSearch recordSetSearch = ddlDisplayContext.getRecordSetSearch(portletUR
 
 <liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>" />
 
-<liferay-util:include page="/toolbar.jsp" servletContext="<%= application %>" />
+<liferay-util:include page="/management_bar.jsp" servletContext="<%= application %>" />
 
 <div class="container-fluid-1280" id="<portlet:namespace />formContainer">
 	<aui:form action="<%= portletURL.toString() %>" method="post" name="fm">
