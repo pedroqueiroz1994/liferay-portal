@@ -24,6 +24,13 @@ DDLViewRecordsDisplayContext ddlViewRecordsDisplayContext = new DDLViewRecordsDi
 PortletURL portletURL = ddlViewRecordsDisplayContext.getPortletURL();
 %>
 
+<c:if test="<%= ddlViewRecordsDisplayContext.isAdminPortlet() %>">
+	<clay:navigation-bar
+		inverted="<%= true %>"
+		navigationItems="<%= ddlViewRecordsDisplayContext.getNavigationItems() %>"
+	/>
+</c:if>
+
 <clay:management-toolbar
 	actionDropdownItems="<%= ddlViewRecordsDisplayContext.getActionItemsDropdownItems() %>"
 	clearResultsURL="<%= ddlViewRecordsDisplayContext.getClearResultsURL() %>"

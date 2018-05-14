@@ -36,6 +36,8 @@ import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
 import com.liferay.petra.string.StringPool;
 import com.liferay.portal.kernel.dao.search.DisplayTerms;
 import com.liferay.portal.kernel.dao.search.EmptyOnClickRowChecker;
@@ -253,6 +255,22 @@ public class DDLViewRecordsDisplayContext {
 							getOrderByDropdownItems());
 						dropdownGroupItem.setLabel(
 							LanguageUtil.get(request, "order-by"));
+					});
+			}
+		};
+	}
+
+	public List<NavigationItem> getNavigationItems() {
+		return new NavigationItemList() {
+			{
+				add(
+					navigationItem -> {
+						navigationItem.setActive(true);
+						navigationItem.setHref(StringPool.BLANK);
+						navigationItem.setLabel(
+							HtmlUtil.extractText(
+								_ddlRecordSet.getName(
+									_ddlRequestHelper.getLocale())));
 					});
 			}
 		};
