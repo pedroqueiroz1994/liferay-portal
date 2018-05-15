@@ -63,7 +63,7 @@ templateSearch.setOrderByType(ddmDisplayContext.getOrderByType());
 	<liferay-util:param name="eventName" value="<%= eventName %>" />
 </liferay-util:include>
 
-<liferay-util:include page="/template_toolbar.jsp" servletContext="<%= application %>">
+<liferay-util:include page="/template_management_bar.jsp" servletContext="<%= application %>">
 	<liferay-util:param name="mvcPath" value="/select_template.jsp" />
 	<liferay-util:param name="redirect" value="<%= currentURL %>" />
 	<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />

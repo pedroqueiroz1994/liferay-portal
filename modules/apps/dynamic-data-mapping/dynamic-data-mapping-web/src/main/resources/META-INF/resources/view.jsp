@@ -67,7 +67,7 @@ if (ddmDisplay.getTitle(locale) != null) {
 
 <liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>" />
 
-<liferay-util:include page="/toolbar.jsp" servletContext="<%= application %>">
+<liferay-util:include page="/management_bar.jsp" servletContext="<%= application %>">
 	<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 	<liferay-util:param name="orderByCol" value="<%= ddmDisplayContext.getOrderByCol() %>" />
 	<liferay-util:param name="orderByType" value="<%= ddmDisplayContext.getOrderByType() %>" />
