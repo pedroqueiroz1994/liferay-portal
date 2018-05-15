@@ -73,7 +73,7 @@ TemplateSearchTerms templateSearchTerms = (TemplateSearchTerms)templateSearch.ge
 
 <liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>" />
 
-<liferay-util:include page="/template_toolbar.jsp" servletContext="<%= application %>">
+<liferay-util:include page="/template_management_bar.jsp" servletContext="<%= application %>">
 	<liferay-util:param name="tabs1" value="<%= tabs1 %>" />
 	<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
 	<liferay-util:param name="searchContainerId" value="ddmTemplates" />
