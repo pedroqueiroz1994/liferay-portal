@@ -3082,27 +3082,26 @@ AUI.add(
 						);
 					},
 
-					_getFixedOptions: function() {
-						var instance = this;
-						var label= {};
-
-						label[instance.get('displayLocale')] = '';
-
-						return [{
-								label: label,
-								value: ''
-							}
-						];
-					},
-
 					_getOptions: function() {
 						var instance = this;
 
 						var fieldDefinition = instance.getFieldDefinition();
 
-						var fixedOptions = instance._getFixedOptions();
+						var fieldOptions = fieldDefinition.options;
 
-						return fixedOptions.concat(fieldDefinition.options);
+						return fieldOptions.unshift(instance._getPlaceholderOption());
+					},
+
+					_getPlaceholderOption: function() {
+						var instance = this;
+						var label = {};
+
+						label[instance.get('displayLocale')] = '';
+
+						return {
+							label: label,
+							value: ''
+						};
 					}
 				}
 			}
