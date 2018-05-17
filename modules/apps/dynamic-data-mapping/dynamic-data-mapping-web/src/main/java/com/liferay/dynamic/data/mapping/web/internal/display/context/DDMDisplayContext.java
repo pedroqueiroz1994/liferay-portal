@@ -94,22 +94,20 @@ public class DDMDisplayContext {
 		return _ddmTemplateHelper.getAutocompleteJSON(request, language);
 	}
 
-	public DDMDisplay getDDMDisplay(String portletId) {
-		return _ddmDisplayRegistry.getDDMDisplay(portletId);
 	}
 
-	public DDMGroupServiceConfiguration getDDMGroupServiceConfiguration() {
-		return _ddmWebRequestHelper.getDDMGroupServiceConfiguration();
+	public DDMDisplay getDDMDisplay() {
+		return _ddmDisplayRegistry.getDDMDisplay(getRefererPortletName());
 	}
 
-	public List<NavigationItem> getNavigationItem(String label) {
+	public List<NavigationItem> getNavigationItem() {
 		return new NavigationItemList() {
 			{
 				add(
 					navigationItem -> {
 						navigationItem.setActive(true);
 						navigationItem.setHref(StringPool.BLANK);
-						navigationItem.setLabel(label);
+						navigationItem.setLabel(getScopedStructureLabel());
 					});
 			}
 		};
@@ -117,12 +115,13 @@ public class DDMDisplayContext {
 
 	public List<NavigationItem> getNavigationItems(
 			LiferayPortletRequest liferayPortletRequest,
-			LiferayPortletResponse liferayPortletResponse,
-			final DDMDisplay ddmDisplay)
+			LiferayPortletResponse liferayPortletResponse)
 		throws Exception {
 
 		return new NavigationItemList() {
 			{
+				DDMDisplay ddmDisplay = getDDMDisplay();
+
 				for (DDMDisplayTabItem ddmDisplayTabItem :
 						ddmDisplay.getTabItems()) {
 
@@ -195,6 +194,11 @@ public class DDMDisplayContext {
 		return orderByType;
 	}
 
+	public String getRefererPortletName() {
+		return ParamUtil.getString(
+			_ddmWebRequestHelper.getRequest(), "refererPortletName",
+			_ddmWebRequestHelper.getPortletName());
+	}
 	public Set<String> getStorageTypes() {
 		return _storageAdapterRegistry.getStorageTypes();
 	}
