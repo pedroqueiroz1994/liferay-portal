@@ -356,6 +356,27 @@ public class DDMDisplayContext {
 		return portletURL.toString();
 	}
 
+	public String getSelectTemplateSearchActionURL() {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		portletURL.setParameter("mvcPath", "/select_template.jsp");
+		portletURL.setParameter(
+			"templateId",
+			String.valueOf(ParamUtil.getLong(_renderRequest, "templateId")));
+		portletURL.setParameter(
+			"classNameId", String.valueOf(getClassNameId()));
+		portletURL.setParameter(
+			"classPK",
+			String.valueOf(ParamUtil.getLong(_renderRequest, "classPK")));
+		portletURL.setParameter(
+			"resourceClassNameId", String.valueOf(getResourceClassNameId()));
+		portletURL.setParameter(
+			"eventName",
+			ParamUtil.getString(_renderRequest, "eventName", "selectTemplate"));
+
+		return portletURL.toString();
+	}
+
 	public String getSortingURL() throws Exception {
 		PortletURL sortingURL = PortletURLUtil.clone(
 			getPortletURL(), _renderResponse);
