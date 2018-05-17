@@ -17,102 +17,28 @@
 <%@ include file="/init.jsp" %>
 
 <%
-String mvcPath = ParamUtil.getString(request, "mvcPath", "/view_template.jsp");
-
-String tabs1 = ParamUtil.getString(request, "tabs1", "templates");
-
-long templateId = ParamUtil.getLong(request, "templateId");
-
-long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
-long classNameId = ParamUtil.getLong(request, "classNameId");
-long classPK = ParamUtil.getLong(request, "classPK");
-
-long resourceClassNameId = ParamUtil.getLong(request, "resourceClassNameId");
-
-if (resourceClassNameId == 0) {
-	resourceClassNameId = PortalUtil.getClassNameId(PortletDisplayTemplate.class);
-}
-
-String mode = ParamUtil.getString(request, "mode", DDMTemplateConstants.TEMPLATE_MODE_CREATE);
-
-String eventName = ParamUtil.getString(request, "eventName", "selectTemplate");
 boolean includeCheckBox = ParamUtil.getBoolean(request, "includeCheckBox", true);
-String keywords = ParamUtil.getString(request, "keywords");
-String orderByCol = ParamUtil.getString(request, "orderByCol", "modified-date");
-String orderByType = ParamUtil.getString(request, "orderByType", "asc");
-String searchContainerId = ParamUtil.getString(request, "searchContainerId");
-
-PortletURL portletURL = renderResponse.createRenderURL();
-
-portletURL.setParameter("mvcPath", mvcPath);
-portletURL.setParameter("templateId", String.valueOf(templateId));
-portletURL.setParameter("classNameId", String.valueOf(classNameId));
-portletURL.setParameter("classPK", String.valueOf(classPK));
-portletURL.setParameter("resourceClassNameId", String.valueOf(resourceClassNameId));
-portletURL.setParameter("eventName", eventName);
-portletURL.setParameter("keywords", keywords);
 %>
 
-<liferay-frontend:management-bar
-	includeCheckBox="<%= includeCheckBox && !user.isDefaultUser() %>"
-	searchContainerId="<%= searchContainerId %>"
->
-	<liferay-frontend:management-bar-filters>
-		<liferay-frontend:management-bar-navigation
-			navigationKeys='<%= new String[] {"all"} %>'
-			portletURL="<%= portletURL %>"
-		/>
+<clay:management-toolbar
+	actionDropdownItems='<%= ddmDisplayContext.getActionItemsDropdownItems("deleteTemplates") %>'
+	clearResultsURL="<%= ddmDisplayContext.getClearResultsURL() %>"
+	componentId="ddmTemplateManagementToolbar"
+	creationMenu="<%= ddmDisplayContext.getTemplateCreationMenu() %>"
+	disabled="<%= ddmDisplayContext.isDisabledManagementBar(DDMWebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE) %>"
+	filterDropdownItems="<%= ddmDisplayContext.getFilterItemsDropdownItems() %>"
+	itemsTotal="<%= ddmDisplayContext.getTotalItems(DDMWebKeys.DYNAMIC_DATA_MAPPING_TEMPLATE) %>"
+	namespace="<%= renderResponse.getNamespace() %>"
+	searchActionURL="<%= ddmDisplayContext.getTemplateSearchActionURL() %>"
+	searchContainerId="<%= ddmDisplayContext.getTemplateSearchContainerId() %>"
+	searchFormName="fm1"
+	selectable="<%= includeCheckBox && !user.isDefaultUser() %>"
+	sortingOrder="<%= ddmDisplayContext.getOrderByType() %>"
+	sortingURL="<%= ddmDisplayContext.getSortingURL() %>"
+/>
 
-		<liferay-frontend:management-bar-sort
-			orderByCol="<%= orderByCol %>"
-			orderByType="<%= orderByType %>"
-			orderColumns='<%= new String[] {"modified-date", "id"} %>'
-			portletURL="<%= portletURL %>"
-		/>
-
-		<li>
-			<portlet:renderURL var="searchURL">
-				<portlet:param name="mvcPath" value="<%= mvcPath %>" />
-				<portlet:param name="tabs1" value="<%= tabs1 %>" />
-				<portlet:param name="templateId" value="<%= String.valueOf(templateId) %>" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-				<portlet:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
-				<portlet:param name="classPK" value="<%= String.valueOf(classPK) %>" />
-				<portlet:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
-				<portlet:param name="eventName" value="<%= eventName %>" />
-			</portlet:renderURL>
-
-			<aui:form action="<%= searchURL.toString() %>" method="post" name="searchForm">
-				<liferay-util:include page="/template_search.jsp" servletContext="<%= application %>" />
-			</aui:form>
-		</li>
-	</liferay-frontend:management-bar-filters>
-
-	<c:if test="<%= includeCheckBox %>">
-		<liferay-frontend:management-bar-action-buttons>
-			<liferay-frontend:management-bar-button
-				href='<%= "javascript:" + renderResponse.getNamespace() + "deleteTemplates();" %>'
-				icon="trash"
-				label="delete"
-			/>
-		</liferay-frontend:management-bar-action-buttons>
-	</c:if>
-
-	<c:if test="<%= (classNameId == 0) || (ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) && DDMTemplatePermission.containsAddTemplatePermission(permissionChecker, groupId, classNameId, scopeClassNameId)) %>">
-		<liferay-frontend:management-bar-buttons>
-			<liferay-util:include page="/template_add_buttons.jsp" servletContext="<%= application %>">
-				<liferay-util:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-				<liferay-util:param name="classNameId" value="<%= String.valueOf(classNameId) %>" />
-				<liferay-util:param name="classPK" value="<%= String.valueOf(classPK) %>" />
-				<liferay-util:param name="resourceClassNameId" value="<%= String.valueOf(resourceClassNameId) %>" />
-				<liferay-util:param name="mode" value="<%= mode %>" />
-			</liferay-util:include>
-		</liferay-frontend:management-bar-buttons>
-	</c:if>
-</liferay-frontend:management-bar>
-
-<aui:script>
-	function <portlet:namespace />deleteTemplates() {
+<aui:script sandbox="<%= true %>">
+	var deleteTemplates = function() {
 		if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this") %>')) {
 			var form = AUI.$(document.<portlet:namespace />fm);
 
@@ -123,5 +49,24 @@ portletURL.setParameter("keywords", keywords);
 
 			submitForm(form, '<portlet:actionURL name="deleteTemplate"><portlet:param name="mvcPath" value="/view_template.jsp" /></portlet:actionURL>');
 		}
-	}
+	};
+
+	var ACTIONS = {
+		'deleteTemplates': deleteTemplates
+	};
+
+	Liferay.componentReady('ddmTemplateManagementToolbar').then(
+		function(managementToolbar) {
+			managementToolbar.on(
+				'actionItemClicked',
+					function(event) {
+						var itemData = event.data.item.data;
+
+						if (itemData && itemData.action && ACTIONS[itemData.action]) {
+							ACTIONS[itemData.action]();
+						}
+				}
+			);
+		}
+	);
 </aui:script>
