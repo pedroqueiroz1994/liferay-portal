@@ -269,6 +269,56 @@ public class DDMDisplayContext {
 			_ddmWebRequestHelper.getPortletName());
 	}
 
+	public CreationMenu getSelectStructureCreationMenu()
+		throws PortalException {
+
+		if (!isShowAddStructureButton()) {
+			return null;
+		}
+
+		return new CreationMenu() {
+			{
+				PortletURL redirect = _renderResponse.createRenderURL();
+
+				redirect.setParameter("mvcPath", "/select_structure.jsp");
+				redirect.setParameter("classPK", String.valueOf(getClassPK()));
+				redirect.setParameter(
+					"eventName",
+					ParamUtil.getString(
+						_renderRequest, "eventName", "selectStructure"));
+
+				addPrimaryDropdownItem(
+					dropdownItem -> {
+						dropdownItem.setHref(
+							_renderResponse.createRenderURL(), "mvcPath",
+							"/edit_structure.jsp", "redirect", redirect,
+							"groupId",
+							String.valueOf(
+								_ddmWebRequestHelper.getScopeGroupId()));
+
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_ddmWebRequestHelper.getRequest(), "add"));
+					});
+			}
+		};
+	}
+
+	public String getSelectStructureSearchActionURL() {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		portletURL.setParameter("mvcPath", "/select_structure.jsp");
+		portletURL.setParameter(
+			"classPK",
+			String.valueOf(ParamUtil.getLong(_renderRequest, "classPK")));
+		portletURL.setParameter(
+			"eventName",
+			ParamUtil.getString(
+				_renderRequest, "eventName", "selectStructure"));
+
+		return portletURL.toString();
+	}
+
 	public String getSortingURL() throws Exception {
 		PortletURL sortingURL = PortletURLUtil.clone(
 			getPortletURL(), _renderResponse);
