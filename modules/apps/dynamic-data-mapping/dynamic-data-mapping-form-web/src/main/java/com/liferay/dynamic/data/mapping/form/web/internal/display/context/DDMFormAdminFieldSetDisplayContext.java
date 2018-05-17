@@ -99,8 +99,6 @@ public class DDMFormAdminFieldSetDisplayContext
 	}
 
 	public DropdownItemList getActionItemsDropdownItemList() {
-		RenderResponse renderResponse = getRenderResponse();
-
 		return new DropdownItemList() {
 
 			{
