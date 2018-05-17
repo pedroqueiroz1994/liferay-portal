@@ -52,13 +52,14 @@ import javax.servlet.http.HttpServletRequest;
 public class DDMDisplayContext {
 
 	public DDMDisplayContext(
-			RenderRequest renderRequest, DDMDisplayRegistry ddmDisplayRegistry,
-			DDMTemplateHelper ddmTemplateHelper,
-			DDMWebConfiguration ddmWebConfiguration,
-			StorageAdapterRegistry storageAdapterRegistry)
-		throws PortalException {
+		RenderRequest renderRequest, RenderResponse renderResponse,
+		DDMDisplayRegistry ddmDisplayRegistry,
+		DDMTemplateHelper ddmTemplateHelper,
+		DDMWebConfiguration ddmWebConfiguration,
+		StorageAdapterRegistry storageAdapterRegistry) {
 
 		_renderRequest = renderRequest;
+		_renderResponse = renderResponse;
 		_ddmDisplayRegistry = ddmDisplayRegistry;
 		_ddmTemplateHelper = ddmTemplateHelper;
 		_ddmWebConfiguration = ddmWebConfiguration;
@@ -221,6 +222,7 @@ public class DDMDisplayContext {
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
+	private final RenderResponse _renderResponse;
 	private final StorageAdapterRegistry _storageAdapterRegistry;
 
 }
