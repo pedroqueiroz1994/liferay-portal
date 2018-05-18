@@ -16,82 +16,25 @@
 
 <%@ include file="/init.jsp" %>
 
-<%
-long groupId = ParamUtil.getLong(request, "groupId", PortalUtil.getScopeGroupId(request, refererPortletName, true));
+<clay:management-toolbar
+	actionDropdownItems='<%= ddmDisplayContext.getActionItemsDropdownItems("deleteStructures") %>'
+	clearResultsURL="<%= ddmDisplayContext.getClearResultsURL() %>"
+	componentId="ddmStructureManagementToolbar"
+	creationMenu="<%= ddmDisplayContext.getStructureCreationMenu() %>"
+	disabled="<%= ddmDisplayContext.isDisabledManagementBar(DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE) %>"
+	filterDropdownItems="<%= ddmDisplayContext.getFilterItemsDropdownItems() %>"
+	itemsTotal="<%= ddmDisplayContext.getTotalItems(DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE) %>"
+	namespace="<%= renderResponse.getNamespace() %>"
+	searchActionURL="<%= ddmDisplayContext.getStructureSearchActionURL() %>"
+	searchContainerId="<%= ddmDisplayContext.getStructureSearchContainerId() %>"
+	searchFormName="fm1"
+	selectable="<%= !user.isDefaultUser() %>"
+	sortingOrder="<%= ddmDisplayContext.getOrderByType() %>"
+	sortingURL="<%= ddmDisplayContext.getSortingURL() %>"
+/>
 
-String orderByCol = ParamUtil.getString(request, "orderByCol");
-String orderByType = ParamUtil.getString(request, "orderByType");
-String searchContainerId = ParamUtil.getString(request, "searchContainerId");
-String tabs1 = ParamUtil.getString(request, "tabs1", "structures");
-
-PortletURL portletURL = renderResponse.createRenderURL();
-%>
-
-<liferay-frontend:management-bar
-	includeCheckBox="<%= !user.isDefaultUser() %>"
-	searchContainerId="<%= searchContainerId %>"
->
-	<liferay-frontend:management-bar-filters>
-		<liferay-frontend:management-bar-navigation
-			navigationKeys='<%= new String[] {"all"} %>'
-			portletURL="<%= portletURL %>"
-		/>
-
-		<liferay-frontend:management-bar-sort
-			orderByCol="<%= orderByCol %>"
-			orderByType="<%= orderByType %>"
-			orderColumns='<%= new String[] {"modified-date", "id"} %>'
-			portletURL="<%= portletURL %>"
-		/>
-
-		<li>
-			<portlet:renderURL var="searchURL">
-				<portlet:param name="mvcPath" value="/view.jsp" />
-				<portlet:param name="tabs1" value="<%= tabs1 %>" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-			</portlet:renderURL>
-
-			<aui:form action="<%= searchURL.toString() %>" method="post" name="searchForm">
-				<liferay-util:include page="/structure_search.jsp" servletContext="<%= application %>" />
-			</aui:form>
-		</li>
-	</liferay-frontend:management-bar-filters>
-
-	<liferay-frontend:management-bar-action-buttons>
-		<liferay-frontend:management-bar-button
-			href='<%= "javascript:" + renderResponse.getNamespace() + "deleteStructures();" %>'
-			icon="trash"
-			label="delete"
-		/>
-	</liferay-frontend:management-bar-action-buttons>
-
-	<c:if test="<%= ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) && DDMStructurePermission.containsAddStructurePermission(permissionChecker, groupId, scopeClassNameId) %>">
-		<liferay-frontend:management-bar-buttons>
-			<liferay-portlet:renderURL var="viewStructuresURL">
-				<portlet:param name="mvcPath" value="/view.jsp" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-			</liferay-portlet:renderURL>
-
-			<liferay-portlet:renderURL var="addStructureURL">
-				<portlet:param name="mvcPath" value="/edit_structure.jsp" />
-				<portlet:param name="redirect" value="<%= viewStructuresURL %>" />
-				<portlet:param name="groupId" value="<%= String.valueOf(groupId) %>" />
-			</liferay-portlet:renderURL>
-
-			<liferay-frontend:add-menu
-				inline="<%= true %>"
-			>
-				<liferay-frontend:add-menu-item
-					title='<%= LanguageUtil.get(request, "add") %>'
-					url="<%= addStructureURL %>"
-				/>
-			</liferay-frontend:add-menu>
-		</liferay-frontend:management-bar-buttons>
-	</c:if>
-</liferay-frontend:management-bar>
-
-<aui:script>
-	function <portlet:namespace />deleteStructures() {
+<aui:script sandbox="<%= true %>">
+	var deleteStructures = function() {
 		if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this") %>')) {
 			var form = AUI.$(document.<portlet:namespace />fm);
 
@@ -102,5 +45,24 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 			submitForm(form, '<portlet:actionURL name="deleteStructure"><portlet:param name="mvcPath" value="/view.jsp" /></portlet:actionURL>');
 		}
-	}
+	};
+
+	var ACTIONS = {
+		'deleteStructures': deleteStructures
+	};
+
+	Liferay.componentReady('ddmStructureManagementToolbar').then(
+		function(managementToolbar) {
+			managementToolbar.on(
+				'actionItemClicked',
+				function(event) {
+					var itemData = event.data.item.data;
+
+					if (itemData && itemData.action && ACTIONS[itemData.action]) {
+						ACTIONS[itemData.action]();
+					}
+				}
+			);
+		}
+	);
 </aui:script>
