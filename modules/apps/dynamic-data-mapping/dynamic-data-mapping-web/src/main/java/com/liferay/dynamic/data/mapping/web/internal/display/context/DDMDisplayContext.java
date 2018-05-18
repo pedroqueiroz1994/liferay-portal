@@ -16,33 +16,53 @@ package com.liferay.dynamic.data.mapping.web.internal.display.context;
 
 import com.liferay.dynamic.data.mapping.configuration.DDMGroupServiceConfiguration;
 import com.liferay.dynamic.data.mapping.constants.DDMPortletKeys;
+import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
+import com.liferay.dynamic.data.mapping.service.DDMStructureServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayTabItem;
 import com.liferay.dynamic.data.mapping.util.DDMTemplateHelper;
+import com.liferay.dynamic.data.mapping.util.DDMUtil;
 import com.liferay.dynamic.data.mapping.web.configuration.DDMWebConfiguration;
 import com.liferay.dynamic.data.mapping.web.internal.context.util.DDMWebRequestHelper;
+import com.liferay.dynamic.data.mapping.web.internal.search.StructureSearch;
+import com.liferay.dynamic.data.mapping.web.internal.search.StructureSearchTerms;
+import com.liferay.dynamic.data.mapping.web.internal.security.permission.resource.DDMStructurePermission;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.CreationMenu;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItem;
+import com.liferay.frontend.taglib.clay.servlet.taglib.util.DropdownItemList;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItem;
 import com.liferay.frontend.taglib.clay.servlet.taglib.util.NavigationItemList;
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.search.SearchContainer;
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.portlet.PortalPreferences;
 import com.liferay.portal.kernel.portlet.PortletPreferencesFactoryUtil;
+import com.liferay.portal.kernel.portlet.PortletURLUtil;
+import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.GetterUtil;
+import com.liferay.portal.kernel.util.OrderByComparator;
 import com.liferay.portal.kernel.util.ParamUtil;
 import com.liferay.portal.kernel.util.PortalUtil;
 import com.liferay.portal.kernel.util.Validator;
+import com.liferay.portal.kernel.util.WebKeys;
+import com.liferay.portlet.display.template.PortletDisplayTemplate;
 
 import java.util.List;
 import java.util.Objects;
 import java.util.Set;
+import java.util.function.Consumer;
 
+import javax.portlet.PortletException;
+import javax.portlet.PortletURL;
 import javax.portlet.RenderRequest;
+import javax.portlet.RenderResponse;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -87,6 +107,23 @@ public class DDMDisplayContext {
 		return _ddmTemplateHelper.fetchStructure(template);
 	}
 
+	public List<DropdownItem> getActionItemsDropdownItems(String action) {
+		return new DropdownItemList() {
+			{
+				add(
+					dropdownItem -> {
+						dropdownItem.putData("action", action);
+						dropdownItem.setIcon("trash");
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_ddmWebRequestHelper.getRequest(), "delete"));
+						dropdownItem.setQuickAction(true);
+					});
+			}
+
+		};
+	}
+
 	public String getAutocompleteJSON(
 			HttpServletRequest request, String language)
 		throws Exception {
@@ -94,10 +131,42 @@ public class DDMDisplayContext {
 		return _ddmTemplateHelper.getAutocompleteJSON(request, language);
 	}
 
+	public String getClearResultsURL() throws PortletException {
+		PortletURL clearResultsURL = PortletURLUtil.clone(
+			getPortletURL(), _renderResponse);
+
+		clearResultsURL.setParameter("keywords", StringPool.BLANK);
+
+		return clearResultsURL.toString();
 	}
 
 	public DDMDisplay getDDMDisplay() {
 		return _ddmDisplayRegistry.getDDMDisplay(getRefererPortletName());
+	}
+
+	public List<DropdownItem> getFilterItemsDropdownItems() {
+		return new DropdownItemList() {
+			{
+				addGroup(
+					dropdownGroupItem -> {
+						dropdownGroupItem.setDropdownItems(
+							getFilterNavigationDropdownItems());
+						dropdownGroupItem.setLabel(
+							LanguageUtil.get(
+								_ddmWebRequestHelper.getRequest(),
+								"filter-by-navigation"));
+					});
+
+				addGroup(
+					dropdownGroupItem -> {
+						dropdownGroupItem.setDropdownItems(
+							getOrderByDropdownItems());
+						dropdownGroupItem.setLabel(
+							LanguageUtil.get(
+								_ddmWebRequestHelper.getRequest(), "order-by"));
+					});
+			}
+		};
 	}
 
 	public List<NavigationItem> getNavigationItem() {
@@ -199,12 +268,153 @@ public class DDMDisplayContext {
 			_ddmWebRequestHelper.getRequest(), "refererPortletName",
 			_ddmWebRequestHelper.getPortletName());
 	}
+
+	public String getSortingURL() throws Exception {
+		PortletURL sortingURL = PortletURLUtil.clone(
+			getPortletURL(), _renderResponse);
+
+		String orderByType = ParamUtil.getString(_renderRequest, "orderByType");
+
+		sortingURL.setParameter(
+			"orderByType", orderByType.equals("asc") ? "desc" : "asc");
+
+		return sortingURL.toString();
+	}
+
 	public Set<String> getStorageTypes() {
 		return _storageAdapterRegistry.getStorageTypes();
 	}
 
+	public CreationMenu getStructureCreationMenu() throws PortalException {
+		if (!isShowAddStructureButton()) {
+			return null;
+		}
+
+		PortletURL redirect = _renderResponse.createRenderURL();
+
+		redirect.setParameter("mvcPath", "/view.jsp");
+		redirect.setParameter(
+			"groupId", String.valueOf(_ddmWebRequestHelper.getScopeGroupId()));
+
+		PortletURL addTemplateURL = _renderResponse.createRenderURL();
+
+		addTemplateURL.setParameter("mvcPath", "/edit_structure.jsp");
+		addTemplateURL.setParameter("redirect", redirect.toString());
+		addTemplateURL.setParameter(
+			"groupId", String.valueOf(_ddmWebRequestHelper.getScopeGroupId()));
+
+		return new CreationMenu() {
+			{
+				addPrimaryDropdownItem(
+					getCreationMenuDropdownItem(addTemplateURL, "add"));
+			}
+		};
+	}
+
+	public SearchContainer<?> getStructureSearch() throws Exception {
+		PortletURL portletURL = getPortletURL();
+
+		StructureSearch structureSearch = new StructureSearch(
+			_renderRequest, portletURL);
+
+		String orderByCol = getOrderByCol();
+		String orderByType = getOrderByType();
+
+		OrderByComparator<DDMStructure> orderByComparator =
+			DDMUtil.getStructureOrderByComparator(
+				getOrderByCol(), getOrderByType());
+
+		structureSearch.setOrderByCol(orderByCol);
+		structureSearch.setOrderByComparator(orderByComparator);
+		structureSearch.setOrderByType(orderByType);
+
+		if (structureSearch.isSearch()) {
+			structureSearch.setEmptyResultsMessage(
+				LanguageUtil.format(
+					_ddmWebRequestHelper.getRequest(), "no-x-were-found",
+					getScopedStructureLabel(), false));
+		}
+		else {
+			structureSearch.setEmptyResultsMessage(
+				LanguageUtil.format(
+					_ddmWebRequestHelper.getRequest(), "there-are-no-x",
+					getScopedStructureLabel(), false));
+		}
+
+		setDDMStructureInstanceSearchResults(structureSearch);
+		setDDMStructureInstanceSearchTotal(structureSearch);
+
+		return structureSearch;
+	}
+
+	public String getStructureSearchActionURL() {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		portletURL.setParameter("mvcPath", "/view.jsp");
+		portletURL.setParameter(
+			"tabs1",
+			ParamUtil.getString(_renderRequest, "tabs1", "structures"));
+		portletURL.setParameter(
+			"groupId", String.valueOf(_ddmWebRequestHelper.getScopeGroupId()));
+
+		return portletURL.toString();
+	}
+
+	public String getStructureSearchContainerId() {
+		return "ddmStructures";
+	}
+
+	public int getTotalItems(String context) throws Exception {
+		SearchContainer<?> searchContainer;
+
+		if (Objects.equals(
+				context, DDMWebKeys.DYNAMIC_DATA_MAPPING_STRUCTURE)) {
+
+			searchContainer = getStructureSearch();
+		}
+		else {
+			searchContainer = getTemplateSearch();
+		}
+
+		return searchContainer.getTotal();
+	}
+
 	public boolean isAutocompleteEnabled(String language) {
 		return _ddmTemplateHelper.isAutocompleteEnabled(language);
+	}
+
+	public boolean isDisabledManagementBar(String context) throws Exception {
+		if (hasResults(context) || isSearch()) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public boolean isSearch() {
+		if (Validator.isNotNull(getKeywords())) {
+			return true;
+		}
+
+		return false;
+	}
+
+	public boolean isShowAddStructureButton() throws PortalException {
+		DDMDisplay ddmDisplay = getDDMDisplay();
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)_renderRequest.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) &&
+			DDMStructurePermission.containsAddStructurePermission(
+				_ddmWebRequestHelper.getPermissionChecker(),
+				_ddmWebRequestHelper.getScopeGroupId(),
+				getStructureClassNameId())) {
+
+			return true;
+		}
+
+		return false;
 	}
 
 	public String[] smallImageExtensions() {
@@ -219,6 +429,228 @@ public class DDMDisplayContext {
 			_ddmWebRequestHelper.getDDMGroupServiceConfiguration();
 
 		return ddmGroupServiceConfiguration.smallImageMaxSize();
+	}
+
+	protected long getClassNameId() {
+		return ParamUtil.getLong(_renderRequest, "classNameId");
+	}
+
+	protected long getClassPK() {
+		return ParamUtil.getLong(_renderRequest, "classPK");
+	}
+
+	protected List<DropdownItem> getFilterNavigationDropdownItems() {
+		return new DropdownItemList() {
+			{
+				add(
+					dropdownItem -> {
+						dropdownItem.setActive(true);
+
+						dropdownItem.setHref(
+							getPortletURL(), "navigation", "all");
+
+						dropdownItem.setLabel(
+							LanguageUtil.get(
+								_ddmWebRequestHelper.getRequest(), "all"));
+					});
+			}
+		};
+	}
+
+	protected String getKeywords() {
+		return ParamUtil.getString(_renderRequest, "keywords");
+	}
+
+	protected Consumer<DropdownItem> getOrderByDropdownItem(String orderByCol) {
+		return dropdownItem -> {
+			dropdownItem.setActive(orderByCol.equals(getOrderByCol()));
+			dropdownItem.setHref(getPortletURL(), "orderByCol", orderByCol);
+			dropdownItem.setLabel(
+				LanguageUtil.get(
+					_ddmWebRequestHelper.getRequest(), orderByCol));
+		};
+	}
+
+	protected List<DropdownItem> getOrderByDropdownItems() {
+		return new DropdownItemList() {
+			{
+				add(getOrderByDropdownItem("modified-date"));
+				add(getOrderByDropdownItem("id"));
+			}
+		};
+	}
+
+	protected PortletURL getPortletURL() {
+		PortletURL portletURL = _renderResponse.createRenderURL();
+
+		long classNameId = getClassNameId();
+
+		if (classNameId != 0) {
+			portletURL.setParameter("classNameId", String.valueOf(classNameId));
+		}
+
+		long classPK = getClassPK();
+
+		if (classNameId != 0) {
+			portletURL.setParameter("classPK", String.valueOf(classPK));
+		}
+
+		String delta = ParamUtil.getString(_renderRequest, "delta");
+
+		if (Validator.isNotNull(delta)) {
+			portletURL.setParameter("delta", delta);
+		}
+
+		String keywords = getKeywords();
+
+		if (Validator.isNotNull(keywords)) {
+			portletURL.setParameter("keywords", keywords);
+		}
+
+		String mvcPath = ParamUtil.getString(_renderRequest, "mvcPath");
+
+		if (Validator.isNotNull(mvcPath)) {
+			portletURL.setParameter("mvcPath", mvcPath);
+		}
+
+		String orderByCol = getOrderByCol();
+
+		if (Validator.isNotNull(orderByCol)) {
+			portletURL.setParameter("orderByCol", orderByCol);
+		}
+
+		String orderByType = getOrderByType();
+
+		if (Validator.isNotNull(orderByType)) {
+			portletURL.setParameter("orderByType", orderByType);
+		}
+
+		String refererPortletName = getRefererPortletName();
+
+		if (Validator.isNotNull(refererPortletName)) {
+			portletURL.setParameter("refererPortletName", refererPortletName);
+		}
+
+		long resourceClassNameId = getResourceClassNameId();
+
+		if (resourceClassNameId != 0) {
+			portletURL.setParameter(
+				"resourceClassNameId", String.valueOf(resourceClassNameId));
+		}
+
+		boolean showAncestorScopes = showAncestorScopes();
+
+		if (Validator.isNotNull(showAncestorScopes)) {
+			portletURL.setParameter(
+				"showAncestorScopes", String.valueOf(showAncestorScopes));
+		}
+
+		String tabs1 = ParamUtil.getString(_renderRequest, "tabs1");
+
+		if (Validator.isNotNull(tabs1)) {
+			portletURL.setParameter("tabs1", tabs1);
+		}
+
+		long templateId = ParamUtil.getLong(_renderRequest, "templateId");
+
+		if (templateId != 0) {
+			portletURL.setParameter("templateId", String.valueOf(templateId));
+		}
+
+		return portletURL;
+	}
+
+	protected long getResourceClassNameId() {
+		long resourceClassNameId = ParamUtil.getLong(
+			_renderRequest, "resourceClassNameId");
+
+		if (resourceClassNameId == 0) {
+			resourceClassNameId = PortalUtil.getClassNameId(
+				PortletDisplayTemplate.class);
+		}
+
+		return resourceClassNameId;
+	}
+
+	protected String getScopedStructureLabel() {
+		String scopeTitle = ParamUtil.getString(_renderRequest, "scopeTitle");
+
+		DDMDisplay ddmDisplay = getDDMDisplay();
+
+		if (Validator.isNull(scopeTitle)) {
+			return ddmDisplay.getTitle(_ddmWebRequestHelper.getLocale());
+		}
+
+		return scopeTitle;
+	}
+
+	protected long getStructureClassNameId() {
+		DDMDisplay ddmDisplay = getDDMDisplay();
+
+		return PortalUtil.getClassNameId(ddmDisplay.getStructureType());
+	}
+
+	protected boolean hasResults(String context) throws Exception {
+		if (getTotalItems(context) > 0) {
+			return true;
+		}
+
+		return false;
+	}
+
+	protected void setDDMStructureInstanceSearchResults(
+			StructureSearch structureSearch)
+		throws Exception {
+
+		StructureSearchTerms searchTerms =
+			(StructureSearchTerms)structureSearch.getSearchTerms();
+
+		long[] groupIds = {
+			PortalUtil.getScopeGroupId(
+				_ddmWebRequestHelper.getRequest(), getRefererPortletName(),
+				true)
+		};
+
+		if (showAncestorScopes()) {
+			groupIds = PortalUtil.getCurrentAndAncestorSiteGroupIds(groupIds);
+		}
+
+		List<DDMStructure> results = DDMStructureServiceUtil.search(
+			_ddmWebRequestHelper.getCompanyId(), groupIds,
+			getStructureClassNameId(), searchTerms.getKeywords(),
+			searchTerms.getStatus(), structureSearch.getStart(),
+			structureSearch.getEnd(), structureSearch.getOrderByComparator());
+
+		structureSearch.setResults(results);
+	}
+
+	protected void setDDMStructureInstanceSearchTotal(
+			StructureSearch structureSearch)
+		throws Exception {
+
+		StructureSearchTerms searchTerms =
+			(StructureSearchTerms)structureSearch.getSearchTerms();
+
+		long[] groupIds = {
+			PortalUtil.getScopeGroupId(
+				_ddmWebRequestHelper.getRequest(), getRefererPortletName(),
+				true)
+		};
+
+		if (showAncestorScopes()) {
+			groupIds = PortalUtil.getCurrentAndAncestorSiteGroupIds(groupIds);
+		}
+
+		int total = DDMStructureServiceUtil.searchCount(
+			_ddmWebRequestHelper.getCompanyId(), groupIds,
+			getStructureClassNameId(), searchTerms.getKeywords(),
+			searchTerms.getStatus());
+
+		structureSearch.setTotal(total);
+	}
+
+	protected boolean showAncestorScopes() {
+		return ParamUtil.getBoolean(_renderRequest, "showAncestorScopes");
 	}
 
 	private final DDMDisplayRegistry _ddmDisplayRegistry;
