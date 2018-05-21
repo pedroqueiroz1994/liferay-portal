@@ -693,15 +693,15 @@ public class DDMDisplayContext {
 			WebKeys.THEME_DISPLAY);
 
 		long classNameId = getClassNameId();
-		long scopeClassNameId = PortalUtil.getClassNameId(
+		long resourceClassNameId = PortalUtil.getClassNameId(
 			ddmDisplay.getStructureType());
 
-		if ((classNameId == 0) ||
+		if ((classNameId == 0) || (resourceClassNameId == 0) ||
 			(ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) &&
 			 DDMTemplatePermission.containsAddTemplatePermission(
 				 _ddmWebRequestHelper.getPermissionChecker(),
 				 _ddmWebRequestHelper.getScopeGroupId(), classNameId,
-				 scopeClassNameId))) {
+				 resourceClassNameId))) {
 
 			return true;
 		}
