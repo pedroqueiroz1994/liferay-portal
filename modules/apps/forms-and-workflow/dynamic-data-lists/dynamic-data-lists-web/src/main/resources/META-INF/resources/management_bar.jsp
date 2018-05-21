@@ -75,7 +75,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 
 <aui:script>
 	function <portlet:namespace />deleteRecordSets() {
-		if (confirm('<%= UnicodeLanguageUtil.get(request, "are-you-sure-you-want-to-delete-this") %>')) {
+		if (confirm('<liferay-ui:message key="are-you-sure-you-want-to-delete-this" />')) {
 			var form = AUI.$(document.<portlet:namespace />fm);
 
 			var searchContainer = AUI.$('#<portlet:namespace />ddlRecordSet', form);
