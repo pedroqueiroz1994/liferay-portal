@@ -20,9 +20,9 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
-import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalServiceUtil;
-import com.liferay.dynamic.data.mapping.service.DDMStructureServiceUtil;
-import com.liferay.dynamic.data.mapping.service.DDMTemplateServiceUtil;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalService;
+import com.liferay.dynamic.data.mapping.service.DDMStructureService;
+import com.liferay.dynamic.data.mapping.service.DDMTemplateService;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
 import com.liferay.dynamic.data.mapping.util.DDMDisplay;
 import com.liferay.dynamic.data.mapping.util.DDMDisplayRegistry;
@@ -89,14 +89,20 @@ public class DDMDisplayContext {
 	public DDMDisplayContext(
 		RenderRequest renderRequest, RenderResponse renderResponse,
 		DDMDisplayRegistry ddmDisplayRegistry,
+		DDMStructureLinkLocalService ddmStructureLinkLocalService,
+		DDMStructureService ddmStructureService,
 		DDMTemplateHelper ddmTemplateHelper,
+		DDMTemplateService ddmTemplateService,
 		DDMWebConfiguration ddmWebConfiguration,
 		StorageAdapterRegistry storageAdapterRegistry) {
 
 		_renderRequest = renderRequest;
 		_renderResponse = renderResponse;
 		_ddmDisplayRegistry = ddmDisplayRegistry;
+		_ddmStructureLinkLocalService = ddmStructureLinkLocalService;
+		_ddmStructureService = ddmStructureService;
 		_ddmTemplateHelper = ddmTemplateHelper;
+		_ddmTemplateService = ddmTemplateService;
 		_ddmWebConfiguration = ddmWebConfiguration;
 		_storageAdapterRegistry = storageAdapterRegistry;
 
@@ -1017,14 +1023,13 @@ public class DDMDisplayContext {
 		List<DDMStructure> results = null;
 
 		if (searchTerms.isSearchRestriction()) {
-			results =
-				DDMStructureLinkLocalServiceUtil.getStructureLinkStructures(
-					getSearchRestrictionClassNameId(),
-					getSearchRestrictionClassPK(), structureSearch.getStart(),
-					structureSearch.getEnd());
+			results = _ddmStructureLinkLocalService.getStructureLinkStructures(
+				getSearchRestrictionClassNameId(),
+				getSearchRestrictionClassPK(), structureSearch.getStart(),
+				structureSearch.getEnd());
 		}
 		else {
-			results = DDMStructureServiceUtil.search(
+			results = _ddmStructureService.search(
 				_ddmWebRequestHelper.getCompanyId(), groupIds,
 				getStructureClassNameId(), searchTerms.getKeywords(),
 				searchTerms.getStatus(), structureSearch.getStart(),
@@ -1054,12 +1059,12 @@ public class DDMDisplayContext {
 		int total = 0;
 
 		if (searchTerms.isSearchRestriction()) {
-			total = DDMStructureLinkLocalServiceUtil.getStructureLinksCount(
+			total = _ddmStructureLinkLocalService.getStructureLinksCount(
 				getSearchRestrictionClassNameId(),
 				getSearchRestrictionClassPK());
 		}
 		else {
-			total = DDMStructureServiceUtil.searchCount(
+			total = _ddmStructureService.searchCount(
 				_ddmWebRequestHelper.getCompanyId(), groupIds,
 				getStructureClassNameId(), searchTerms.getKeywords(),
 				searchTerms.getStatus());
@@ -1086,7 +1091,7 @@ public class DDMDisplayContext {
 			_ddmWebRequestHelper.getCompanyId(), getStructureClassNameId(),
 			getClassPK());
 
-		List<DDMTemplate> results = DDMTemplateServiceUtil.search(
+		List<DDMTemplate> results = _ddmTemplateService.search(
 			_ddmWebRequestHelper.getCompanyId(), groupIds,
 			getTemplateClassNameIds(), classPKs, getResourceClassNameId(),
 			searchTerms.getKeywords(), searchTerms.getType(), getTemplateMode(),
@@ -1114,7 +1119,7 @@ public class DDMDisplayContext {
 			_ddmWebRequestHelper.getCompanyId(), getStructureClassNameId(),
 			getClassPK());
 
-		int total = DDMTemplateServiceUtil.searchCount(
+		int total = _ddmTemplateService.searchCount(
 			_ddmWebRequestHelper.getCompanyId(), groupIds,
 			getTemplateClassNameIds(), classPKs, getResourceClassNameId(),
 			searchTerms.getKeywords(), searchTerms.getType(), getTemplateMode(),
@@ -1128,7 +1133,10 @@ public class DDMDisplayContext {
 	}
 
 	private final DDMDisplayRegistry _ddmDisplayRegistry;
+	private final DDMStructureLinkLocalService _ddmStructureLinkLocalService;
+	private final DDMStructureService _ddmStructureService;
 	private final DDMTemplateHelper _ddmTemplateHelper;
+	private final DDMTemplateService _ddmTemplateService;
 	private final DDMWebConfiguration _ddmWebConfiguration;
 	private final DDMWebRequestHelper _ddmWebRequestHelper;
 	private final RenderRequest _renderRequest;
