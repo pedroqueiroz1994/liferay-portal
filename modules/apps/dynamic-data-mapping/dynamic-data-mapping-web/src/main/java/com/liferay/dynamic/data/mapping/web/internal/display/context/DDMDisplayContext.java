@@ -20,6 +20,7 @@ import com.liferay.dynamic.data.mapping.constants.DDMWebKeys;
 import com.liferay.dynamic.data.mapping.model.DDMStructure;
 import com.liferay.dynamic.data.mapping.model.DDMTemplate;
 import com.liferay.dynamic.data.mapping.model.DDMTemplateConstants;
+import com.liferay.dynamic.data.mapping.service.DDMStructureLinkLocalServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMStructureServiceUtil;
 import com.liferay.dynamic.data.mapping.service.DDMTemplateServiceUtil;
 import com.liferay.dynamic.data.mapping.storage.StorageAdapterRegistry;
@@ -899,6 +900,16 @@ public class DDMDisplayContext {
 		return scopeTitle;
 	}
 
+	protected long getSearchRestrictionClassNameId() {
+		return ParamUtil.getLong(
+			_ddmWebRequestHelper.getRequest(), "searchRestrictionClassNameId");
+	}
+
+	protected long getSearchRestrictionClassPK() {
+		return ParamUtil.getLong(
+			_ddmWebRequestHelper.getRequest(), "searchRestrictionClassPK");
+	}
+
 	protected long getStructureClassNameId() {
 		DDMDisplay ddmDisplay = getDDMDisplay();
 
@@ -1003,11 +1014,23 @@ public class DDMDisplayContext {
 			groupIds = PortalUtil.getCurrentAndAncestorSiteGroupIds(groupIds);
 		}
 
-		List<DDMStructure> results = DDMStructureServiceUtil.search(
-			_ddmWebRequestHelper.getCompanyId(), groupIds,
-			getStructureClassNameId(), searchTerms.getKeywords(),
-			searchTerms.getStatus(), structureSearch.getStart(),
-			structureSearch.getEnd(), structureSearch.getOrderByComparator());
+		List<DDMStructure> results = null;
+
+		if (searchTerms.isSearchRestriction()) {
+			results =
+				DDMStructureLinkLocalServiceUtil.getStructureLinkStructures(
+					getSearchRestrictionClassNameId(),
+					getSearchRestrictionClassPK(), structureSearch.getStart(),
+					structureSearch.getEnd());
+		}
+		else {
+			results = DDMStructureServiceUtil.search(
+				_ddmWebRequestHelper.getCompanyId(), groupIds,
+				getStructureClassNameId(), searchTerms.getKeywords(),
+				searchTerms.getStatus(), structureSearch.getStart(),
+				structureSearch.getEnd(),
+				structureSearch.getOrderByComparator());
+		}
 
 		structureSearch.setResults(results);
 	}
@@ -1028,10 +1051,19 @@ public class DDMDisplayContext {
 			groupIds = PortalUtil.getCurrentAndAncestorSiteGroupIds(groupIds);
 		}
 
-		int total = DDMStructureServiceUtil.searchCount(
-			_ddmWebRequestHelper.getCompanyId(), groupIds,
-			getStructureClassNameId(), searchTerms.getKeywords(),
-			searchTerms.getStatus());
+		int total = 0;
+
+		if (searchTerms.isSearchRestriction()) {
+			total = DDMStructureLinkLocalServiceUtil.getStructureLinksCount(
+				getSearchRestrictionClassNameId(),
+				getSearchRestrictionClassPK());
+		}
+		else {
+			total = DDMStructureServiceUtil.searchCount(
+				_ddmWebRequestHelper.getCompanyId(), groupIds,
+				getStructureClassNameId(), searchTerms.getKeywords(),
+				searchTerms.getStatus());
+		}
 
 		structureSearch.setTotal(total);
 	}
