@@ -419,7 +419,7 @@ public class DDMDisplayContext {
 		};
 	}
 
-	public SearchContainer<?> getStructureSearch() throws Exception {
+	public SearchContainer<DDMStructure> getStructureSearch() throws Exception {
 		PortletURL portletURL = getPortletURL();
 
 		StructureSearch structureSearch = new StructureSearch(
@@ -449,8 +449,8 @@ public class DDMDisplayContext {
 					getScopedStructureLabel(), false));
 		}
 
-		setDDMStructureInstanceSearchResults(structureSearch);
-		setDDMStructureInstanceSearchTotal(structureSearch);
+		setDDMStructureSearchResults(structureSearch);
+		setDDMStructureSearchTotal(structureSearch);
 
 		return structureSearch;
 	}
@@ -576,7 +576,7 @@ public class DDMDisplayContext {
 		};
 	}
 
-	public SearchContainer<?> getTemplateSearch() throws Exception {
+	public SearchContainer<DDMTemplate> getTemplateSearch() throws Exception {
 		PortletURL portletURL = getPortletURL();
 
 		TemplateSearch templateSearch = new TemplateSearch(
@@ -696,12 +696,15 @@ public class DDMDisplayContext {
 		long resourceClassNameId = PortalUtil.getClassNameId(
 			ddmDisplay.getStructureType());
 
-		if ((classNameId == 0) || (resourceClassNameId == 0) ||
-			(ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) &&
-			 DDMTemplatePermission.containsAddTemplatePermission(
-				 _ddmWebRequestHelper.getPermissionChecker(),
-				 _ddmWebRequestHelper.getScopeGroupId(), classNameId,
-				 resourceClassNameId))) {
+		if ((classNameId == 0) || (resourceClassNameId == 0)) {
+			return true;
+		}
+
+		if (ddmDisplay.isShowAddButton(themeDisplay.getScopeGroup()) &&
+			DDMTemplatePermission.containsAddTemplatePermission(
+				_ddmWebRequestHelper.getPermissionChecker(),
+				_ddmWebRequestHelper.getScopeGroupId(), classNameId,
+				resourceClassNameId)) {
 
 			return true;
 		}
@@ -795,6 +798,24 @@ public class DDMDisplayContext {
 	protected PortletURL getPortletURL() {
 		PortletURL portletURL = _renderResponse.createRenderURL();
 
+		String mvcPath = ParamUtil.getString(_renderRequest, "mvcPath");
+
+		if (Validator.isNotNull(mvcPath)) {
+			portletURL.setParameter("mvcPath", mvcPath);
+		}
+
+		String tabs1 = ParamUtil.getString(_renderRequest, "tabs1");
+
+		if (Validator.isNotNull(tabs1)) {
+			portletURL.setParameter("tabs1", tabs1);
+		}
+
+		long templateId = ParamUtil.getLong(_renderRequest, "templateId");
+
+		if (templateId != 0) {
+			portletURL.setParameter("templateId", String.valueOf(templateId));
+		}
+
 		long classNameId = getClassNameId();
 
 		if (classNameId != 0) {
@@ -805,6 +826,19 @@ public class DDMDisplayContext {
 
 		if (classNameId != 0) {
 			portletURL.setParameter("classPK", String.valueOf(classPK));
+		}
+
+		long resourceClassNameId = getResourceClassNameId();
+
+		if (resourceClassNameId != 0) {
+			portletURL.setParameter(
+				"resourceClassNameId", String.valueOf(resourceClassNameId));
+		}
+
+		String refererPortletName = getRefererPortletName();
+
+		if (Validator.isNotNull(refererPortletName)) {
+			portletURL.setParameter("refererPortletName", refererPortletName);
 		}
 
 		String delta = ParamUtil.getString(_renderRequest, "delta");
@@ -819,12 +853,6 @@ public class DDMDisplayContext {
 			portletURL.setParameter("keywords", keywords);
 		}
 
-		String mvcPath = ParamUtil.getString(_renderRequest, "mvcPath");
-
-		if (Validator.isNotNull(mvcPath)) {
-			portletURL.setParameter("mvcPath", mvcPath);
-		}
-
 		String orderByCol = getOrderByCol();
 
 		if (Validator.isNotNull(orderByCol)) {
@@ -837,36 +865,11 @@ public class DDMDisplayContext {
 			portletURL.setParameter("orderByType", orderByType);
 		}
 
-		String refererPortletName = getRefererPortletName();
-
-		if (Validator.isNotNull(refererPortletName)) {
-			portletURL.setParameter("refererPortletName", refererPortletName);
-		}
-
-		long resourceClassNameId = getResourceClassNameId();
-
-		if (resourceClassNameId != 0) {
-			portletURL.setParameter(
-				"resourceClassNameId", String.valueOf(resourceClassNameId));
-		}
-
 		boolean showAncestorScopes = showAncestorScopes();
 
 		if (Validator.isNotNull(showAncestorScopes)) {
 			portletURL.setParameter(
 				"showAncestorScopes", String.valueOf(showAncestorScopes));
-		}
-
-		String tabs1 = ParamUtil.getString(_renderRequest, "tabs1");
-
-		if (Validator.isNotNull(tabs1)) {
-			portletURL.setParameter("tabs1", tabs1);
-		}
-
-		long templateId = ParamUtil.getLong(_renderRequest, "templateId");
-
-		if (templateId != 0) {
-			portletURL.setParameter("templateId", String.valueOf(templateId));
 		}
 
 		return portletURL;
@@ -984,8 +987,7 @@ public class DDMDisplayContext {
 		return false;
 	}
 
-	protected void setDDMStructureInstanceSearchResults(
-			StructureSearch structureSearch)
+	protected void setDDMStructureSearchResults(StructureSearch structureSearch)
 		throws Exception {
 
 		StructureSearchTerms searchTerms =
@@ -1010,8 +1012,7 @@ public class DDMDisplayContext {
 		structureSearch.setResults(results);
 	}
 
-	protected void setDDMStructureInstanceSearchTotal(
-			StructureSearch structureSearch)
+	protected void setDDMStructureSearchTotal(StructureSearch structureSearch)
 		throws Exception {
 
 		StructureSearchTerms searchTerms =

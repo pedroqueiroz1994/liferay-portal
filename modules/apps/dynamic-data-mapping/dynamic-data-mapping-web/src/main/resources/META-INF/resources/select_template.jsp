@@ -31,7 +31,7 @@ if ((classPK > 0) && (structureClassNameId == classNameId)) {
 	structure = DDMStructureLocalServiceUtil.getStructure(classPK);
 }
 
-SearchContainer templateSearch = ddmDisplayContext.getTemplateSearch();
+SearchContainer<DDMTemplate> templateSearch = ddmDisplayContext.getTemplateSearch();
 %>
 
 <liferay-util:include page="/navigation_bar.jsp" servletContext="<%= application %>" />
