@@ -164,6 +164,19 @@ AUI.add(
 				delete instance._conditions[index + '-condition-second-operand-decimal'];
 			},
 
+			_getFirstOperandValueFieldType: function(firstOperandValue) {
+				var instance = this;
+
+				var firstOperandValueField = A.Array.find(
+					instance.get('fields'),
+					function(field) {
+						return field.value === firstOperandValue;
+					}
+				);
+
+				return firstOperandValueField.type;
+			},
+
 			_getConditions: function() {
 				var instance = this;
 
@@ -172,86 +185,93 @@ AUI.add(
 				for (var i = 0; i < instance._conditionsIndexes.length; i++) {
 					var index = instance._conditionsIndexes[i];
 
-					var type = instance._getFirstOperandValue(index) === 'user' ? 'user' : 'field';
+					var firstOperandValue = instance._getFirstOperandValue(index);
 
-					var condition = {
-						'operands': [
-							{
-								label: instance._getFieldLabel(instance._getFirstOperandValue(index)),
-								type: type,
-								value: instance._getFirstOperandValue(index)
-							}
-						],
-						operator: instance._getOperatorValue(index)
-					};
+					if (firstOperandValue) {
+						var firstOperandGroup = firstOperandValue === 'user' ? 'user' : 'field';
 
-					if (instance._isBinaryCondition(index)) {
-
-						var secondOperandTypeValue = instance._getSecondOperandTypeValue(index);
-
-						if (secondOperandTypeValue === 'field') {
-							condition.operands.push(
+						var condition = {
+							'operands': [
 								{
-									type: 'field',
-									value: instance._getSecondOperandValue(index, 'fields')
+									label: instance._getFieldLabel(instance._getFirstOperandValue(index)),
+									type: firstOperandGroup,
+									value: instance._getFirstOperandValue(index)
 								}
-							);
-						}
-						else if (instance._isConstant(secondOperandTypeValue)) {
-							if (instance._getSecondOperandValue(index, 'date')) {
+							],
+							operator: instance._getOperatorValue(index)
+						};
+
+						if (instance._isBinaryCondition(index)) {
+
+							var secondOperandTypeValue = instance._getSecondOperandTypeValue(index);
+
+							if (secondOperandTypeValue === 'field') {
 								condition.operands.push(
 									{
-										type: instance._getFieldDataType(secondOperandTypeValue),
-										value: instance._getSecondOperandValue(index, 'date')
+										type: 'field',
+										value: instance._getSecondOperandValue(index, 'fields')
 									}
 								);
 							}
-							else if (instance._getSecondOperandValue(index, 'integer')) {
-								condition.operands.push(
-									{
-										type: instance._getFieldDataType(secondOperandTypeValue),
-										value: instance._getSecondOperandValue(index, 'integer')
-									}
-								);
-							}
-							else if (instance._getSecondOperandValue(index, 'double')) {
-								condition.operands.push(
-									{
-										type: instance._getFieldDataType(secondOperandTypeValue),
-										value: instance._getSecondOperandValue(index, 'double')
-									}
-								);
-							}
-							else if (instance._getSecondOperandValue(index, 'input-text')) {
-								condition.operands.push(
-									{
-										type: instance._getFieldDataType(secondOperandTypeValue),
-										value: instance._getSecondOperandValue(index, 'input-text')
-									}
-								);
-							}
-							else {
-								condition.operands.push(
-									{
-										label: instance._getOptionsLabel(instance._getSecondOperand(index, 'options'), instance._getSecondOperandValue(index, 'options')),
-										type: instance._getFieldDataType(secondOperandTypeValue),
-										value: instance._getSecondOperandValue(index, 'options')
-									}
-								);
-							}
-						}
-						else if (instance._getOperatorValue(index) === 'belongs-to') {
-							condition.operands.push(
-								{
-									label: secondOperandTypeValue,
-									type: 'list',
-									value: secondOperandTypeValue
+							else if (instance._isConstant(secondOperandTypeValue)) {
+								var type = instance._getFieldDataType(secondOperandTypeValue);
+
+								if (type === 'date') {
+									condition.operands.push(
+										{
+											type: type,
+											value: instance._getSecondOperandValue(index, 'date')
+										}
+									);
 								}
-							);
+								else if (type === 'integer') {
+									condition.operands.push(
+										{
+											type: type,
+											value: instance._getSecondOperandValue(index, 'integer')
+										}
+									);
+								}
+								else if (type === 'double') {
+									condition.operands.push(
+										{
+											type: type,
+											value: instance._getSecondOperandValue(index, 'double')
+										}
+									);
+								}
+								else if (type === 'input-text') {
+									condition.operands.push(
+										{
+											type: type,
+											value: instance._getSecondOperandValue(index, 'input-text')
+										}
+									);
+								}
+								else {
+									condition.operands.push(
+										{
+											label: instance._getOptionsLabel(instance._getSecondOperand(index, 'options'), instance._getSecondOperandValue(index, 'options')),
+											type: type,
+											value: instance._getSecondOperandValue(index, 'options')
+										}
+									);
+								}
+							}
+							else if (instance._getOperatorValue(index) === 'belongs-to') {
+								condition.operands.push(
+									{
+										label: secondOperandTypeValue,
+										type: 'list',
+										value: secondOperandTypeValue
+									}
+								);
+							}
 						}
+
+						conditions.push(condition);
 					}
 
-					conditions.push(condition);
 				}
 
 				return conditions;
@@ -317,6 +337,10 @@ AUI.add(
 				var instance = this;
 
 				return instance._conditions[index + '-condition-first-operand'];
+			},
+
+			_getFirstOperandType: function(index) {
+				var instance = this;
 			},
 
 			_getFirstOperandValue: function(index) {
@@ -795,7 +819,7 @@ AUI.add(
 				var value = [];
 
 				if (condition && instance._isBinaryCondition(index) && condition.operands[1]) {
-					value = [condition.operands[1].type];
+					value.push(instance._getFieldDataType(instance._getFirstOperandValue(index)));
 				}
 
 				var field = instance.createSelectField(
@@ -805,7 +829,7 @@ AUI.add(
 						options: [
 							{
 								label: instance.get('strings').value,
-								value: instance._getFieldDataType(instance._getFirstOperandValue(index))
+								value: value
 							},
 							{
 								label: instance.get('strings').otherField,
