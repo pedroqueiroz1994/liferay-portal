@@ -829,11 +829,7 @@ AUI.add(
 						if (inputLocalized) {
 							inputLocalized.get('items').forEach(
 								function(item) {
-									var value = inputLocalized.getValue(item);
-
-									if (value.trim() !== '') {
-										localizationMap[item] = value;
-									}
+									localizationMap[item] = inputLocalized.getValue(item);
 								}
 							);
 						}
