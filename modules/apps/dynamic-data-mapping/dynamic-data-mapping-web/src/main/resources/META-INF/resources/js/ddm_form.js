@@ -3103,7 +3103,9 @@ AUI.add(
 
 						var fieldOptions = fieldDefinition.options;
 
-						return fieldOptions.unshift(instance._getPlaceholderOption());
+						fieldOptions.unshift(instance._getPlaceholderOption());
+
+						return fieldOptions;
 					},
 
 					_getPlaceholderOption: function() {
