@@ -825,7 +825,7 @@ AUI.add(
 						var localizationMap = instance.get('localizationMap');
 
 						var inputLocalized = Liferay.component(instance.getInputName(true));
-
+						
 						if (inputLocalized) {
 							inputLocalized.get('items').forEach(
 								function(item) {
