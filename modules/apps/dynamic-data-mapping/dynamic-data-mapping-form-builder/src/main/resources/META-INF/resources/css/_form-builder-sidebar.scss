@@ -40,11 +40,10 @@ $sidebar-z-index: 1000;
 
 	.navbar {
 		border-bottom: 1px solid $sidebar-navbar-border-color;
-		border-top: 1px solid $sidebar-navbar-border-color;
 	}
 
-	.form-builder-sidebar-title {
-		margin-top: 8px;
+	.sidebar .tbar-section {
+		margin-right: auto;
 	}
 
 	.sidebar-body {
