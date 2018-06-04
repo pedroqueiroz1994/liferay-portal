@@ -24,6 +24,12 @@ try {
 }
 catch (NoSuchQuestionException nsqe) {
 }
+
+if (question != null) {
+	question = question.toEscapedModel();
+
+	renderResponse.setTitle(HtmlUtil.unescape(question.getTitle(locale)));
+}
 %>
 
 <%@ include file="/polls_display/view_options.jspf" %>
@@ -54,8 +60,6 @@ catch (NoSuchQuestionException nsqe) {
 
 		<%
 		String redirect = StringPool.BLANK;
-
-		question = question.toEscapedModel();
 
 		List<PollsChoice> choices = question.getChoices();
 
