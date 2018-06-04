@@ -32,8 +32,6 @@ if (question != null) {
 }
 %>
 
-<%@ include file="/polls_display/view_options.jspf" %>
-
 <c:choose>
 	<c:when test="<%= question == null %>">
 
@@ -120,3 +118,5 @@ if (question != null) {
 		</aui:form>
 	</c:otherwise>
 </c:choose>
+
+<%@ include file="/polls_display/view_options.jspf" %>
