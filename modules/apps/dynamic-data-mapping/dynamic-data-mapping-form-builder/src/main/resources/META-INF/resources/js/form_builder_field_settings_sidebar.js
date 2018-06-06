@@ -258,65 +258,84 @@ AUI.add(
 
 						var builder = instance.get('builder');
 
-						var contentBox = instance.get('contentBox');
-
-						var editMode = builder.isEditMode();
-
-						if (contentBox.one('.liferay-ddm-form-field-options')) {
-							var closeOptions = contentBox.one('.liferay-ddm-form-field-options').all('button.close');
-							var options = contentBox.one('.liferay-ddm-form-field-options').all('input.field');
-
-							if (editMode) {
-								closeOptions.attr('disabled', true);
-
-								if (options) {
-									options.each(
-										function(option, key) {
-											if (option._node.value == '') {
-												option.attr('disabled', true);
-											}
-										}
-									);
-								}
-							}
-							else {
-								closeOptions.attr('disabled', false);
-								options.attr('disabled', false);
-							}
-						}
-
 						var settingsPanel = builder.getFieldSettingsPanel();
+
 						var settingsPanelNode = settingsPanel.get('contentBox');
 
-						var controlInputs = contentBox.all('.custom-control-input');
 						var dropdownFieldToolbar = settingsPanelNode.one('.dropdown-action');
-						var duplicateFieldButton = dropdownFieldToolbar.one('.dropdown-item[data-handler="duplicateField"]');
 						var fieldTypeButton = settingsPanelNode.one('#field-type-menu-content');
-						var removeFieldButton = dropdownFieldToolbar.one('.dropdown-item[data-handler="_removeFieldCol"]');
 						var sidebarBack = settingsPanelNode.one('.form-builder-sidebar-back');
+
+						var duplicateFieldButton = dropdownFieldToolbar.one('.dropdown-item[data-handler="duplicateField"]');
+						var removeFieldButton = dropdownFieldToolbar.one('.dropdown-item[data-handler="_removeFieldCol"]');
+
+						var contentBox = instance.get('contentBox');
+
+						var controlInputs = contentBox.all('.custom-control-input');
 						var switchers = contentBox.all('.toggle-switch');
 
-						if (editMode) {
+						var disabled = false;
+
+						if (builder.isEditMode()) {
+							disabled = true;
+
 							duplicateFieldButton.addClass('disabled');
-							fieldTypeButton.attr('disabled', true);
 							removeFieldButton.addClass('disabled');
 							sidebarBack.addClass('disabled');
 
-							if (switchers || controlInputs) {
-								controlInputs.attr('disabled', true);
-								switchers.attr('disabled', true);
-							}
+							instance._configureKeyValueFieldEditMode();
+							instance._configureOptionsFieldEditMode();
 						}
 						else {
-							if (switchers) {
-								controlInputs.attr('disabled', false);
-								switchers.attr('disabled', false);
-							}
-
 							duplicateFieldButton.removeClass('disabled');
-							fieldTypeButton.attr('disabled', false);
+
 							removeFieldButton.removeClass('disabled');
 							sidebarBack.removeClass('disabled');
+						}
+
+						fieldTypeButton.attr('disabled', disabled);
+
+						if (controlInputs) {
+							controlInputs.attr('disabled', disabled);
+						}
+
+						if (switchers) {
+							switchers.attr('disabled', disabled);
+						}
+					},
+
+					_configureKeyValueFieldEditMode: function() {
+						var instance = this;
+
+						var contentBox = instance.get('contentBox');
+
+						var keyValueFields = contentBox.all('.liferay-ddm-form-field-key-value');
+
+						keyValueFields.each(
+							function(keyValueField) {
+								var key = keyValueField.one('input.key-value-input');
+								var value = keyValueField.one('input.field');
+
+								key.attr('disabled', true);
+
+								if (key.val() === '') {
+									value.attr('disabled', true);
+								}
+							}
+						);
+					},
+
+					_configureOptionsFieldEditMode: function() {
+						var instance = this;
+
+						var contentBox = instance.get('contentBox');
+
+						var optionsField = contentBox.one('.liferay-ddm-form-field-options');
+
+						if (optionsField) {
+							var closeOptions = optionsField.all('button.close');
+
+							closeOptions.attr('disabled', true);
 						}
 					},
 
