@@ -181,17 +181,18 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance updateFormInstance(
-			long ddmFormInstanceId, long ddmStructureId,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			DDMFormValues settingsDDMFormValues, ServiceContext serviceContext)
+			long ddmFormInstanceId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, DDMForm ddmForm,
+			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
+			ServiceContext serviceContext)
 		throws PortalException {
 
 		_ddmFormInstanceModelResourcePermission.check(
 			getPermissionChecker(), ddmFormInstanceId, ActionKeys.UPDATE);
 
 		return ddmFormInstanceLocalService.updateFormInstance(
-			ddmFormInstanceId, ddmStructureId, nameMap, descriptionMap,
-			settingsDDMFormValues, serviceContext);
+			getUserId(), ddmFormInstanceId, nameMap, descriptionMap, ddmForm,
+			ddmFormLayout, settingsDDMFormValues, serviceContext);
 	}
 
 	private static volatile ModelResourcePermission<DDMFormInstance>
