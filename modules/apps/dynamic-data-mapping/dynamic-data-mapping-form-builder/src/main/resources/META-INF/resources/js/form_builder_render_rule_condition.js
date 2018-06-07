@@ -349,24 +349,21 @@ AUI.add(
 				return value[0] || '';
 			},
 
-			_getProperty: function(value, options, property) {
+			_getProperty: function(field, property) {
 				var instance = this;
 
-				var option;
-
-				var propertyValue;
+				var options = field.get('options').concat(field.get('fixedOptions'));
+				var value = field.getValue();
 
 				for (var i = 0; i < options.length; i++) {
-					option = options[i];
+					var option = options[i];
 
 					if (value.indexOf(option.value) > -1) {
-						propertyValue = option[property];
-
-						break;
+						return option[property];
 					}
 				}
 
-				return propertyValue;
+				return '';
 			},
 
 			_getSecondOperand: function(index, type) {
@@ -468,17 +465,14 @@ AUI.add(
 
 				var field = event.target;
 				var fieldName = field.get('fieldName');
-				var options = field.get('options').concat(field.get('fixedOptions'));
 
 				if (fieldName) {
 					var index = fieldName.split('-')[0];
 
 					if (fieldName.match('-condition-first-operand')) {
-						var dataType = instance._getProperty(field.getValue(), options, 'dataType');
-
+						var dataType = instance._getProperty(field, 'dataType');
 						var operatorSelected = instance._getOperator(index);
-
-						var repeatable = instance._getProperty(field.getValue(), options, 'repeatable');
+						var repeatable = instance._getProperty(field, 'repeatable');
 
 						operatorSelected.cleanSelect();
 
@@ -488,7 +482,7 @@ AUI.add(
 
 						instance._clearOperatorField(index);
 
-						instance._updateOperatorList(dataType, index, repeatable);
+						instance._updateOperatorList(index, dataType, repeatable);
 					}
 					else if (fieldName.match('-condition-operator')) {
 						var operator = event.newVal[0];
@@ -710,7 +704,9 @@ AUI.add(
 				field.render(container);
 
 				if (condition) {
-					instance._updateOperatorList(instance._getFieldProperty(condition.operands[0].value, 'dataType'), index, condition.operands[0].repeatable);
+					var operand = condition.operands[0];
+
+					instance._updateOperatorList(index, instance._getFieldProperty(operand.value, 'dataType'), operand.repeatable);
 				}
 			},
 
@@ -869,7 +865,7 @@ AUI.add(
 				}
 			},
 
-			_updateOperatorList: function(dataType, conditionIndex, repeatable) {
+			_updateOperatorList: function(conditionIndex, dataType, repeatable) {
 				var instance = this;
 
 				var operator = instance._getOperator(conditionIndex);
