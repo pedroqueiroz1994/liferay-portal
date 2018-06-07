@@ -57,10 +57,9 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long groupId, long classNameId, String structureKey,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-			DDMFormValues settingsDDMFormValues, String storageType,
+			long groupId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, DDMForm ddmForm,
+			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
 			ServiceContext serviceContext)
 		throws PortalException {
 
@@ -68,9 +67,8 @@ public class DDMFormInstanceServiceImpl extends DDMFormInstanceServiceBaseImpl {
 			getPermissionChecker(), groupId, DDMActionKeys.ADD_FORM_INSTANCE);
 
 		return ddmFormInstanceLocalService.addFormInstance(
-			getUserId(), groupId, classNameId, structureKey, nameMap,
-			descriptionMap, ddmForm, ddmFormLayout, settingsDDMFormValues,
-			storageType, serviceContext);
+			getUserId(), groupId, nameMap, descriptionMap, ddmForm,
+			ddmFormLayout, settingsDDMFormValues, serviceContext);
 	}
 
 	@Override

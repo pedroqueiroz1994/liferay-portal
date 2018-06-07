@@ -28,6 +28,7 @@ import com.liferay.dynamic.data.mapping.model.DDMStructureConstants;
 import com.liferay.dynamic.data.mapping.model.DDMStructureVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMFormInstanceLocalServiceBaseImpl;
 import com.liferay.dynamic.data.mapping.storage.DDMFormValues;
+import com.liferay.dynamic.data.mapping.storage.StorageType;
 import com.liferay.dynamic.data.mapping.util.DDMFormFactory;
 import com.liferay.dynamic.data.mapping.util.DDMFormInstanceFactory;
 import com.liferay.dynamic.data.mapping.validator.DDMFormValuesValidator;
@@ -132,18 +133,18 @@ public class DDMFormInstanceLocalServiceImpl
 
 	@Override
 	public DDMFormInstance addFormInstance(
-			long userId, long groupId, long classNameId, String structureKey,
-			Map<Locale, String> nameMap, Map<Locale, String> descriptionMap,
-			DDMForm ddmForm, DDMFormLayout ddmFormLayout,
-			DDMFormValues settingsDDMFormValues, String storageType,
+			long userId, long groupId, Map<Locale, String> nameMap,
+			Map<Locale, String> descriptionMap, DDMForm ddmForm,
+			DDMFormLayout ddmFormLayout, DDMFormValues settingsDDMFormValues,
 			ServiceContext serviceContext)
 		throws PortalException {
 
 		DDMStructure ddmStructure = ddmStructureLocalService.addStructure(
 			userId, groupId, DDMStructureConstants.DEFAULT_PARENT_STRUCTURE_ID,
-			classNameId, structureKey, nameMap, descriptionMap, ddmForm,
-			ddmFormLayout, storageType, DDMStructureConstants.TYPE_AUTO,
-			serviceContext);
+			classNameLocalService.getClassNameId(DDMFormInstance.class),
+			StringPool.BLANK, nameMap, descriptionMap, ddmForm, ddmFormLayout,
+			getStorageType(settingsDDMFormValues),
+			DDMStructureConstants.TYPE_AUTO, serviceContext);
 
 		return addFormInstance(
 			userId, groupId, ddmStructure.getStructureId(), nameMap,
@@ -525,6 +526,20 @@ public class DDMFormInstanceLocalServiceImpl
 		}
 
 		return versionParts[0] + StringPool.PERIOD + versionParts[1];
+	}
+
+	protected String getStorageType(DDMFormValues settingsDDMFormValues) {
+		DDMFormInstanceSettings ddmFormInstanceSettings =
+			DDMFormInstanceFactory.create(
+				DDMFormInstanceSettings.class, settingsDDMFormValues);
+
+		String storageType = ddmFormInstanceSettings.storageType();
+
+		if (Validator.isNotNull(storageType)) {
+			return storageType;
+		}
+
+		return StorageType.JSON.toString();
 	}
 
 	protected long getStructureVersionId(long ddmStructureId)
