@@ -137,9 +137,6 @@ public class SaveFormInstanceMVCCommandHelper {
 			DDMFormInstance.class.getName(), portletRequest);
 
 		long groupId = ParamUtil.getLong(portletRequest, "groupId");
-		String structureKey = ParamUtil.getString(
-			portletRequest, "structureKey");
-		String storageType = getStorageType(settingsDDMFormValues);
 		String name = ParamUtil.getString(portletRequest, "name");
 		String description = ParamUtil.getString(portletRequest, "description");
 		DDMForm ddmForm = getDDMForm(portletRequest, serviceContext);
@@ -159,9 +156,8 @@ public class SaveFormInstanceMVCCommandHelper {
 		validateRedirectURL(settingsDDMFormValues);
 
 		return formInstanceService.addFormInstance(
-			groupId, _portal.getClassNameId(DDMFormInstance.class),
-			structureKey, nameMap, descriptionMap, ddmForm, ddmFormLayout,
-			settingsDDMFormValues, storageType, serviceContext);
+			groupId, nameMap, descriptionMap, ddmForm, ddmFormLayout,
+			settingsDDMFormValues, serviceContext);
 	}
 
 	protected DDMFormInstance addFormInstance(
