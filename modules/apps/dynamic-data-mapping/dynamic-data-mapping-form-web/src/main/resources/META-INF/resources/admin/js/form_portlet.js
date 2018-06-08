@@ -174,6 +174,11 @@ AUI.add(
 					bindNavigationBar: function() {
 						var instance = this;
 
+						var ACTIONS = {
+							'showForm': this._onFormButtonClick,
+							'showRules': this._onRulesButtonClick
+						};
+
 						Liferay.componentReady('formsNavigationBar').then(
 							function(navigationBar) {
 								navigationBar.on(
@@ -182,13 +187,10 @@ AUI.add(
 										var itemData = event.data.item.data;
 
 										if (itemData && itemData.action && ACTIONS[itemData.action]) {
-											if (itemData.action == 'showForm') {
-												instance._onFormButtonClick();
-											} else if (itemData.action == 'showRules') {
-												instance._onRulesButtonClick();
-											}
+											ACTIONS[itemData.action]();
 										}
-									});
+									}
+								);
 							}
 						);
 					},
