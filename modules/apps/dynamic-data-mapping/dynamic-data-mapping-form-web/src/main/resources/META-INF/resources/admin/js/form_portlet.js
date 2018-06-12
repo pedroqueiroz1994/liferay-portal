@@ -291,7 +291,7 @@ AUI.add(
 
 						instance.layoutVisitor.set('pages', formBuilder.get('layouts'));
 
-						var translationManager = instance.get('translationManager');
+						var translationManager = instance.get(STR_TRANSLATION_MANAGER);
 
 						var state = {
 							availableLanguageIds: translationManager.get('availableLocales'),
