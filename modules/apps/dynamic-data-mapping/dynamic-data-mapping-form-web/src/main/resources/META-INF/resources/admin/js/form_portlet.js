@@ -179,6 +179,8 @@ AUI.add(
 							'showRules': A.bind('_onRulesButtonClick', instance)
 						};
 
+						instance._currentTab = 'formBuilder';
+
 						Liferay.componentReady('formsNavigationBar').then(
 							function(navigationBar) {
 								navigationBar.on(
@@ -189,6 +191,21 @@ AUI.add(
 										if (itemData && itemData.action && ACTIONS[itemData.action]) {
 											ACTIONS[itemData.action]();
 										}
+
+										var newItems = this.items;
+
+										newItems.forEach(
+											function (item) {
+												if (item.data.action === itemData.action) {
+													item.active = true;
+												}
+												else {
+													item.active = false;
+												}
+											}
+										);
+
+										this.items = newItems;
 									}
 								);
 							}
@@ -825,11 +842,11 @@ AUI.add(
 					_onFormButtonClick: function() {
 						var instance = this;
 
-						var ruleTab = instance.one('#showRules');
-
-						if (ruleTab.hasClass('disabled')) {
-							ruleTab.removeClass('disabled');
+						if (instance._currentTab == 'formBuilder') {
+							return;
 						}
+
+						instance._currentTab = 'formBuilder';
 
 						instance._hideRuleBuilder();
 
@@ -942,11 +959,11 @@ AUI.add(
 					_onRulesButtonClick: function() {
 						var instance = this;
 
-						var ruleTab = instance.one('#showRules');
-
-						if (ruleTab.hasClass('disabled')) {
+						if (instance._currentTab == 'ruleBuilder') {
 							return;
 						}
+
+						instance._currentTab = 'ruleBuilder'
 
 						instance._hideFormBuilder();
 
