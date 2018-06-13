@@ -175,8 +175,8 @@ AUI.add(
 						var instance = this;
 
 						var ACTIONS = {
-							'showForm': this._onFormButtonClick,
-							'showRules': this._onRulesButtonClick
+							'showForm': A.bind('_onFormButtonClick', instance),
+							'showRules': A.bind('_onRulesButtonClick', instance)
 						};
 
 						Liferay.componentReady('formsNavigationBar').then(
