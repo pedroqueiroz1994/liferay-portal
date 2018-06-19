@@ -27,9 +27,12 @@ import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.log.Log;
 import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.repository.model.FileEntry;
+import com.liferay.portal.kernel.security.auth.AuthTokenUtil;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
 import com.liferay.portal.kernel.util.AggregateResourceBundle;
 import com.liferay.portal.kernel.util.Html;
+import com.liferay.portal.kernel.util.Portal;
+import com.liferay.portal.kernel.util.PortletKeys;
 import com.liferay.portal.kernel.util.ResourceBundleLoader;
 import com.liferay.portal.kernel.util.ResourceBundleLoaderUtil;
 import com.liferay.portal.kernel.util.ResourceBundleUtil;
@@ -152,6 +155,9 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 
 		parameters.put(
 			"groupId", ddmFormFieldRenderingContext.getProperty("groupId"));
+
+		parameters.put(
+			"itemSelectorAuthToken", getItemSelectorAuthToken(request));
 		parameters.put("lexiconIconsPath", getLexiconIconsPath(request));
 
 		Map<String, String> stringsMap = new HashMap<>();
@@ -183,6 +189,29 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		}
 	}
 
+	protected String getItemSelectorAuthToken(HttpServletRequest request) {
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (themeDisplay == null) {
+			return StringPool.BLANK;
+		}
+
+		try {
+			String itemSelectorAuthToken = AuthTokenUtil.getToken(
+				request,
+				portal.getControlPanelPlid(themeDisplay.getCompanyId()),
+				PortletKeys.ITEM_SELECTOR);
+
+			return itemSelectorAuthToken;
+		}
+		catch (PortalException pe) {
+			_log.error("Unable to generate item selector auth token ", pe);
+		}
+
+		return StringPool.BLANK;
+	}
+
 	protected ResourceBundle getResourceBundle(Locale locale) {
 		ResourceBundleLoader portalResourceBundleLoader =
 			ResourceBundleLoaderUtil.getPortalResourceBundleLoader();
@@ -205,6 +234,9 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 
 	@Reference
 	protected JSONFactory jsonFactory;
+
+	@Reference
+	protected Portal portal;
 
 	private static final Log _log = LogFactoryUtil.getLog(
 		DocumentLibraryDDMFormFieldTemplateContextContributor.class);

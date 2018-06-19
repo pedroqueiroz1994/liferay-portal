@@ -14,6 +14,10 @@ AUI.add(
 						value: 0
 					},
 
+					itemSelectorAuthToken: {
+						value: ''
+					},
+
 					strings: {
 						value: {
 							select: Liferay.Language.get('select')
@@ -52,7 +56,7 @@ AUI.add(
 						portletURL.setParameter('criteria', 'com.liferay.item.selector.criteria.file.criterion.FileItemSelectorCriterion');
 						portletURL.setParameter('doAsGroupId', instance.get('groupId'));
 						portletURL.setParameter('itemSelectedEventName', portletNamespace + 'selectDocumentLibrary');
-						portletURL.setParameter('p_p_auth', container.getData('itemSelectorAuthToken'));
+						portletURL.setParameter('p_p_auth', instance.get('itemSelectorAuthToken'));
 
 						var criterionJSON = {
 							desiredItemSelectorReturnTypes: 'com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType,com.liferay.item.selector.criteria.FileEntryItemSelectorReturnType'
