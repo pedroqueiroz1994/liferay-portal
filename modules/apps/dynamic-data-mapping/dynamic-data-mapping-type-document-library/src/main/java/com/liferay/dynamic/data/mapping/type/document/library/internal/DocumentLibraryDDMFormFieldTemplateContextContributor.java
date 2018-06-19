@@ -64,70 +64,6 @@ import org.osgi.service.component.annotations.Reference;
 public class DocumentLibraryDDMFormFieldTemplateContextContributor
 	implements DDMFormFieldTemplateContextContributor {
 
-	public FileEntry getFileEntry(JSONObject valueJSONObject) {
-		try {
-			return dlAppService.getFileEntryByUuidAndGroupId(
-				valueJSONObject.getString("uuid"),
-				valueJSONObject.getLong("groupId"));
-		}
-		catch (PortalException pe) {
-			_log.error("Unable to retrieve file entry ", pe);
-
-			return null;
-		}
-	}
-
-	public String getFileEntryTitle(FileEntry fileEntry) {
-		if (fileEntry == null) {
-			return StringPool.BLANK;
-		}
-
-		return html.escape(fileEntry.getTitle());
-	}
-
-	public String getFileEntryURL(
-		HttpServletRequest request, FileEntry fileEntry) {
-
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		if (fileEntry == null) {
-			return StringPool.BLANK;
-		}
-
-		StringBundler sb = new StringBundler(9);
-
-		sb.append(themeDisplay.getPathContext());
-		sb.append("/documents/");
-		sb.append(fileEntry.getRepositoryId());
-		sb.append(StringPool.SLASH);
-		sb.append(fileEntry.getFolderId());
-		sb.append(StringPool.SLASH);
-		sb.append(
-			URLCodec.encodeURL(html.unescape(fileEntry.getTitle()), true));
-		sb.append(StringPool.SLASH);
-		sb.append(fileEntry.getUuid());
-
-		return html.escape(sb.toString());
-	}
-
-	public String getLexiconIconsPath(HttpServletRequest request) {
-		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
-			WebKeys.THEME_DISPLAY);
-
-		if (themeDisplay == null) {
-			return null;
-		}
-
-		StringBundler sb = new StringBundler(3);
-
-		sb.append(themeDisplay.getPathThemeImages());
-		sb.append("/lexicon/icons.svg");
-		sb.append(StringPool.POUND);
-
-		return sb.toString();
-	}
-
 	@Override
 	public Map<String, Object> getParameters(
 		DDMFormField ddmFormField,
@@ -176,17 +112,51 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		return parameters;
 	}
 
-	public JSONObject getValueJSONObject(String value) {
+	protected FileEntry getFileEntry(JSONObject valueJSONObject) {
 		try {
-			return jsonFactory.createJSONObject(value);
+			return dlAppService.getFileEntryByUuidAndGroupId(
+				valueJSONObject.getString("uuid"),
+				valueJSONObject.getLong("groupId"));
 		}
-		catch (JSONException jsone) {
-			if (_log.isDebugEnabled()) {
-				_log.debug(jsone, jsone);
-			}
+		catch (PortalException pe) {
+			_log.error("Unable to retrieve file entry ", pe);
 
 			return null;
 		}
+	}
+
+	protected String getFileEntryTitle(FileEntry fileEntry) {
+		if (fileEntry == null) {
+			return StringPool.BLANK;
+		}
+
+		return html.escape(fileEntry.getTitle());
+	}
+
+	protected String getFileEntryURL(
+		HttpServletRequest request, FileEntry fileEntry) {
+
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (fileEntry == null) {
+			return StringPool.BLANK;
+		}
+
+		StringBundler sb = new StringBundler(9);
+
+		sb.append(themeDisplay.getPathContext());
+		sb.append("/documents/");
+		sb.append(fileEntry.getRepositoryId());
+		sb.append(StringPool.SLASH);
+		sb.append(fileEntry.getFolderId());
+		sb.append(StringPool.SLASH);
+		sb.append(
+			URLCodec.encodeURL(html.unescape(fileEntry.getTitle()), true));
+		sb.append(StringPool.SLASH);
+		sb.append(fileEntry.getUuid());
+
+		return html.escape(sb.toString());
 	}
 
 	protected String getItemSelectorAuthToken(HttpServletRequest request) {
@@ -212,6 +182,23 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 		return StringPool.BLANK;
 	}
 
+	protected String getLexiconIconsPath(HttpServletRequest request) {
+		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
+			WebKeys.THEME_DISPLAY);
+
+		if (themeDisplay == null) {
+			return null;
+		}
+
+		StringBundler sb = new StringBundler(3);
+
+		sb.append(themeDisplay.getPathThemeImages());
+		sb.append("/lexicon/icons.svg");
+		sb.append(StringPool.POUND);
+
+		return sb.toString();
+	}
+
 	protected ResourceBundle getResourceBundle(Locale locale) {
 		ResourceBundleLoader portalResourceBundleLoader =
 			ResourceBundleLoaderUtil.getPortalResourceBundleLoader();
@@ -224,6 +211,19 @@ public class DocumentLibraryDDMFormFieldTemplateContextContributor
 
 		return new AggregateResourceBundle(
 			moduleResourceBundle, portalResourceBundle);
+	}
+
+	protected JSONObject getValueJSONObject(String value) {
+		try {
+			return jsonFactory.createJSONObject(value);
+		}
+		catch (JSONException jsone) {
+			if (_log.isDebugEnabled()) {
+				_log.debug(jsone, jsone);
+			}
+
+			return null;
+		}
 	}
 
 	@Reference
