@@ -70,14 +70,41 @@ public class UpgradeKaleoDefinitionVersion extends UpgradeProcess {
 	protected void doUpgrade() throws Exception {
 		upgradeKaleoDefinitionVersion();
 
+		removeDuplicatedKaleoDefinitions();
 		removeKaleoDefinitionId();
 		removeStartKaleoNodeId();
-
-		_removeDuplicatedKaleoDefinitions();
 	}
 
 	protected String getVersion(int version) {
 		return version + StringPool.PERIOD + 0;
+	}
+
+	protected void removeDuplicatedKaleoDefinitions()
+		throws IOException, SQLException {
+
+		try (LoggingTimer loggingTimer = new LoggingTimer();
+			PreparedStatement ps1 = connection.prepareStatement(
+				"select name, MAX(version) version from KaleoDefinition " +
+					"group by name");
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"delete from KaleoDefinition where name = ? and version " +
+						"< ?");
+			ResultSet rs = ps1.executeQuery()) {
+
+			while (rs.next()) {
+				String name = rs.getString("name");
+				int version = rs.getInt("version");
+
+				ps2.setString(1, name);
+				ps2.setInt(2, version);
+
+				ps2.addBatch();
+			}
+
+			ps2.executeBatch();
+		}
 	}
 
 	protected void removeKaleoDefinitionId() throws Exception {
@@ -289,34 +316,6 @@ public class UpgradeKaleoDefinitionVersion extends UpgradeProcess {
 			for (PreparedStatement preparedStatement : preparedStatements) {
 				DataAccess.cleanUp(preparedStatement);
 			}
-		}
-	}
-
-	private void _removeDuplicatedKaleoDefinitions()
-		throws IOException, SQLException {
-
-		try (LoggingTimer loggingTimer = new LoggingTimer();
-			PreparedStatement ps1 = connection.prepareStatement(
-				"select name, MAX(version) version from KaleoDefinition " +
-					"group by name");
-			PreparedStatement ps2 =
-				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
-					connection,
-					"delete from KaleoDefinition where name = ? and version " +
-						"< ?");
-			ResultSet rs = ps1.executeQuery()) {
-
-			while (rs.next()) {
-				String name = rs.getString("name");
-				int version = rs.getInt("version");
-
-				ps2.setString(1, name);
-				ps2.setInt(2, version);
-
-				ps2.addBatch();
-			}
-
-			ps2.executeBatch();
 		}
 	}
 
