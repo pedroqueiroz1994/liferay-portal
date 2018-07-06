@@ -15,12 +15,12 @@
 package com.liferay.portal.workflow.kaleo.internal.upgrade.v1_4_1;
 
 import com.liferay.petra.string.StringPool;
+import com.liferay.portal.kernel.dao.jdbc.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.kernel.dao.jdbc.DataAccess;
 import com.liferay.portal.kernel.upgrade.UpgradeProcess;
 import com.liferay.portal.kernel.util.LoggingTimer;
 import com.liferay.portal.kernel.util.StringBundler;
 import com.liferay.portal.kernel.workflow.WorkflowConstants;
-import com.liferay.portal.upgrade.AutoBatchPreparedStatementUtil;
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v1_4_1.util.KaleoActionTable;
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v1_4_1.util.KaleoConditionTable;
 import com.liferay.portal.workflow.kaleo.internal.upgrade.v1_4_1.util.KaleoDefinitionTable;
@@ -295,29 +295,28 @@ public class UpgradeKaleoDefinitionVersion extends UpgradeProcess {
 	private void _removeDuplicatedKaleoDefinitions()
 		throws IOException, SQLException {
 
-		StringBundler sb1 = new StringBundler(2);
-
-		sb1.append("select name, MAX(version) version from KaleoDefinition ");
-		sb1.append("group by name");
-
 		try (LoggingTimer loggingTimer = new LoggingTimer();
-			PreparedStatement ps1 = connection.prepareStatement(sb1.toString());
+			PreparedStatement ps1 = connection.prepareStatement(
+				"select name, MAX(version) version from KaleoDefinition " +
+					"group by name");
+			PreparedStatement ps2 =
+				AutoBatchPreparedStatementUtil.concurrentAutoBatch(
+					connection,
+					"delete from KaleoDefinition where name = ? and version " +
+						"< ?");
 			ResultSet rs = ps1.executeQuery()) {
 
 			while (rs.next()) {
 				String name = rs.getString("name");
 				int version = rs.getInt("version");
 
-				StringBundler sb2 = new StringBundler(4);
+				ps2.setString(1, name);
+				ps2.setInt(2, version);
 
-				sb2.append("delete from KaleoDefinition where name = '");
-				sb2.append(name);
-				sb2.append("' and version <> ");
-				sb2.append(version);
-
-				runSQL(sb2.toString());
+				ps2.addBatch();
 			}
 
+			ps2.executeBatch();
 		}
 	}
 
