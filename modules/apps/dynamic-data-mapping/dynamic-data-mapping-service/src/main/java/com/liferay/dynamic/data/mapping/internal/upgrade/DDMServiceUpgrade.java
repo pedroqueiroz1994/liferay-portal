@@ -45,7 +45,6 @@ import com.liferay.expando.kernel.service.ExpandoValueLocalService;
 import com.liferay.portal.kernel.json.JSONFactory;
 import com.liferay.portal.kernel.security.permission.ResourceActions;
 import com.liferay.portal.kernel.service.ClassNameLocalService;
-import com.liferay.portal.kernel.service.PortletPreferencesLocalService;
 import com.liferay.portal.kernel.service.ResourceActionLocalService;
 import com.liferay.portal.kernel.service.ResourceLocalService;
 import com.liferay.portal.kernel.service.ResourcePermissionLocalService;
@@ -130,11 +129,17 @@ public class DDMServiceUpgrade implements UpgradeStepRegistrator {
 				UpgradeSchema());
 
 		registry.register(
-			"1.2.0", "2.0.0",
+			"1.2.0", "1.2.1",
+			new com.liferay.dynamic.data.mapping.internal.upgrade.v1_2_0.
+				UpgradeDDMFormAdminPortletId(),
+			new com.liferay.dynamic.data.mapping.internal.upgrade.v1_2_0.
+				UpgradeDDMFormPortletId());
+
+		registry.register(
+			"1.2.1", "2.0.0",
 			new com.liferay.dynamic.data.mapping.internal.upgrade.v2_0_0.
 				UpgradeDDMFormInstance(
 					_classNameLocalService, _counterLocalService,
-					_portletPreferencesLocalService,
 					_resourcePermissionLocalService),
 			new com.liferay.dynamic.data.mapping.internal.upgrade.v2_0_0.
 				UpgradeDDMFormInstanceRecord(_assetEntryLocalService),
@@ -221,9 +226,6 @@ public class DDMServiceUpgrade implements UpgradeStepRegistrator {
 
 	@Reference
 	private JSONFactory _jsonFactory;
-
-	@Reference
-	private PortletPreferencesLocalService _portletPreferencesLocalService;
 
 	@Reference
 	private ResourceActionLocalService _resourceActionLocalService;
