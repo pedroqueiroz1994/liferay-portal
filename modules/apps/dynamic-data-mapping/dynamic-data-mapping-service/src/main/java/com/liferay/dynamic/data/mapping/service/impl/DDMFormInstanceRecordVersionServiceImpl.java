@@ -14,7 +14,6 @@
 
 package com.liferay.dynamic.data.mapping.service.impl;
 
-import com.liferay.dynamic.data.mapping.model.DDMFormInstance;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecord;
 import com.liferay.dynamic.data.mapping.model.DDMFormInstanceRecordVersion;
 import com.liferay.dynamic.data.mapping.service.base.DDMFormInstanceRecordVersionServiceBaseImpl;
@@ -57,9 +56,10 @@ public class DDMFormInstanceRecordVersionServiceImpl
 			ddmFormInstanceRecordVersionLocalService.
 				getFormInstanceRecordVersion(ddmFormInstanceRecordVersionId);
 
-		_ddmFormInstanceModelResourcePermission.check(
+		_ddmFormInstanceRecordModelResourcePermission.check(
 			getPermissionChecker(),
-			ddmFormInstanceRecordVersion.getFormInstance(), ActionKeys.VIEW);
+			ddmFormInstanceRecordVersion.getFormInstanceRecordId(),
+			ActionKeys.VIEW);
 
 		return ddmFormInstanceRecordVersion;
 	}
@@ -69,13 +69,8 @@ public class DDMFormInstanceRecordVersionServiceImpl
 			long ddmFormInstanceRecordId, String version)
 		throws PortalException {
 
-		DDMFormInstanceRecord ddmFormInstanceRecord =
-			ddmFormInstanceRecordPersistence.findByPrimaryKey(
-				ddmFormInstanceRecordId);
-
-		_ddmFormInstanceModelResourcePermission.check(
-			getPermissionChecker(), ddmFormInstanceRecord.getFormInstance(),
-			ActionKeys.VIEW);
+		_ddmFormInstanceRecordModelResourcePermission.check(
+			getPermissionChecker(), ddmFormInstanceRecordId, ActionKeys.VIEW);
 
 		return ddmFormInstanceRecordVersionPersistence.findByF_V(
 			ddmFormInstanceRecordId, version);
@@ -86,13 +81,8 @@ public class DDMFormInstanceRecordVersionServiceImpl
 			long ddmFormInstanceRecordId)
 		throws PortalException {
 
-		DDMFormInstanceRecord ddmFormInstanceRecord =
-			ddmFormInstanceRecordPersistence.findByPrimaryKey(
-				ddmFormInstanceRecordId);
-
-		_ddmFormInstanceModelResourcePermission.check(
-			getPermissionChecker(), ddmFormInstanceRecord.getFormInstance(),
-			ActionKeys.VIEW);
+		_ddmFormInstanceRecordModelResourcePermission.check(
+			getPermissionChecker(), ddmFormInstanceRecordId, ActionKeys.VIEW);
 
 		return ddmFormInstanceRecordVersionPersistence.
 			findByFormInstanceRecordId(ddmFormInstanceRecordId);
@@ -104,13 +94,8 @@ public class DDMFormInstanceRecordVersionServiceImpl
 			OrderByComparator<DDMFormInstanceRecordVersion> orderByComparator)
 		throws PortalException {
 
-		DDMFormInstanceRecord ddmFormInstanceRecord =
-			ddmFormInstanceRecordPersistence.findByPrimaryKey(
-				ddmFormInstanceRecordId);
-
-		_ddmFormInstanceModelResourcePermission.check(
-			getPermissionChecker(), ddmFormInstanceRecord.getFormInstance(),
-			ActionKeys.VIEW);
+		_ddmFormInstanceRecordModelResourcePermission.check(
+			getPermissionChecker(), ddmFormInstanceRecordId, ActionKeys.VIEW);
 
 		return ddmFormInstanceRecordVersionPersistence.
 			findByFormInstanceRecordId(
@@ -121,24 +106,13 @@ public class DDMFormInstanceRecordVersionServiceImpl
 	public int getFormInstanceRecordVersionsCount(long ddmFormInstanceRecordId)
 		throws PortalException {
 
-		DDMFormInstanceRecord ddmFormInstanceRecord =
-			ddmFormInstanceRecordPersistence.findByPrimaryKey(
-				ddmFormInstanceRecordId);
-
-		_ddmFormInstanceModelResourcePermission.check(
-			getPermissionChecker(), ddmFormInstanceRecord.getFormInstance(),
-			ActionKeys.VIEW);
+		_ddmFormInstanceRecordModelResourcePermission.check(
+			getPermissionChecker(), ddmFormInstanceRecordId, ActionKeys.VIEW);
 
 		return ddmFormInstanceRecordVersionPersistence.
 			countByFormInstanceRecordId(ddmFormInstanceRecordId);
 	}
 
-	private static volatile ModelResourcePermission<DDMFormInstance>
-		_ddmFormInstanceModelResourcePermission =
-			ModelResourcePermissionFactory.getInstance(
-				DDMFormInstanceRecordVersionServiceImpl.class,
-				"_ddmFormInstanceModelResourcePermission",
-				DDMFormInstance.class);
 	private static volatile ModelResourcePermission<DDMFormInstanceRecord>
 		_ddmFormInstanceRecordModelResourcePermission =
 			ModelResourcePermissionFactory.getInstance(
