@@ -151,7 +151,7 @@ if (!searchRestriction) {
 			classPK="<%= ddmStructure.getStructureId() %>"
 			ddmFormValues="<%= journalDisplayContext.getDDMFormValues(ddmStructure) %>"
 			ignoreRequestValue="<%= changeStructure %>"
-			requestedLocale="<%= LocaleUtil.fromLanguageId(defaultLanguageId) %>"
+			requestedLocale="<%= locale %>"
 		/>
 	</div>
 
