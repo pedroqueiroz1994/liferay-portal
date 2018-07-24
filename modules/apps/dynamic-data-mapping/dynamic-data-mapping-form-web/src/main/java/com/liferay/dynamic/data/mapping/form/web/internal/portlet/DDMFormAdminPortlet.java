@@ -53,6 +53,7 @@ import com.liferay.portal.kernel.util.Portal;
 import com.liferay.portal.kernel.util.WebKeys;
 
 import java.io.IOException;
+
 import java.util.Map;
 
 import javax.portlet.Portlet;
@@ -279,10 +280,6 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 	private DDMFormInstanceLocalService _ddmFormInstanceLocalService;
 
 	@Reference
-	private DDMFormInstanceVersionLocalService
-		_ddmFormInstanceVersionLocalService;
-
-	@Reference
 	private DDMFormInstanceRecordLocalService
 		_ddmFormInstanceRecordLocalService;
 
@@ -292,6 +289,10 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 
 	@Reference
 	private DDMFormInstanceService _ddmFormInstanceService;
+
+	@Reference
+	private DDMFormInstanceVersionLocalService
+		_ddmFormInstanceVersionLocalService;
 
 	@Reference
 	private DDMFormRenderer _ddmFormRenderer;
