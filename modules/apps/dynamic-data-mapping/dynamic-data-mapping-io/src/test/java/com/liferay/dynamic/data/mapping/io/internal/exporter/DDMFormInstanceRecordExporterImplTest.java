@@ -372,9 +372,6 @@ public class DDMFormInstanceRecordExporterImplTest extends PowerMockito {
 
 		Assert.assertEquals("value1", actualValue);
 
-		InOrder inOrder = Mockito.inOrder(
-			_ddmFormFieldTypeServicesTracker, ddmFormFieldValueRenderer, _html);
-
 		Mockito.verify(
 			_ddmFormFieldTypeServicesTracker, Mockito.times(1)
 		).getDDMFormFieldValueRenderer(
