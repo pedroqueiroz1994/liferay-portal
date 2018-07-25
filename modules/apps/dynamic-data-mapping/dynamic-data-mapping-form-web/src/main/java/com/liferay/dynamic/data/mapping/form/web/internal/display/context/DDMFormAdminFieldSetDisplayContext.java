@@ -96,7 +96,7 @@ public class DDMFormAdminFieldSetDisplayContext
 			formRenderer, formValuesFactory, formValuesMerger,
 			structureLocalService, structureService, jsonFactory);
 
-         _fieldSetPermissionCheckerHelper = new FieldSetPermissionCheckerHelper(
+		_fieldSetPermissionCheckerHelper = new FieldSetPermissionCheckerHelper(
 			formAdminRequestHelper);
 	}
 
@@ -164,7 +164,7 @@ public class DDMFormAdminFieldSetDisplayContext
 			}
 			catch (PortalException pe) {
 				if (_log.isDebugEnabled()) {
-					_log.debug(pe);
+					_log.debug(pe, pe);
 				}
 			}
 		}
