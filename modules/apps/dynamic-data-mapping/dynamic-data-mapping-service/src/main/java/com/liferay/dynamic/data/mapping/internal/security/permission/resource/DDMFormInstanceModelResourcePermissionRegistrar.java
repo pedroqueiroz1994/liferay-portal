@@ -105,10 +105,7 @@ public class DDMFormInstanceModelResourcePermissionRegistrar {
 				return null;
 			}
 
-			Boolean contains = super.contains(
-				permissionChecker, name, model, actionId);
-
-			return contains;
+			return super.contains(permissionChecker, name, model, actionId);
 		}
 
 	}
