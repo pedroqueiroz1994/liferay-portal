@@ -58,7 +58,7 @@ public class DDMFormInstanceModelResourcePermissionRegistrar {
 				_ddmFormInstanceLocalService::getDDMFormInstance,
 				_portletResourcePermission,
 				(modelResourcePermission, consumer) -> consumer.accept(
-					new AddFormInstanceRecordLogic(
+					new AddFormInstanceRecordPermissionLogic(
 						_stagingPermission,
 						DDMPortletKeys.DYNAMIC_DATA_MAPPING_FORM_ADMIN,
 						DDMFormInstance::getFormInstanceId))),
@@ -84,10 +84,10 @@ public class DDMFormInstanceModelResourcePermissionRegistrar {
 	@Reference
 	private StagingPermission _stagingPermission;
 
-	private class AddFormInstanceRecordLogic
+	private class AddFormInstanceRecordPermissionLogic
 		extends StagedModelPermissionLogic<DDMFormInstance> {
 
-		public AddFormInstanceRecordLogic(
+		public AddFormInstanceRecordPermissionLogic(
 			StagingPermission stagingPermission, String portletId,
 			ToLongFunction<DDMFormInstance> primKeyToLongFunction) {
 
