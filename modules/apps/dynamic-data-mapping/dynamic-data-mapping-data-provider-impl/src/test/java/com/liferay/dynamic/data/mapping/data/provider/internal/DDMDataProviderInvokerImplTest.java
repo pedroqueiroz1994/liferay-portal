@@ -126,10 +126,10 @@ public class DDMDataProviderInvokerImplTest extends PowerMockito {
 		DDMDataProviderResponse ddmDataProviderResponse =
 			ddmDataProviderInvoker.doInvoke(ddmDataProviderRequest);
 
-		Optional<Number> optionalOutput = ddmDataProviderResponse.getOutput(
+		Optional<Number> outputOptional = ddmDataProviderResponse.getOutput(
 			"output", Number.class);
 
-		Assert.assertEquals(2, optionalOutput.get());
+		Assert.assertEquals(2, outputOptional.get());
 	}
 
 	@Test
@@ -188,10 +188,10 @@ public class DDMDataProviderInvokerImplTest extends PowerMockito {
 		DDMDataProviderResponse ddmDataProviderResponse =
 			ddmDataProviderInvoker.doInvoke(ddmDataProviderRequest);
 
-		Optional<String> optionalOutput = ddmDataProviderResponse.getOutput(
+		Optional<String> outputOptional = ddmDataProviderResponse.getOutput(
 			"test", String.class);
 
-		Assert.assertEquals("value", optionalOutput.get());
+		Assert.assertEquals("value", outputOptional.get());
 	}
 
 	@Test

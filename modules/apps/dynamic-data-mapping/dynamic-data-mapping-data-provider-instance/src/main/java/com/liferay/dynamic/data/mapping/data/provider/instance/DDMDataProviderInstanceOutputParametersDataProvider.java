@@ -55,15 +55,15 @@ public class DDMDataProviderInstanceOutputParametersDataProvider
 	public DDMDataProviderResponse getData(
 		DDMDataProviderRequest ddmDataProviderRequest) {
 
-		Optional<Long> optionalDataProviderInstanceId =
+		Optional<Long> dataProviderInstanceIdOptional =
 			ddmDataProviderRequest.getParameter(
 				"dataProviderInstanceId", String.class);
 
 		long dataProviderInstanceId = 0;
 
-		if (optionalDataProviderInstanceId.isPresent()) {
+		if (dataProviderInstanceIdOptional.isPresent()) {
 			dataProviderInstanceId = GetterUtil.getLong(
-				optionalDataProviderInstanceId.get());
+				dataProviderInstanceIdOptional.get());
 		}
 
 		DDMDataProviderResponse.Builder builder =

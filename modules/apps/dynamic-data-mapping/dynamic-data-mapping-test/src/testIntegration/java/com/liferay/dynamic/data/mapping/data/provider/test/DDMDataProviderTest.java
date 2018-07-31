@@ -83,12 +83,12 @@ public class DDMDataProviderTest {
 		DDMDataProviderResponse ddmDataProviderResponse =
 			testDataProvider.getData(ddmDataProviderRequest);
 
-		Optional<List<KeyValuePair>> optionalKeyValuePairs =
+		Optional<List<KeyValuePair>> keyValuePairsOptional =
 			ddmDataProviderResponse.getOutput("Default-Output", List.class);
 
-		Assert.assertTrue(optionalKeyValuePairs.isPresent());
+		Assert.assertTrue(keyValuePairsOptional.isPresent());
 
-		List<KeyValuePair> keyValuePairs = optionalKeyValuePairs.get();
+		List<KeyValuePair> keyValuePairs = keyValuePairsOptional.get();
 
 		Assert.assertEquals(keyValuePairs.toString(), 2, keyValuePairs.size());
 	}

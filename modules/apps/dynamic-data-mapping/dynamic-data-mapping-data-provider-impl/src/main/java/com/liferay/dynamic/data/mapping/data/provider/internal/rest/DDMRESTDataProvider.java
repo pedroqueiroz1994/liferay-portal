@@ -378,13 +378,13 @@ public class DDMRESTDataProvider implements DDMDataProvider {
 		throws Exception {
 
 		if (PermissionThreadLocal.getPermissionChecker() == null) {
-			Optional<HttpServletRequest> optionalHttpServletRequest =
+			Optional<HttpServletRequest> httpServletRequestOptional =
 				ddmDataProviderRequest.getParameter(
 					"httpServletRequest", HttpServletRequest.class);
 
-			if (optionalHttpServletRequest.isPresent()) {
+			if (httpServletRequestOptional.isPresent()) {
 				HttpServletRequest httpServletRequest =
-					optionalHttpServletRequest.get();
+					httpServletRequestOptional.get();
 
 				User user = portal.getUser(httpServletRequest);
 

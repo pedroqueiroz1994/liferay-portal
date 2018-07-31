@@ -252,14 +252,14 @@ public class DDMDataProviderInstanceOutputParametersDataProviderTest
 			_ddmDataProviderInstanceOutputParametersDataProvider.getData(
 				ddmDataProviderRequest);
 
-		Optional<List<KeyValuePair>> optionalOutputParameterNames =
+		Optional<List<KeyValuePair>> outputParameterNamesOptional =
 			ddmDataProviderResponse.getOutput(
 				"outputParameterNames", List.class);
 
-		Assert.assertTrue(optionalOutputParameterNames.isPresent());
+		Assert.assertTrue(outputParameterNamesOptional.isPresent());
 
 		List<KeyValuePair> outputParameterNames =
-			optionalOutputParameterNames.get();
+			outputParameterNamesOptional.get();
 
 		Assert.assertEquals(
 			outputParameterNames.toString(), 0, outputParameterNames.size());

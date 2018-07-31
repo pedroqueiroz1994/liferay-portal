@@ -290,19 +290,19 @@ public class CallFunction extends BaseDDMFormRuleFunction {
 				continue;
 			}
 
-			Optional<List<KeyValuePair>> optionalKeyValuePairs =
+			Optional<List<KeyValuePair>> keyValuePairsOptional =
 				ddmDataProviderResponse.getOutput(outputName, List.class);
 
-			if (optionalKeyValuePairs.isPresent()) {
+			if (keyValuePairsOptional.isPresent()) {
 				setDDMFormFieldOptions(
-					ddmFormFieldName, optionalKeyValuePairs.get());
+					ddmFormFieldName, keyValuePairsOptional.get());
 			}
 			else {
-				Optional<String> optionalValue =
+				Optional<String> valueOptional =
 					ddmDataProviderResponse.getOutput(outputName, String.class);
 
-				if (optionalValue.isPresent()) {
-					setDDMFormFieldValue(ddmFormFieldName, optionalValue.get());
+				if (valueOptional.isPresent()) {
+					setDDMFormFieldValue(ddmFormFieldName, valueOptional.get());
 				}
 			}
 		}
