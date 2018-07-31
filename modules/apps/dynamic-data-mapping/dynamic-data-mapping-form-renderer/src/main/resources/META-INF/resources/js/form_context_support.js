@@ -44,6 +44,14 @@ AUI.add(
 			destructor: function() {
 				var instance = this;
 
+				instance.disposeScheduled();
+
+				instance.get('visitor').destroy();
+			},
+
+			disposeScheduled: function() {
+				var instance = this;
+
 				if (instance._scheduledToDisposal) {
 					instance._scheduledToDisposal.forEach(
 						function(component) {
@@ -55,8 +63,6 @@ AUI.add(
 
 					instance._scheduledToDisposal = null;
 				}
-
-				instance.get('visitor').destroy();
 			},
 
 			_createField: function(context, fieldsMap) {
@@ -195,6 +201,8 @@ AUI.add(
 				var visitor = instance.get('visitor');
 
 				AArray.invoke(instance.get('fields'), 'destroy');
+
+				instance.disposeScheduled();
 
 				visitor.set('pages', context.pages);
 

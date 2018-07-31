@@ -141,6 +141,8 @@ AUI.add(
 
 						(new A.EventHandle(instance._eventHandlers)).detach();
 
+						instance._eventHandlers = null;
+
 						instance.set('rendered', false);
 					},
 

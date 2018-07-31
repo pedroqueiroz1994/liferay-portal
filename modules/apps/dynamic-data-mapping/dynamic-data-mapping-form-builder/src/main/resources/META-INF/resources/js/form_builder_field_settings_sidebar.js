@@ -125,6 +125,8 @@ AUI.add(
 						}
 
 						instance.settingsForm = null;
+						instance._previousContext = null;
+						instance._previousFormContext = null;
 					},
 
 					getFieldSettings: function() {

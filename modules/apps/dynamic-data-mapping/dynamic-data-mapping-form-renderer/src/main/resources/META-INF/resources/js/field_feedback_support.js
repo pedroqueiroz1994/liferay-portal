@@ -29,6 +29,8 @@ AUI.add(
 			destructor: function() {
 				var instance = this;
 
+				instance._errorMessageNode.remove(true);
+
 				instance._errorMessageNode = null;
 			},
 

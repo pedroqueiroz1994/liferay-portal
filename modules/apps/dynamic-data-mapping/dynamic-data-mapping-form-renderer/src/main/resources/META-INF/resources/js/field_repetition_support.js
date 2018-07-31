@@ -65,6 +65,8 @@ AUI.add(
 
 					instance._DOMEventHandlers = null;
 				}
+
+				instance.set('repetitions', []);
 			},
 
 			copy: function() {
