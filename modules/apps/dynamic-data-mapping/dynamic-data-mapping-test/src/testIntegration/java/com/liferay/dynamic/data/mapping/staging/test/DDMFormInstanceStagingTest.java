@@ -15,18 +15,18 @@
 package com.liferay.dynamic.data.mapping.staging.test;
 
 import com.liferay.arquillian.extension.junit.bridge.junit.Arquillian;
-import com.liferay.dynamic.data.mapping.constants.DDMActionKeys;
+import com.liferay.dynamic.data.mapping.service.DDMFormInstanceServiceUtil;
 import com.liferay.dynamic.data.mapping.test.util.DDMFormStagingTestUtil;
 import com.liferay.portal.kernel.model.Group;
+import com.liferay.portal.kernel.security.auth.PrincipalException;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.security.permission.PermissionCheckerFactoryUtil;
-import com.liferay.portal.kernel.service.ServiceContext;
+import com.liferay.portal.kernel.security.permission.PermissionThreadLocal;
 import com.liferay.portal.kernel.test.rule.DeleteAfterTestRun;
 import com.liferay.portal.kernel.test.util.GroupTestUtil;
-import com.liferay.portal.kernel.test.util.ServiceContextTestUtil;
 import com.liferay.portal.kernel.test.util.TestPropsValues;
 
-import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -36,26 +36,33 @@ import org.junit.runner.RunWith;
 @RunWith(Arquillian.class)
 public class DDMFormInstanceStagingTest {
 
-	@Test
+	@Before
+	public void setUp() throws Exception {
+		setUpPermissionThreadLocal();
+	}
+
+	@Test(expected = PrincipalException.MustHavePermission.class)
 	public void testUserCannotAddAFormOnLiveSite() throws Exception {
 		_liveGroup = GroupTestUtil.addGroup();
-
-		ServiceContext serviceContext =
-			ServiceContextTestUtil.getServiceContext(_liveGroup.getGroupId());
 
 		DDMFormStagingTestUtil.enableLocalStaging(
 			_liveGroup, true, false, true);
 
-		PermissionChecker permissionChecker =
-			PermissionCheckerFactoryUtil.create(TestPropsValues.getUser());
+		DDMFormInstanceServiceUtil.addFormInstance(
+			_liveGroup.getGroupId(), null, null, null, null, null, null);
+	}
 
-		Assert.assertFalse(
-			DDMFormPermission.contains(
-				permissionChecker, serviceContext.getScopeGroupId(),
-				DDMActionKeys.ADD_FORM_INSTANCE));
+	protected void setUpPermissionThreadLocal() throws Exception {
+		_originalPermissionChecker =
+			PermissionThreadLocal.getPermissionChecker();
+
+		PermissionThreadLocal.setPermissionChecker(
+			PermissionCheckerFactoryUtil.create(TestPropsValues.getUser()));
 	}
 
 	@DeleteAfterTestRun
 	private Group _liveGroup;
+
+	private PermissionChecker _originalPermissionChecker;
 
 }
