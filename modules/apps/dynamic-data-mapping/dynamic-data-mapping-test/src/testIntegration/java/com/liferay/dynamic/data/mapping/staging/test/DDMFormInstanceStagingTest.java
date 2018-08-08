@@ -45,8 +45,7 @@ public class DDMFormInstanceStagingTest {
 	public void testUserCannotAddAFormOnLiveSite() throws Exception {
 		_liveGroup = GroupTestUtil.addGroup();
 
-		DDMFormStagingTestUtil.enableLocalStaging(
-			_liveGroup, true, false, true);
+		DDMFormStagingTestUtil.enableLocalStaging(_liveGroup, true);
 
 		DDMFormInstanceServiceUtil.addFormInstance(
 			_liveGroup.getGroupId(), null, null, null, null, null, null);
