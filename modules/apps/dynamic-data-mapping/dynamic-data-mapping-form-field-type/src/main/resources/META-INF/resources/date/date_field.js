@@ -33,6 +33,7 @@ AUI.add(
 
 						if (!instance.get('readOnly')) {
 							instance.bindContainerEvent('blur', instance._onBlurInput, '.form-control');
+							instance.bindContainerEvent('change', instance._afterSelectionChange,'.liferay-ddm-form-field-date input');
 							instance.bindContainerEvent('click', instance._onClickCalendar, '.input-group-addon');
 							instance.bindContainerEvent('focus', instance._fireFocusEvent, '.form-control');
 						}
