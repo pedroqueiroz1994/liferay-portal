@@ -84,7 +84,8 @@ public class DDMFormTaglibUtil {
 	}
 
 	public static String getFormBuilderContext(
-		long ddmStructureId, HttpServletRequest request) {
+		long ddmStructureId, long ddmStructureVersionId,
+		HttpServletRequest request) {
 
 		ThemeDisplay themeDisplay = (ThemeDisplay)request.getAttribute(
 			WebKeys.THEME_DISPLAY);
@@ -101,21 +102,28 @@ public class DDMFormTaglibUtil {
 		Optional<DDMStructure> ddmStructureOptional = Optional.ofNullable(
 			_ddmStructureLocalService.fetchDDMStructure(ddmStructureId));
 
+		DDMStructureVersion ddmStructureVersion =
+			_ddmStructureVersionLocalService.fetchDDMStructureVersion(
+				ddmStructureVersionId);
+
 		Locale locale = themeDisplay.getSiteDefaultLocale();
 
-		if (ddmStructureOptional.isPresent()) {
-			DDMStructure ddmStructure = ddmStructureOptional.get();
-
-			DDMForm ddmForm = ddmStructure.getDDMForm();
+		if (ddmStructureOptional.isPresent() || (ddmStructureVersion != null)) {
+			DDMForm ddmForm = getDDMForm(ddmStructureId, ddmStructureVersionId);
 
 			locale = ddmForm.getDefaultLocale();
 		}
 
+		DDMFormBuilderContextRequest ddmFormBuilderContextRequest =
+			DDMFormBuilderContextRequest.with(
+				ddmStructureOptional, themeDisplay.getRequest(),
+				themeDisplay.getResponse(), locale, true);
+
+		ddmFormBuilderContextRequest.addProperty(
+			"ddmStructureVersion", ddmStructureVersion);
+
 		DDMFormBuilderContextResponse formBuilderContextResponse =
-			_ddmFormBuilderContextFactory.create(
-				DDMFormBuilderContextRequest.with(
-					ddmStructureOptional, themeDisplay.getRequest(),
-					themeDisplay.getResponse(), locale, true));
+			_ddmFormBuilderContextFactory.create(ddmFormBuilderContextRequest);
 
 		return jsonSerializer.serializeDeep(
 			formBuilderContextResponse.getContext());
