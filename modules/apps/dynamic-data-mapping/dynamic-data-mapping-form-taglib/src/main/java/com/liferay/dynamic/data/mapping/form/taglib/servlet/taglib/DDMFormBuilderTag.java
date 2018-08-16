@@ -37,7 +37,8 @@ public class DDMFormBuilderTag extends BaseDDMFormBuilderTag {
 
 	protected DDMForm getDDMForm() {
 		return DDMFormTaglibUtil.getDDMForm(
-			GetterUtil.getLong(getDdmStructureId()));
+			GetterUtil.getLong(getDdmStructureId()),
+			GetterUtil.getLong(getDdmStructureVersionId()));
 	}
 
 	protected DDMFormBuilderSettingsResponse getDDMFormBuilderSettings(
