@@ -143,7 +143,7 @@ renderResponse.setTitle((formInstance == null) ? LanguageUtil.get(request, "new-
 			ddmStructureVersionId="<%= ddmFormAdminDisplayContext.getLatestDDMStructureVersionId() %>"
 			defaultLanguageId="<%= ddmFormAdminDisplayContext.getDefaultLanguageId() %>"
 			editingLanguageId="<%= ddmFormAdminDisplayContext.getDefaultLanguageId() %>"
-			fieldSetsClassNameId="<%= PortalUtil.getClassNameId(DDMFormInstance.class) %>"
+			fieldSetClassNameId="<%= PortalUtil.getClassNameId(DDMFormInstance.class) %>"
 			refererPortletNamespace="<%= liferayPortletResponse.getNamespace() %>"
 		/>
 
