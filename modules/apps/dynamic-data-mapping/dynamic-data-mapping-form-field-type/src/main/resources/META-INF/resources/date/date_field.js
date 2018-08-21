@@ -108,6 +108,7 @@ AUI.add(
 							if (calendar.get('boundingBox').contains(node) || popover.get('visible')) {
 								hasFocus = true;
 							}
+
 						}
 
 						return hasFocus;
@@ -128,7 +129,7 @@ AUI.add(
 
 						var element = instance.getTriggerNode().getDOM();
 
-						DDMDate.vanillaTextMask(
+						instance.dateMask = DDMDate.vanillaTextMask(
 							{
 								inputElement: element,
 								mask: [/\d/, /\d/, '/', /\d/, /\d/, '/', /\d/, /\d/, /\d/, /\d/],
@@ -145,6 +146,9 @@ AUI.add(
 								after: {
 									selectionChange: A.bind('_afterSelectionChange', instance)
 								},
+								on: {
+									selectionChange: A.bind('_onSelectionChange', instance)
+								},
 								mask: instance.get('mask'),
 								popover: {
 									zIndex: Liferay.zIndex.TOOLTIP
@@ -152,6 +156,8 @@ AUI.add(
 								trigger: '[data-fieldname=' + qualifiedName + '] .form-control'
 							}
 						);
+
+						instance.datePicker.getCalendar().on('dateClick', instance._onDateClick.bind(this));
 
 						return instance;
 					},
@@ -180,10 +186,48 @@ AUI.add(
 						formGroup.append(container.one('.form-feedback-item'));
 					},
 
-					_afterSelectionChange: function(event) {
+					_getDatePlaceholder: function() {
 						var instance = this;
 
+						if (instance.dateMask) {
+							return instance.dateMask.textMaskInputElement.state.previousPlaceholder;
+						}
+					},
+
+					_onSelectionChange: function(event) {
+						var instance = this;
+
+						if (!instance.getTriggerNode().val() || (instance.getTriggerNode().val() == instance._getDatePlaceholder())) {
+							instance.invalidValue = true;
+						}
+					},
+
+					_afterSelectionChange: function(event) {
+						var instance = this;
 						var date = event.newSelection;
+
+						instance.dateValue = instance.getTriggerNode().val()
+
+						if (instance.invalidValue) {
+							return instance.clearDateInputValue();
+						}
+
+						return instance._setDatePickerValue(date);
+					},
+
+					clearDateInputValue: function() {
+						instance = this;
+
+						var placeholder = instance._getDatePlaceholder();
+
+						instance.getTriggerNode().val('');
+						instance.getTriggerNode().setAttribute('placeholder', placeholder)
+						instance.setValue('');
+						instance.invalidValue = false;
+					},
+
+					_setDatePickerValue: function(date) {
+						var instance = this;
 
 						if (isArray(date) && date.length) {
 							date = date[0];
@@ -194,6 +238,8 @@ AUI.add(
 						instance.validate();
 
 						instance._fireStartedFillingEvent();
+
+						instance.actionByCalendar = false;
 					},
 
 					_onBlurInput: function() {
@@ -224,6 +270,13 @@ AUI.add(
 						instance.getTriggerNode().focus();
 
 						datePicker.show();
+					},
+
+					_onDateClick: function(event) {
+						var instance = this;
+
+						instance.getTriggerNode().val(instance.dateValue);
+						instance._setDatePickerValue(event.date);
 					}
 				}
 			}
