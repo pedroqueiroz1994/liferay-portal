@@ -43,7 +43,7 @@ PortletURL portletURL = renderResponse.createRenderURL();
 			var form = document.getElementById('<portlet:namespace />fm');
 
 			if (form) {
-				var searchContainer = form.querySelector('#<portlet:namespace />ddlRecordSet');
+				var searchContainer = form.querySelector('#<portlet:namespace /><%= ddlDisplayContext.getSearchContainerId() %>');
 
 				if (searchContainer) {
 					form.setAttribute('method', 'post');
