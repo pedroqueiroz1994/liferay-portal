@@ -42,8 +42,8 @@ public class DDMFormBuilderContextFactoryImpl
 	public DDMFormBuilderContextResponse create(
 		DDMFormBuilderContextRequest ddmFormBuilderContextRequest) {
 
-		Optional<DDMStructure> ddmStructureOptional =
-			ddmFormBuilderContextRequest.getProperty("ddmStructureOptional");
+		Optional<DDMStructure> ddmStructureOptional = Optional.ofNullable(
+			ddmFormBuilderContextRequest.getProperty("ddmStructure"));
 
 		Optional<DDMStructureVersion> ddmStructureVersionOptional =
 			Optional.ofNullable(
