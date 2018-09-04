@@ -324,7 +324,7 @@ public class DDMFormAdminPortlet extends MVCPortlet {
 		policyOption = ReferencePolicyOption.GREEDY,
 		unbind = "unsetDDMFormWebConfigurationActivator"
 	)
-	private volatile DDMFormWebConfigurationActivator
+	protected volatile DDMFormWebConfigurationActivator
 		_ddmFormWebConfigurationActivator;
 
 	@Reference
