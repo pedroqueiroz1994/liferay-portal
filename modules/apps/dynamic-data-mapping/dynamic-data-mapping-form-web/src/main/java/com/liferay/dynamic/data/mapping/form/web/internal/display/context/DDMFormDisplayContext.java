@@ -591,7 +591,7 @@ public class DDMFormDisplayContext {
 			return LanguageUtil.get(locale, "submit-for-publication");
 		}
 
-		return LanguageUtil.get(locale, "submit");
+		return LanguageUtil.get(locale, "submit-form");
 	}
 
 	protected ThemeDisplay getThemeDisplay() {
