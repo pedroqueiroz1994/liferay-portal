@@ -17,10 +17,14 @@ package com.liferay.asset.kernel.model;
 import aQute.bnd.annotation.ProviderType;
 
 import com.liferay.portal.kernel.exception.PortalException;
+import com.liferay.portal.kernel.language.Language;
+import com.liferay.portal.kernel.language.LanguageUtil;
 import com.liferay.portal.kernel.portlet.LiferayPortletRequest;
 import com.liferay.portal.kernel.portlet.LiferayPortletResponse;
 import com.liferay.portal.kernel.security.permission.PermissionChecker;
 import com.liferay.portal.kernel.theme.ThemeDisplay;
+import com.liferay.portal.kernel.util.ArrayUtil;
+import com.liferay.portal.kernel.util.LocaleUtil;
 
 import java.util.Date;
 import java.util.Locale;
@@ -57,6 +61,18 @@ public interface AssetRenderer<T> extends Renderer {
 	public int getAssetRendererType();
 
 	public String[] getAvailableLanguageIds() throws Exception;
+
+	public default String getDefaultLanguageId() throws Exception {
+		String[] availableLanguageIds = getAvailableLanguageIds();
+		String siteDefaultLanguageId =
+			LocaleUtil.toLanguageId(LocaleUtil.getSiteDefault());
+
+		if (!ArrayUtil.contains(availableLanguageIds, siteDefaultLanguageId)) {
+			return availableLanguageIds[0];
+		}
+
+		return siteDefaultLanguageId;
+	}
 
 	public DDMFormValuesReader getDDMFormValuesReader();
 
