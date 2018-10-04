@@ -14,4 +14,4 @@
  */
 --%>
 
-<%@ include file="init.jsp" %>
+<%@ include file="/ddm_form_renderer/init.jsp" %>
