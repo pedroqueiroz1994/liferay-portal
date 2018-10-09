@@ -71,16 +71,6 @@ public class DDMFormTaglibUtil {
 		return _ddmFormValuesFactory.create(request, ddmForm);
 	}
 
-	public static DDMFormInstanceRecordVersion
-		fetchLatestFormInstanceRecordVersion(
-			long userId, long formInstanceId, String formInstanceVersion,
-			int status) {
-
-		return _ddmFormInstanceRecordVersionLocalService.
-			fetchLatestFormInstanceRecordVersion(
-				userId, formInstanceId, formInstanceVersion, status);
-	}
-
 	public static DDMForm getDDMForm(
 		long ddmStructureId, long ddmStructureVersionId) {
 
