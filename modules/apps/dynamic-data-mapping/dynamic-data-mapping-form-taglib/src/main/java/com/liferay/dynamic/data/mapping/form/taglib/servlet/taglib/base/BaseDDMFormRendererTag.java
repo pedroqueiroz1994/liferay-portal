@@ -106,8 +106,8 @@ public abstract class BaseDDMFormRendererTag extends com.liferay.taglib.util.Inc
 		_formInstanceRecordVersionId = null;
 		_formInstanceVersionId = null;
 		_namespace = null;
-		_showFormBasicInfo = false;
-		_showSubmitButton = false;
+		_showFormBasicInfo = true;
+		_showSubmitButton = true;
 	}
 
 	@Override
@@ -122,13 +122,13 @@ public abstract class BaseDDMFormRendererTag extends com.liferay.taglib.util.Inc
 
 	@Override
 	protected void setAttributes(HttpServletRequest request) {
-		request.setAttribute("liferay-form:ddm-form-renderer:formInstanceId", _formInstanceId);
-		request.setAttribute("liferay-form:ddm-form-renderer:formInstanceRecordId", _formInstanceRecordId);
-		request.setAttribute("liferay-form:ddm-form-renderer:formInstanceRecordVersionId", _formInstanceRecordVersionId);
-		request.setAttribute("liferay-form:ddm-form-renderer:formInstanceVersionId", _formInstanceVersionId);
-		request.setAttribute("liferay-form:ddm-form-renderer:namespace", _namespace);
-		request.setAttribute("liferay-form:ddm-form-renderer:showFormBasicInfo", String.valueOf(_showFormBasicInfo));
-		request.setAttribute("liferay-form:ddm-form-renderer:showSubmitButton", String.valueOf(_showSubmitButton));
+		setNamespacedAttribute(request, "formInstanceId", _formInstanceId);
+		setNamespacedAttribute(request, "formInstanceRecordId", _formInstanceRecordId);
+		setNamespacedAttribute(request, "formInstanceRecordVersionId", _formInstanceRecordVersionId);
+		setNamespacedAttribute(request, "formInstanceVersionId", _formInstanceVersionId);
+		setNamespacedAttribute(request, "namespace", _namespace);
+		setNamespacedAttribute(request, "showFormBasicInfo", _showFormBasicInfo);
+		setNamespacedAttribute(request, "showSubmitButton", _showSubmitButton);
 	}
 
 	protected static final String _ATTRIBUTE_NAMESPACE = "liferay-form:ddm-form-renderer:";
@@ -144,7 +144,7 @@ public abstract class BaseDDMFormRendererTag extends com.liferay.taglib.util.Inc
 	private java.lang.Long _formInstanceRecordVersionId = null;
 	private java.lang.Long _formInstanceVersionId = null;
 	private java.lang.String _namespace = null;
-	private boolean _showFormBasicInfo = false;
-	private boolean _showSubmitButton = false;
+	private boolean _showFormBasicInfo = true;
+	private boolean _showSubmitButton = true;
 
 }

@@ -1,3 +1,4 @@
+<%@ taglib prefix="liferay-form" uri="http://liferay.com/tld/form" %>
 <%--
 /**
  * Copyright (c) 2000-present Liferay, Inc. All rights reserved.
@@ -65,91 +66,7 @@ long formInstanceId = ddmFormDisplayContext.getFormInstanceId();
 
 				<div class="portlet-forms">
 					<aui:form action="<%= addFormInstanceRecordActionURL %>" data-DDMFormInstanceId="<%= formInstanceId %>" method="post" name="fm">
-
-						<%
-						String redirectURL = ddmFormDisplayContext.getRedirectURL();
-						%>
-
-						<c:if test="<%= Validator.isNull(redirectURL) %>">
-							<aui:input name="redirect" type="hidden" value="<%= redirect %>" />
-						</c:if>
-
-						<aui:input name="groupId" type="hidden" value="<%= formInstance.getGroupId() %>" />
-						<aui:input name="formInstanceId" type="hidden" value="<%= formInstance.getFormInstanceId() %>" />
-						<aui:input name="languageId" type="hidden" value="<%= languageId %>" />
-						<aui:input name="workflowAction" type="hidden" value="<%= WorkflowConstants.ACTION_PUBLISH %>" />
-
-						<liferay-ui:error exception="<%= CaptchaTextException.class %>" message="text-verification-failed" />
-						<liferay-ui:error exception="<%= DDMFormRenderingException.class %>" message="unable-to-render-the-selected-form" />
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.class %>" message="field-validation-failed" />
-
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.MustSetValidValue.class %>">
-
-							<%
-							DDMFormValuesValidationException.MustSetValidValue msvv = (DDMFormValuesValidationException.MustSetValidValue)errorException;
-							%>
-
-							<liferay-ui:message arguments="<%= HtmlUtil.escape(msvv.getFieldName()) %>" key="validation-failed-for-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
-
-						<liferay-ui:error exception="<%= DDMFormValuesValidationException.RequiredValue.class %>">
-
-							<%
-							DDMFormValuesValidationException.RequiredValue rv = (DDMFormValuesValidationException.RequiredValue)errorException;
-							%>
-
-							<liferay-ui:message arguments="<%= HtmlUtil.escape(rv.getFieldName()) %>" key="no-value-is-defined-for-field-x" translateArguments="<%= false %>" />
-						</liferay-ui:error>
-
-						<liferay-ui:error exception="<%= NoSuchFormInstanceException.class %>" message="the-selected-form-no-longer-exists" />
-						<liferay-ui:error exception="<%= NoSuchStructureException.class %>" message="unable-to-retrieve-the-definition-of-the-selected-form" />
-						<liferay-ui:error exception="<%= NoSuchStructureLayoutException.class %>" message="unable-to-retrieve-the-layout-of-the-selected-form" />
-
-						<liferay-ui:error-principal />
-
-						<c:if test="<%= ddmFormDisplayContext.isFormShared() %>">
-							<div class="container-fluid-1280">
-								<div class="locale-actions">
-									<liferay-ui:language
-										formAction="<%= currentURL %>"
-										languageId="<%= languageId %>"
-										languageIds="<%= ddmFormDisplayContext.getAvailableLanguageIds() %>"
-									/>
-								</div>
-							</div>
-						</c:if>
-
-						<c:if test="<%= !ddmFormDisplayContext.hasAddFormInstanceRecordPermission() %>">
-							<div class="ddm-form-basic-info">
-								<div class="container-fluid-1280">
-									<clay:alert
-										message='<%= LanguageUtil.get(resourceBundle, "you-do-not-have-the-permission-to-submit-this-form") %>'
-										style="warning"
-										title='<%= LanguageUtil.get(resourceBundle, "warning") %>'
-									/>
-								</div>
-							</div>
-						</c:if>
-
-						<div class="ddm-form-basic-info">
-							<div class="container-fluid-1280">
-								<h1 class="ddm-form-name"><%= HtmlUtil.escape(formInstance.getName(displayLocale)) %></h1>
-
-								<%
-								String description = HtmlUtil.escape(formInstance.getDescription(displayLocale));
-								%>
-
-								<c:if test="<%= Validator.isNotNull(description) %>">
-									<h5 class="ddm-form-description"><%= description %></h5>
-								</c:if>
-							</div>
-						</div>
-
-						<div class="container-fluid-1280 ddm-form-builder-app">
-							<%= ddmFormDisplayContext.getDDMFormHTML() %>
-
-							<aui:input name="empty" type="hidden" value="" />
-						</div>
+						<liferay-form:ddm-form-renderer formInstanceId="<%= formInstance.getFormInstanceId() %>" />
 					</aui:form>
 				</div>
 
