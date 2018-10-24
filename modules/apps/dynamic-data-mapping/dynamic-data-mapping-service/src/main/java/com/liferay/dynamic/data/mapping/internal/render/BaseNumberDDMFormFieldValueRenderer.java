@@ -18,9 +18,12 @@ import com.liferay.dynamic.data.mapping.model.Value;
 import com.liferay.dynamic.data.mapping.render.BaseDDMFormFieldValueRenderer;
 import com.liferay.dynamic.data.mapping.render.ValueAccessor;
 import com.liferay.dynamic.data.mapping.storage.DDMFormFieldValue;
+import com.liferay.portal.kernel.log.Log;
+import com.liferay.portal.kernel.log.LogFactoryUtil;
 import com.liferay.portal.kernel.util.GetterUtil;
 
 import java.text.NumberFormat;
+import java.text.ParseException;
 
 import java.util.Locale;
 
@@ -40,15 +43,27 @@ public abstract class BaseNumberDDMFormFieldValueRenderer
 
 				String valueString = value.getString(locale);
 
-				Number number = GetterUtil.getNumber(valueString);
-
 				NumberFormat numberFormat = NumberFormat.getNumberInstance(
 					locale);
+
+				Number number = GetterUtil.DEFAULT_NUMBER;
+
+				try {
+					number = numberFormat.parse(valueString);
+				}
+				catch (ParseException pe) {
+					if (_log.isWarnEnabled()) {
+						_log.warn(pe, pe);
+					}
+				}
 
 				return numberFormat.format(number);
 			}
 
 		};
 	}
+
+	private static final Log _log = LogFactoryUtil.getLog(
+		BaseNumberDDMFormFieldValueRenderer.class);
 
 }
