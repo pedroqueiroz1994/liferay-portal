@@ -356,7 +356,15 @@ AUI.add(
 					initializer: function() {
 						var instance = this;
 
-						Liferay.on('inputLocalized:localeChanged', A.bind('_onLocaleChanged', instance));
+						instance._bindedOnLocaleChanged = A.bind(
+							'_onLocaleChanged',
+							instance
+						);
+
+						Liferay.on(
+							'inputLocalized:localeChanged',
+							instance._bindedOnLocaleChanged
+						);
 					},
 
 					renderUI: function() {
@@ -381,6 +389,13 @@ AUI.add(
 
 					destructor: function() {
 						var instance = this;
+
+						if (instance._bindedOnLocaleChanged) {
+							Liferay.detach(
+								'inputLocalized:localeChanged',
+								instance._bindedOnLocaleChanged
+							);
+						}
 
 						instance.get('container').remove();
 					},
